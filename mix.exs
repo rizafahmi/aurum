@@ -67,7 +67,8 @@ defmodule Aurum.MixProject do
       {:bandit, "~> 1.5"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:stream_data, "~> 1.0", only: :test}
+      {:stream_data, "~> 1.0", only: :test},
+      {:phoenix_test, "~> 0.9.1", only: :test, runtime: false}
     ]
   end
 
@@ -90,7 +91,14 @@ defmodule Aurum.MixProject do
         "esbuild aurum --minify",
         "phx.digest"
       ],
-      precommit: ["credo", "dialyzer", "compile --warning-as-errors", "deps.unlock --unused", "format", "test"]
+      precommit: [
+        "credo",
+        "dialyzer",
+        "compile --warning-as-errors",
+        "deps.unlock --unused",
+        "format",
+        "test"
+      ]
     ]
   end
 end

@@ -28,6 +28,7 @@ defmodule AurumWeb.ConnCase do
       import Plug.Conn
       import Phoenix.ConnTest
       import AurumWeb.ConnCase
+      import PhoenixTest
     end
   end
 
