@@ -17,7 +17,10 @@ defmodule AurumWeb.Router do
   scope "/", AurumWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", DashboardLive
+
+    live "/items", ItemLive.Index
+    live "/items/new", ItemLive.New
   end
 
   # Other scopes may use custom stacks.
