@@ -60,10 +60,17 @@ Top 5 technical risks that could kill this project, ranked by likelihood of fail
 
 ---
 
-## RISK 5: Troy oz ↔ gram conversion causes data corruption
+## RISK 5: Troy oz ↔ gram conversion causes data corruption ✅ VALIDATED
 
 **Assumption:** Users can enter weight in either grams or troy ounces and we store/display correctly.
 
 **Failure Mode:** Unit stored ambiguously, conversion applied twice, or precision lost. User enters 1 troy oz, sees 31.1g, edits, saves as 31.1 troy oz.
 
 **Test:** Build `Aurum.Units` module with explicit conversion functions, store canonical unit (grams) in DB with original input unit, write tests for round-trip edit scenarios.
+
+**Result:** ✅ Validated with 28 unit tests + 6 property-based tests
+- Canonical storage in grams prevents ambiguity
+- Original unit preserved for display (no double-conversion)
+- `weight_input` struct tracks both value and canonical grams
+- Round-trip scenarios tested: create → store → restore → edit → save
+- Property tests verify stability within 0.002g tolerance (4 decimal precision)

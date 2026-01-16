@@ -1,5 +1,40 @@
 # Progress Log
 
+## 2026-01-16 20:00
+
+### Risk #5 Validation: Unit Conversion Safety
+
+Built `Aurum.Units` module to prevent unit conversion data corruption.
+
+**Design decisions:**
+- Store canonical value in grams (DB always stores grams)
+- Preserve original input unit for display
+- `weight_input` struct tracks: value, unit, canonical_grams
+- Explicit function names prevent accidental double-conversion
+
+**Key functions:**
+- `create_weight_input/2` - Creates struct from user input
+- `restore_weight_input/2` - Recreates from DB for editing
+- `update_weight_value/2` - User edits value (recalculates canonical)
+- `update_weight_unit/2` - User switches unit (preserves physical amount)
+
+**Test coverage (34 tests):**
+- 28 unit tests including 5 round-trip edit scenarios
+- 6 property-based tests for stability
+
+**Round-trip scenarios tested:**
+1. Enter 1 troy oz → save → load → edit → save
+2. Switch unit mid-edit (troy oz → grams)
+3. Enter grams → switch to troy oz → edit → save
+4. Multiple load/save cycles (no drift)
+5. Multiple edits preserve precision
+
+**Files created:**
+- `lib/aurum/units.ex` - Unit conversion with canonical storage
+- `test/aurum/units_test.exs` - Unit + property tests
+
+---
+
 ## 2026-01-16 19:45
 
 ### Risk #4 Validation: Decimal Precision for Valuations
