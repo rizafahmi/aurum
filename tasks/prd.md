@@ -174,7 +174,181 @@ Tone: calm, serious, utilitarian.
 
 ---
 
-## 12. Guiding Constraint
+## 12. User Stories
+
+### US-001: Create Gold Item
+**Description:** As a gold owner, I want to add a new gold item to my portfolio so that I can track its value.
+
+**Acceptance Criteria:**
+- [ ] Form displays fields: name, category (Bar/Coin/Jewelry/Other), weight, weight unit (grams/troy oz), purity, quantity, purchase price, purchase date (optional), notes (optional)
+- [ ] Category is a dropdown with exactly 4 options
+- [ ] Purity accepts preset values (24K, 22K, 18K, 14K) or custom percentage
+- [ ] Weight and quantity must be positive numbers
+- [ ] Purchase price must be non-negative
+- [ ] Item is persisted to local SQLite database after submission
+- [ ] User is redirected to portfolio view after successful creation
+- [ ] mix test passes
+- [ ] Verify in browser using dev-browser skill
+
+---
+
+### US-002: View Portfolio Dashboard
+**Description:** As a gold owner, I want to see a summary of my entire gold portfolio so that I understand my total holdings at a glance.
+
+**Acceptance Criteria:**
+- [ ] Dashboard displays total pure gold weight (in grams)
+- [ ] Dashboard displays total invested amount (sum of purchase prices)
+- [ ] Dashboard displays current total value based on spot price
+- [ ] Dashboard displays unrealized gain/loss in absolute value and percentage
+- [ ] Empty state shown when no items exist with prompt to add first item
+- [ ] mix test passes
+- [ ] Verify in browser using dev-browser skill
+
+---
+
+### US-003: List All Gold Items
+**Description:** As a gold owner, I want to see all my gold items in a list so that I can review individual holdings.
+
+**Acceptance Criteria:**
+- [ ] Each item displays: name, category, weight, purity, quantity, purchase price, current value
+- [ ] Items are sorted by creation date (newest first)
+- [ ] Each item row links to its detail/edit view
+- [ ] List displays "No items yet" message when portfolio is empty
+- [ ] mix test passes
+- [ ] Verify in browser using dev-browser skill
+
+---
+
+### US-004: Edit Gold Item
+**Description:** As a gold owner, I want to edit an existing gold item so that I can correct mistakes or update details.
+
+**Acceptance Criteria:**
+- [ ] Edit form pre-populates with existing item data
+- [ ] All fields from creation are editable
+- [ ] Validation rules match creation form
+- [ ] Changes are persisted to database on save
+- [ ] Cancel button returns to previous view without saving
+- [ ] mix test passes
+- [ ] Verify in browser using dev-browser skill
+
+---
+
+### US-005: Delete Gold Item
+**Description:** As a gold owner, I want to delete a gold item so that I can remove items I no longer own.
+
+**Acceptance Criteria:**
+- [ ] Delete button shows confirmation dialog before deleting
+- [ ] Confirmation dialog clearly states item name being deleted
+- [ ] Item is permanently removed from database upon confirmation
+- [ ] User is redirected to portfolio list after deletion
+- [ ] mix test passes
+- [ ] Verify in browser using dev-browser skill
+
+---
+
+### US-006: Fetch Live Gold Price
+**Description:** As a gold owner, I want the app to fetch current gold spot price so that my portfolio valuation is accurate.
+
+**Acceptance Criteria:**
+- [ ] App fetches XAU/USD spot price from a public API on dashboard load
+- [ ] Fetched price is cached locally in database
+- [ ] "Last updated" timestamp is displayed next to price
+- [ ] Price fetch does not require user authentication
+- [ ] API errors are handled gracefully without crashing
+- [ ] mix test passes
+
+---
+
+### US-007: Display Stale Price Indicator
+**Description:** As a gold owner, I want to know when the displayed gold price is outdated so that I understand my valuation may be stale.
+
+**Acceptance Criteria:**
+- [ ] When offline or API fails, app uses last cached price
+- [ ] Visual indicator (badge/icon) shows when price is stale (>15 minutes old)
+- [ ] Tooltip or text explains "Price last updated X minutes/hours ago"
+- [ ] mix test passes
+- [ ] Verify in browser using dev-browser skill
+
+---
+
+### US-008: Calculate Item Valuation
+**Description:** As a gold owner, I want each item's current value calculated automatically so that I know what my gold is worth.
+
+**Acceptance Criteria:**
+- [ ] Pure gold weight = weight × (purity% / 100) × quantity
+- [ ] Current value = pure gold weight × spot price
+- [ ] Gain/loss = current value - purchase price
+- [ ] Calculations use consistent precision (2 decimal places for currency, 4 for weight)
+- [ ] mix test passes
+
+---
+
+### US-009: Convert Weight Units
+**Description:** As a gold owner, I want to enter weight in grams or troy ounces so that I can use my preferred unit.
+
+**Acceptance Criteria:**
+- [ ] Weight unit selector offers "grams" and "troy oz" options
+- [ ] Internal storage normalizes to grams
+- [ ] Display converts back to user's preferred unit
+- [ ] Conversion uses 1 troy oz = 31.1035 grams
+- [ ] mix test passes
+
+---
+
+### US-010: Refresh Gold Price Manually
+**Description:** As a gold owner, I want to manually refresh the gold price so that I can get the latest value on demand.
+
+**Acceptance Criteria:**
+- [ ] Refresh button is visible on dashboard near price display
+- [ ] Clicking refresh fetches new price from API
+- [ ] Loading state shown during fetch
+- [ ] Success updates displayed price and timestamp
+- [ ] Error shows user-friendly message without losing cached price
+- [ ] mix test passes
+- [ ] Verify in browser using dev-browser skill
+
+---
+
+### US-011: View Item Details
+**Description:** As a gold owner, I want to view full details of a single gold item so that I can see all information including notes.
+
+**Acceptance Criteria:**
+- [ ] Detail page shows all item fields including notes
+- [ ] Shows calculated pure gold weight
+- [ ] Shows current value and gain/loss for this item
+- [ ] Edit and Delete buttons are accessible from this view
+- [ ] Back navigation returns to portfolio list
+- [ ] mix test passes
+- [ ] Verify in browser using dev-browser skill
+
+---
+
+### US-012: Validate Item Form Inputs
+**Description:** As a gold owner, I want clear validation errors when I enter invalid data so that I can correct my input.
+
+**Acceptance Criteria:**
+- [ ] Empty required fields show "is required" error
+- [ ] Negative weight shows "must be greater than 0" error
+- [ ] Invalid purity (>100% or <0%) shows appropriate error
+- [ ] Errors display inline next to the relevant field
+- [ ] Form does not submit until all validations pass
+- [ ] mix test passes
+- [ ] Verify in browser using dev-browser skill
+
+---
+
+### US-013: Persist Data Across Restarts
+**Description:** As a gold owner, I want my data to persist after closing the app so that I don't lose my portfolio.
+
+**Acceptance Criteria:**
+- [ ] Items created are visible after stopping and restarting the Phoenix server
+- [ ] Cached gold price survives app restart
+- [ ] SQLite database file exists in priv/repo directory
+- [ ] mix test passes
+
+---
+
+## 13. Guiding Constraint
 If a feature weakens privacy or increases complexity without clear value, it does not ship.
 
 Simplicity is a feature.

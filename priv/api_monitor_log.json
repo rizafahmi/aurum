@@ -1,0 +1,21 @@
+[
+  {
+    "timestamp": "2026-01-16T12:12:40.166090Z",
+    "nbp": {
+      "success": true,
+      "currency": "PLN",
+      "response_time_ms": 477,
+      "price_per_oz": "16674.897385"
+    },
+    "goldapi": {
+      "error": "missing_api_key",
+      "success": false,
+      "response_time_ms": 0
+    },
+    "metalpriceapi": {
+      "error": "missing_api_key",
+      "success": false,
+      "response_time_ms": 0
+    }
+  }
+]

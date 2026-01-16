@@ -1,0 +1,53 @@
+# Technical Risks
+
+Top 5 technical risks that could kill this project, ranked by likelihood of failure and how much they block everything else.
+
+---
+
+## RISK 1: Free gold price API is unreliable or disappears
+
+**Assumption:** A free, public XAU/USD API exists that we can use without user authentication.
+
+**Failure Mode:** Public XAU APIs have rate limits, require API keys, shut down, or return inconsistent data formats. Most "free" APIs are actually freemium with tight limits.
+
+**Test:** Build a `Aurum.Gold.PriceClient` module that fetches from 2-3 candidate APIs, logs response times/failures over 24 hours, and validates response schema matches expectations.
+
+---
+
+## RISK 2: SQLite encryption adds unacceptable complexity
+
+**Assumption:** We can encrypt the SQLite database at rest to protect user data.
+
+**Failure Mode:** Ecto + SQLite3 doesn't natively support encryption at rest. Solutions like SQLCipher require custom compilation, break standard tooling, or have Elixir binding issues.
+
+**Test:** Create a spike branch that configures `ecto_sqlite3` with SQLCipher, runs migrations, performs CRUD, and verifies the `.db` file is unreadable without the key.
+
+---
+
+## RISK 3: Offline-first cache invalidation causes stale/wrong valuations
+
+**Assumption:** We can cache the gold price locally and clearly indicate when it's stale.
+
+**Failure Mode:** Cached price gets stuck, timestamps drift, or users see outdated valuations without realizing. Trust is destroyed if numbers are silently wrong.
+
+**Test:** Build `Aurum.Gold.PriceCache` GenServer with TTL logic, write tests simulating API failures, and verify stale indicators trigger correctly after 15+ minutes.
+
+---
+
+## RISK 4: Floating-point precision errors in valuation math
+
+**Assumption:** We can perform accurate financial calculations for portfolio valuation.
+
+**Failure Mode:** Weight × purity × price accumulates rounding errors. Users see $0.01 discrepancies that erode trust in "honest math" promise.
+
+**Test:** Create `Aurum.Portfolio.Valuation` module using `Decimal` for all calculations, write property-based tests with edge cases (tiny weights, high quantities), verify round-trip consistency.
+
+---
+
+## RISK 5: Troy oz ↔ gram conversion causes data corruption
+
+**Assumption:** Users can enter weight in either grams or troy ounces and we store/display correctly.
+
+**Failure Mode:** Unit stored ambiguously, conversion applied twice, or precision lost. User enters 1 troy oz, sees 31.1g, edits, saves as 31.1 troy oz.
+
+**Test:** Build `Aurum.Units` module with explicit conversion functions, store canonical unit (grams) in DB with original input unit, write tests for round-trip edit scenarios.
