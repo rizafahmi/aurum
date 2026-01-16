@@ -27,13 +27,19 @@ Top 5 technical risks that could kill this project, ranked by likelihood of fail
 
 ---
 
-## RISK 3: Offline-first cache invalidation causes stale/wrong valuations
+## RISK 3: Offline-first cache invalidation causes stale/wrong valuations ✅ VALIDATED
 
 **Assumption:** We can cache the gold price locally and clearly indicate when it's stale.
 
 **Failure Mode:** Cached price gets stuck, timestamps drift, or users see outdated valuations without realizing. Trust is destroyed if numbers are silently wrong.
 
 **Test:** Build `Aurum.Gold.PriceCache` GenServer with TTL logic, write tests simulating API failures, and verify stale indicators trigger correctly after 15+ minutes.
+
+**Result:** ✅ Validated with 17 passing tests
+- Staleness detection works reliably with configurable TTL
+- Cached prices persist through API failures
+- All responses include `stale: true/false` indicator
+- Age tracking in milliseconds enables precise staleness UI
 
 ---
 

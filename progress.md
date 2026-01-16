@@ -1,5 +1,36 @@
 # Progress Log
 
+## 2026-01-16 19:30
+
+### Risk #3 Validation: Price Cache with Staleness Detection
+
+Built `Aurum.Gold.PriceCache` GenServer to validate offline-first caching.
+
+**Features implemented:**
+- TTL-based staleness detection (configurable, default 15 minutes)
+- Cached price returned when API fails
+- Staleness indicator in all price responses
+- Age tracking in milliseconds and human-readable format
+- Error counting for reliability monitoring
+- Auto-refresh capability (optional)
+
+**Test coverage (17 tests):**
+- Staleness triggers correctly after threshold
+- Cached price persists through API failures
+- Refresh failures don't lose cached data
+- Age/staleness tracking accuracy
+
+**Findings:**
+- GenServer approach works well for single-node caching
+- Mock function injection enables thorough testing without network calls
+- Staleness detection is reliable with millisecond precision
+
+**Files created:**
+- `lib/aurum/gold/price_cache.ex` - GenServer with TTL logic
+- `test/aurum/gold/price_cache_test.exs` - 17 tests for cache behavior
+
+---
+
 ## 2026-01-16 19:15
 
 ### Risk #1 Validation: Gold Price API
