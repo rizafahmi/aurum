@@ -43,13 +43,20 @@ Top 5 technical risks that could kill this project, ranked by likelihood of fail
 
 ---
 
-## RISK 4: Floating-point precision errors in valuation math
+## RISK 4: Floating-point precision errors in valuation math ✅ VALIDATED
 
 **Assumption:** We can perform accurate financial calculations for portfolio valuation.
 
 **Failure Mode:** Weight × purity × price accumulates rounding errors. Users see $0.01 discrepancies that erode trust in "honest math" promise.
 
 **Test:** Create `Aurum.Portfolio.Valuation` module using `Decimal` for all calculations, write property-based tests with edge cases (tiny weights, high quantities), verify round-trip consistency.
+
+**Result:** ✅ Validated with 22 unit tests + 10 property-based tests
+- All calculations use Decimal library (no floats in core logic)
+- Weight precision: 4 decimal places
+- Currency precision: 2 decimal places
+- Property tests verify: linear scaling, round-trip stability, edge cases
+- Tested: tiny weights (0.000001g), large quantities (1M), high precision floats
 
 ---
 

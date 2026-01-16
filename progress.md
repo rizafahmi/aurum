@@ -1,5 +1,44 @@
 # Progress Log
 
+## 2026-01-16 19:45
+
+### Risk #4 Validation: Decimal Precision for Valuations
+
+Built `Aurum.Portfolio.Valuation` module with Decimal-based calculations.
+
+**Features implemented:**
+- Pure gold weight calculation (weight × purity × quantity)
+- Current value calculation (pure grams × spot price)
+- Gain/loss and percentage calculations
+- Unit conversions (troy oz ↔ grams)
+- Karat to purity conversion
+- Portfolio aggregation
+
+**Precision rules:**
+- Weight: 4 decimal places
+- Currency: 2 decimal places
+- All intermediate calculations use full Decimal precision
+
+**Test coverage (32 tests):**
+- 22 unit tests for core calculations
+- 10 property-based tests for invariants
+
+**Property tests validate:**
+- Precision limits respected
+- Linear scaling with quantity
+- Gain/loss consistency
+- Round-trip unit conversion stability
+- Edge cases: tiny weights, large quantities, high precision floats
+
+**Files created:**
+- `lib/aurum/portfolio/valuation.ex` - Decimal-based valuation logic
+- `test/aurum/portfolio/valuation_test.exs` - Unit + property tests
+
+**Dependencies added:**
+- `stream_data` for property-based testing
+
+---
+
 ## 2026-01-16 19:30
 
 ### Risk #3 Validation: Price Cache with Staleness Detection
