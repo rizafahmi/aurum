@@ -1,4 +1,7 @@
 defmodule Aurum.Portfolio do
+  @moduledoc """
+  Context for managing gold portfolio items.
+  """
   import Ecto.Query
   alias Aurum.Repo
   alias Aurum.Portfolio.{Item, Valuation}
@@ -9,6 +12,27 @@ defmodule Aurum.Portfolio do
     Item
     |> order_by(desc: :inserted_at)
     |> Repo.all()
+  end
+
+  def list_items_with_current_values(spot_price \\ @default_spot_price) do
+    list_items()
+    |> Enum.map(&add_current_value(&1, spot_price))
+  end
+
+  defp add_current_value(item, spot_price) do
+    purity = Valuation.karat_to_purity(item.purity)
+
+    valuation =
+      Valuation.valuate_item(
+        item.weight,
+        item.weight_unit,
+        purity,
+        item.quantity,
+        item.purchase_price,
+        spot_price
+      )
+
+    %{item | current_value: valuation.current_value}
   end
 
   def dashboard_summary(spot_price \\ @default_spot_price) do

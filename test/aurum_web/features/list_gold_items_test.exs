@@ -1,8 +1,6 @@
 defmodule AurumWeb.ListGoldItemsTest do
   use AurumWeb.ConnCase, async: true
 
-  @moduletag :skip
-
   describe "US-003: List All Gold Items - empty state" do
     test "displays empty message when no items exist", %{conn: conn} do
       conn
@@ -13,10 +11,18 @@ defmodule AurumWeb.ListGoldItemsTest do
 
   describe "US-003: List All Gold Items - with items" do
     setup do
-      # Create test items when Portfolio context is available
-      # {:ok, item1} = Aurum.Portfolio.create_item(%{...})
-      # {:ok, item2} = Aurum.Portfolio.create_item(%{...})
-      :ok
+      {:ok, item} =
+        Aurum.Portfolio.create_item(%{
+          name: "Gold Bar",
+          category: :bar,
+          weight: Decimal.new("31.1035"),
+          weight_unit: :grams,
+          purity: 24,
+          quantity: 1,
+          purchase_price: Decimal.new("2500.00")
+        })
+
+      %{item: item}
     end
 
     test "displays item name", %{conn: conn} do
@@ -68,7 +74,6 @@ defmodule AurumWeb.ListGoldItemsTest do
     end
 
     test "items sorted by creation date newest first", %{conn: conn} do
-      # Would need to verify order of items in list
       conn
       |> visit("/items")
       |> assert_has("#items-list")

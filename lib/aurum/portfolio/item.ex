@@ -1,4 +1,7 @@
 defmodule Aurum.Portfolio.Item do
+  @moduledoc """
+  Schema and helpers for gold portfolio items.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -16,6 +19,8 @@ defmodule Aurum.Portfolio.Item do
     field :purchase_price, :decimal
     field :purchase_date, :date
     field :notes, :string
+
+    field :current_value, :decimal, virtual: true
 
     timestamps()
   end
@@ -66,4 +71,24 @@ defmodule Aurum.Portfolio.Item do
   def weight_unit_short(:troy_oz), do: "oz"
 
   def purity_label(k), do: "#{k}K"
+
+  def format_currency(decimal) do
+    decimal
+    |> Decimal.round(2)
+    |> Decimal.to_string()
+    |> format_with_commas()
+    |> then(&"$#{&1}")
+  end
+
+  defp format_with_commas(str) do
+    [integer, decimal] = String.split(str, ".")
+    formatted_integer =
+      integer
+      |> String.reverse()
+      |> String.graphemes()
+      |> Enum.chunk_every(3)
+      |> Enum.join(",")
+      |> String.reverse()
+    "#{formatted_integer}.#{String.pad_trailing(decimal, 2, "0")}"
+  end
 end

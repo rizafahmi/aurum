@@ -2,6 +2,7 @@ defmodule AurumWeb.DashboardLive do
   use AurumWeb, :live_view
 
   alias Aurum.Portfolio
+  alias Aurum.Portfolio.Item
 
   @impl true
   def mount(_params, _session, socket) do
@@ -44,17 +45,17 @@ defmodule AurumWeb.DashboardLive do
         <.stat_card
           id="total-invested"
           label="Total Invested"
-          value={"$#{@summary.total_invested}"}
+          value={Item.format_currency(@summary.total_invested)}
         />
         <.stat_card
           id="total-current-value"
           label="Current Value"
-          value={"$#{@summary.total_current_value}"}
+          value={Item.format_currency(@summary.total_current_value)}
         />
         <.stat_card
           id="gain-loss-amount"
           label="Gain/Loss"
-          value={"$#{@summary.total_gain_loss}"}
+          value={Item.format_currency(@summary.total_gain_loss)}
           subtitle_id="gain-loss-percent"
           subtitle={"#{@summary.total_gain_loss_percent}%"}
         />

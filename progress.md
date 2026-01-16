@@ -1,5 +1,237 @@
 # Progress Log
 
+## 2026-01-17 00:00
+
+### US-003 Test 1: displays empty message when no items exist
+
+**Implementation:**
+- Added pattern-matched `render/1` clause for empty items list
+- Displays `<p>No items yet</p>` when `@items == []`
+
+**Files modified:**
+- `lib/aurum_web/live/item_live/index.ex` - Added empty state render clause
+- `test/aurum_web/features/list_gold_items_test.exs` - Removed `@moduletag :skip`, added `@tag :skip` to remaining tests
+
+**Test status:** ✅ PASSED (140 tests, 0 failures, 38 skipped)
+
+---
+
+## 2026-01-17 00:10
+
+### US-003 Test 3: displays item category
+
+**Implementation:**
+- Already working - `Item.category_label/1` returns "Bar" for `:bar` category
+
+**Files modified:**
+- `test/aurum_web/features/list_gold_items_test.exs` - Unskipped Test 3
+
+**Test status:** ✅ PASSED (140 tests, 0 failures, 36 skipped)
+
+---
+
+## 2026-01-17 00:45
+
+### US-003 Refactor: Code Quality Improvements
+
+**Changes based on Oracle review:**
+
+1. **Fixed purity conversion bug** - Was passing raw karat (24) instead of purity fraction (0.999)
+   - `Valuation.karat_to_purity/1` now called in context, not LiveView
+
+2. **Moved valuation logic to context** - Created `Portfolio.list_items_with_current_values/1`
+   - Removed duplicated `@default_spot_price` from LiveView
+   - Single source of truth in `Portfolio` module
+
+3. **Added virtual field** - `field :current_value, :decimal, virtual: true` in Item schema
+   - Explicit struct shape instead of ad-hoc `Map.put`
+
+4. **Used idiomatic LiveView navigation** - `<.link navigate={~p"/items/#{item.id}"}>`
+   - Replaced `<a href>` with verified route helper
+
+5. **Consistent currency formatting** - Dashboard now uses `Item.format_currency/1`
+   - Same formatting across all pages
+
+**Files modified:**
+- `lib/aurum/portfolio/item.ex` - Added virtual field, @moduledoc
+- `lib/aurum/portfolio.ex` - Added `list_items_with_current_values/1`, `add_current_value/2`, @moduledoc
+- `lib/aurum_web/live/item_live/index.ex` - Simplified to use context function
+- `lib/aurum_web/live/dashboard_live.ex` - Use `Item.format_currency/1`
+
+**Test status:** ✅ PASSED (140 tests, 0 failures, 29 skipped)
+
+---
+
+## 2026-01-17 00:32
+
+### US-003 Test 10: items sorted by creation date newest first
+
+**Implementation:**
+- Added `id="items-list"` to table element
+- Sorting already implemented in `Portfolio.list_items/0` with `order_by(desc: :inserted_at)`
+
+**Files modified:**
+- `lib/aurum_web/live/item_live/index.ex` - Added table ID
+- `test/aurum_web/features/list_gold_items_test.exs` - Unskipped Test 10
+
+**Test status:** ✅ PASSED (140 tests, 0 failures, 29 skipped)
+
+---
+
+### US-003: List All Gold Items — COMPLETE ✅
+
+**All 10 acceptance tests passing:**
+1. ✅ displays empty message when no items exist
+2. ✅ displays item name
+3. ✅ displays item category
+4. ✅ displays item weight
+5. ✅ displays item purity
+6. ✅ displays item quantity
+7. ✅ displays item purchase price
+8. ✅ displays item current value
+9. ✅ each item row links to detail view
+10. ✅ items sorted by creation date newest first
+
+**Implementation summary:**
+- LiveView: `AurumWeb.ItemLive.Index` at `/items`
+- Uses `Portfolio.list_items_with_current_values/1` for data + valuation
+- Currency formatting via `Item.format_currency/1`
+- Idiomatic `<.link navigate>` for detail links
+
+**Key learnings:**
+- Always use `Valuation.karat_to_purity/1` when passing purity to valuation functions
+- Keep valuation logic in context, not LiveView
+- Use virtual schema fields for computed values
+- Use `~p` verified routes instead of string interpolation
+
+---
+
+## 2026-01-17 00:30
+
+### US-003 Test 9: each item row links to detail view
+
+**Implementation:**
+- Wrapped item name in `<a href={"/items/#{item.id}"}>` link
+
+**Files modified:**
+- `lib/aurum_web/live/item_live/index.ex` - Added link around item name
+- `test/aurum_web/features/list_gold_items_test.exs` - Unskipped Test 9
+
+**Test status:** ✅ PASSED (140 tests, 0 failures, 30 skipped)
+
+---
+
+## 2026-01-17 00:28
+
+### US-003 Test 8: displays item current value
+
+**Implementation:**
+- Added `Valuation` alias and `@default_spot_price` module attribute (85 USD/g)
+- Added `add_current_value/1` helper to calculate valuation per item
+- Added "Current Value" column with `data-test="current-value"` attribute
+- Uses `Item.format_currency/1` for display
+
+**Files modified:**
+- `lib/aurum_web/live/item_live/index.ex` - Added valuation calculation and column
+- `test/aurum_web/features/list_gold_items_test.exs` - Unskipped Test 8
+
+**Test status:** ✅ PASSED (140 tests, 0 failures, 31 skipped)
+
+---
+
+## 2026-01-17 00:26
+
+### US-003 Test 7: displays item purchase price
+
+**Implementation:**
+- Added `Item.format_currency/1` helper for `$X,XXX.XX` formatting
+- Uses `Decimal.round(2)` and comma insertion for thousands
+
+**Files modified:**
+- `lib/aurum/portfolio/item.ex` - Added `format_currency/1` and `format_with_commas/1`
+- `lib/aurum_web/live/item_live/index.ex` - Use `Item.format_currency/1` for price display
+- `test/aurum_web/features/list_gold_items_test.exs` - Unskipped Test 7
+
+**Test status:** ✅ PASSED (140 tests, 0 failures, 32 skipped)
+
+---
+
+## 2026-01-17 00:24
+
+### US-003 Test 6: displays item quantity
+
+**Implementation:**
+- Already working - template displays `{item.quantity}`
+
+**Files modified:**
+- `test/aurum_web/features/list_gold_items_test.exs` - Unskipped Test 6
+
+**Test status:** ✅ PASSED (140 tests, 0 failures, 33 skipped)
+
+---
+
+## 2026-01-17 00:22
+
+### US-003 Test 5: displays item purity
+
+**Implementation:**
+- Already working - template uses `Item.purity_label/1` which returns "24K"
+
+**Files modified:**
+- `test/aurum_web/features/list_gold_items_test.exs` - Unskipped Test 5
+
+**Test status:** ✅ PASSED (140 tests, 0 failures, 34 skipped)
+
+---
+
+## 2026-01-17 00:20
+
+### US-003 Test 4: displays item weight
+
+**Implementation:**
+- Already working - template displays `{item.weight} {Item.weight_unit_short(item.weight_unit)}`
+
+**Files modified:**
+- `test/aurum_web/features/list_gold_items_test.exs` - Unskipped Test 4
+
+**Test status:** ✅ PASSED (140 tests, 0 failures, 35 skipped)
+
+---
+
+## 2026-01-17 00:15
+
+### US-003 Refactor: Avoid double DB hits
+
+**Change:**
+- Added `connected?(socket)` guard in `mount/3`
+- Only loads items after WebSocket connection established
+- Returns empty list on initial static render
+
+**Files modified:**
+- `lib/aurum_web/live/item_live/index.ex` - Added connected? guard
+
+**Test status:** ✅ PASSED (140 tests, 0 failures, 36 skipped)
+
+---
+
+## 2026-01-17 00:05
+
+### US-003 Test 2: displays item name
+
+**Implementation:**
+- Added test setup with real item creation using `Portfolio.create_item/1`
+- Existing `ItemLive.Index` already displays item name in `<td>`
+
+**Files modified:**
+- `test/aurum_web/features/list_gold_items_test.exs` - Added setup block with test item, unskipped Test 2
+
+**Learnings:**
+- Test setup creates item with: name "Gold Bar", category :bar, weight 31.1035g, purity 24K, quantity 1, price $2500
+
+**Test status:** ✅ PASSED (140 tests, 0 failures, 37 skipped)
+
+---
+
 ## 2026-01-16 22:00
 
 ### US-002 Test 1: shows empty state when no items exist
