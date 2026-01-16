@@ -111,8 +111,8 @@ All calculations performed locally.
 
 ### 6.5 Local Storage & Security
 - Use local database (e.g., SQLite)
-- Encrypt data at rest
-- Optional app-level passcode
+- ~~Encrypt data at rest~~ (deferred post-MVP — network privacy is the core value, not disk encryption)
+- Optional app-level passcode (post-MVP)
 - No telemetry, analytics, or logging sent externally
 
 ---

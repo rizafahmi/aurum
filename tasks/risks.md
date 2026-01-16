@@ -14,13 +14,16 @@ Top 5 technical risks that could kill this project, ranked by likelihood of fail
 
 ---
 
-## RISK 2: SQLite encryption adds unacceptable complexity
+## ~~RISK 2: SQLite encryption adds unacceptable complexity~~ (SKIPPED)
 
-**Assumption:** We can encrypt the SQLite database at rest to protect user data.
+**Decision:** Skip encryption for MVP.
 
-**Failure Mode:** Ecto + SQLite3 doesn't natively support encryption at rest. Solutions like SQLCipher require custom compilation, break standard tooling, or have Elixir binding issues.
-
-**Test:** Create a spike branch that configures `ecto_sqlite3` with SQLCipher, runs migrations, performs CRUD, and verifies the `.db` file is unreadable without the key.
+**Rationale:**
+- Core value prop is "data never leaves your device" (network privacy), not disk encryption
+- If attacker has filesystem access, they likely have full device access anyway
+- SQLCipher adds significant complexity (custom compilation, potential Elixir binding issues)
+- No clear user benefit for MVP scope
+- Can add post-MVP if users request it
 
 ---
 
