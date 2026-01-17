@@ -1,5 +1,90 @@
 # Progress Log
 
+## 2026-01-17 01:30
+
+### Code Review & Refactoring
+
+**Oracle-guided refactoring for idiomatic Elixir/Phoenix patterns:**
+
+1. **Centralized valuation logic** - Created `Portfolio.valuate_item/2` as single source of truth
+   - Removed duplicated valuation code from `ItemLive.Show`
+   - `list_items_with_current_values/1` and `calculate_summary/2` now use shared function
+   - More idiomatic with `Enum.unzip/1` instead of manual reduce
+
+2. **Fixed nil crash in changeset** - `String.trim/1` replaced with `maybe_trim/1` for name field
+   - Also normalize empty strings to nil for cleaner `:if` guards in templates
+
+3. **Consistent `~p` verified routes** - Fixed `DashboardLive` and `ItemLive.New` hardcoded paths
+
+4. **Added missing `@impl true`** - All LiveView callbacks now properly annotated
+
+5. **Single render with conditionals** - Consolidated duplicate `render/1` clauses
+   - `ItemLive.Index` and `DashboardLive` now use `:if` directives instead of pattern-matched renders
+   - More idiomatic LiveView pattern
+
+6. **Added CRUD functions** - `Portfolio.update_item/2` and `Portfolio.delete_item/1`
+
+7. **Created `ItemLive.Edit`** - Full edit form implementation to resolve route warning
+
+**Files modified:**
+- `lib/aurum/portfolio.ex` - Added `valuate_item/2`, `update_item/2`, `delete_item/1`, refactored with `Enum.unzip/1`
+- `lib/aurum/portfolio/item.ex` - Fixed `maybe_trim/1` usage, normalize empty to nil
+- `lib/aurum_web/live/item_live/show.ex` - Use `Portfolio.valuate_item/1`
+- `lib/aurum_web/live/item_live/index.ex` - Single render, `@impl true`
+- `lib/aurum_web/live/item_live/new.ex` - `~p` routes, `@impl true`
+- `lib/aurum_web/live/dashboard_live.ex` - Single render, `~p` routes
+- `lib/aurum_web/router.ex` - Added edit route
+
+**Files created:**
+- `lib/aurum_web/live/item_live/edit.ex` - Edit form LiveView
+
+**Test status:** ✅ PASSED (140 tests, 0 failures, 22 skipped)
+
+**Key learnings from refactor:**
+- Keep business logic (valuation) in context modules, not LiveViews
+- Use `Enum.unzip/1` for cleaner tuple list separation vs manual reduce
+- Always use `@impl true` for LiveView callbacks
+- Single `render/1` with `:if` directives is more idiomatic than multiple pattern-matched renders
+- Use `~p` verified routes everywhere for compile-time route validation
+- Handle nil/empty in changeset transforms (`maybe_trim/1`) to avoid crashes
+- Normalize empty strings to nil for cleaner conditional UI
+
+---
+
+## 2026-01-17 01:00
+
+### US-011: View Item Details — COMPLETE ✅
+
+**All 7 acceptance tests passing:**
+1. ✅ shows all item fields including notes
+2. ✅ shows calculated pure gold weight
+3. ✅ shows current value
+4. ✅ shows gain/loss for this item
+5. ✅ edit button is accessible
+6. ✅ delete button is accessible
+7. ✅ back navigation returns to portfolio list
+
+**Implementation:**
+- Created `AurumWeb.ItemLive.Show` LiveView at `/items/:id`
+- Added route in router
+- Uses `Portfolio.get_item!/1` to fetch item
+- Uses `Valuation.valuate_item/6` for pure gold weight, current value, gain/loss
+- All fields displayed with `data-test` attributes
+- Edit, Delete, Back buttons present
+
+**Files created:**
+- `lib/aurum_web/live/item_live/show.ex`
+
+**Files modified:**
+- `lib/aurum_web/router.ex` - Added `/items/:id` route
+- `test/aurum_web/features/view_item_details_test.exs` - Fixed setup block, purity from 99.9 to 24K integer
+
+**Note:** Edit route (`/items/:id/edit`) not yet implemented - warning present but doesn't break tests.
+
+**Test status:** ✅ PASSED (140 tests, 0 failures, 22 skipped)
+
+---
+
 ## 2026-01-17 00:00
 
 ### US-003 Test 1: displays empty message when no items exist

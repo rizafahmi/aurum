@@ -28,7 +28,7 @@ defmodule Aurum.Portfolio.Item do
   def changeset(item, attrs) do
     item
     |> cast(attrs, [:name, :category, :weight, :weight_unit, :purity, :quantity, :purchase_price, :purchase_date, :notes])
-    |> update_change(:name, &String.trim/1)
+    |> update_change(:name, &maybe_trim/1)
     |> update_change(:notes, &maybe_trim/1)
     |> validate_required([:name, :category, :weight, :weight_unit, :purity, :quantity, :purchase_price])
     |> validate_length(:name, min: 1, max: 100)
@@ -39,7 +39,11 @@ defmodule Aurum.Portfolio.Item do
   end
 
   defp maybe_trim(nil), do: nil
-  defp maybe_trim(str), do: String.trim(str)
+
+  defp maybe_trim(str) do
+    trimmed = String.trim(str)
+    if trimmed == "", do: nil, else: trimmed
+  end
 
   def category_options do
     Enum.map(@categories, fn cat ->

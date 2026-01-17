@@ -302,16 +302,16 @@ Tone: calm, serious, utilitarian.
 
 ---
 
-### US-011: View Item Details
+### US-011: View Item Details ✅
 **Description:** As a gold owner, I want to view full details of a single gold item so that I can see all information including notes.
 
 **Acceptance Criteria:**
-- [ ] Detail page shows all item fields including notes
-- [ ] Shows calculated pure gold weight
-- [ ] Shows current value and gain/loss for this item
-- [ ] Edit and Delete buttons are accessible from this view
-- [ ] Back navigation returns to portfolio list
-- [ ] mix test passes
+- [x] Detail page shows all item fields including notes
+- [x] Shows calculated pure gold weight
+- [x] Shows current value and gain/loss for this item
+- [x] Edit and Delete buttons are accessible from this view
+- [x] Back navigation returns to portfolio list
+- [x] mix test passes
 
 ---
 

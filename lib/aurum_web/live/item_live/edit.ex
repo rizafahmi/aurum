@@ -1,20 +1,22 @@
-defmodule AurumWeb.ItemLive.New do
+defmodule AurumWeb.ItemLive.Edit do
   use AurumWeb, :live_view
 
   alias Aurum.Portfolio
   alias Aurum.Portfolio.Item
 
   @impl true
-  def mount(_params, _session, socket) do
-    changeset = Portfolio.change_item(%Item{})
-    {:ok, assign(socket, form: to_form(changeset))}
+  def mount(%{"id" => id}, _session, socket) do
+    item = Portfolio.get_item!(id)
+    changeset = Portfolio.change_item(item)
+
+    {:ok, assign(socket, item: item, form: to_form(changeset), page_title: "Edit #{item.name}")}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
-      <h1>Add Gold Item</h1>
+      <h1>Edit {@item.name}</h1>
 
       <.form for={@form} id="item-form" phx-change="validate" phx-submit="save">
         <.input field={@form[:name]} type="text" label="Name" id="item-name" />
@@ -75,20 +77,21 @@ defmodule AurumWeb.ItemLive.New do
   @impl true
   def handle_event("validate", %{"item" => item_params}, socket) do
     changeset =
-      %Item{}
+      socket.assigns.item
       |> Portfolio.change_item(item_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, form: to_form(changeset))}
   end
 
+  @impl true
   def handle_event("save", %{"item" => item_params}, socket) do
-    case Portfolio.create_item(item_params) do
-      {:ok, _item} ->
+    case Portfolio.update_item(socket.assigns.item, item_params) do
+      {:ok, item} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Gold item created successfully")
-         |> push_navigate(to: ~p"/items")}
+         |> put_flash(:info, "Gold item updated successfully")
+         |> push_navigate(to: ~p"/items/#{item.id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}

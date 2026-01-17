@@ -18,25 +18,19 @@ defmodule AurumWeb.DashboardLive do
   end
 
   @impl true
-  def render(%{items: []} = assigns) do
-    ~H"""
-    <Layouts.app flash={@flash}>
-      <h1 class="text-2xl font-bold mb-6">Aurum</h1>
-      <div id="empty-portfolio" class="text-center py-12">
-        <p class="text-gray-500 mb-4">Your portfolio is empty</p>
-        <.link navigate="/items/new" class="text-blue-600 hover:underline">
-          Add your first gold item
-        </.link>
-      </div>
-    </Layouts.app>
-    """
-  end
-
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
       <h1 class="text-2xl font-bold mb-6">Aurum</h1>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+
+      <div :if={@items == []} id="empty-portfolio" class="text-center py-12">
+        <p class="text-gray-500 mb-4">Your portfolio is empty</p>
+        <.link navigate={~p"/items/new"} class="text-blue-600 hover:underline">
+          Add your first gold item
+        </.link>
+      </div>
+
+      <div :if={@items != []} class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <.stat_card
           id="total-gold-weight"
           label="Total Pure Gold"

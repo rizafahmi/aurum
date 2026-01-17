@@ -4,26 +4,21 @@ defmodule AurumWeb.ItemLive.Index do
   alias Aurum.Portfolio
   alias Aurum.Portfolio.Item
 
+  @impl true
   def mount(_params, _session, socket) do
     items = if connected?(socket), do: Portfolio.list_items_with_current_values(), else: []
     {:ok, assign(socket, items: items)}
   end
 
-  def render(%{items: []} = assigns) do
-    ~H"""
-    <Layouts.app flash={@flash}>
-      <h1>Gold Items</h1>
-      <p>No items yet</p>
-    </Layouts.app>
-    """
-  end
-
+  @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
       <h1>Gold Items</h1>
 
-      <table id="items-list">
+      <p :if={@items == []}>No items yet</p>
+
+      <table :if={@items != []} id="items-list">
         <thead>
           <tr>
             <th>Name</th>

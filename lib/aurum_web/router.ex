@@ -21,6 +21,8 @@ defmodule AurumWeb.Router do
 
     live "/items", ItemLive.Index
     live "/items/new", ItemLive.New
+    live "/items/:id", ItemLive.Show
+    live "/items/:id/edit", ItemLive.Edit
   end
 
   # Other scopes may use custom stacks.
