@@ -16,7 +16,7 @@ defmodule AurumWeb.ItemLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
-      <h1>{@item.name}</h1>
+      <h1 data-test="item-name">{@item.name}</h1>
 
       <dl class="grid grid-cols-2 gap-4 mt-6">
         <div>
@@ -83,5 +83,15 @@ defmodule AurumWeb.ItemLive.Show do
       </div>
     </Layouts.app>
     """
+  end
+
+  @impl true
+  def handle_event("delete", _params, socket) do
+    {:ok, _} = Portfolio.delete_item(socket.assigns.item)
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Gold item deleted")
+     |> push_navigate(to: ~p"/items")}
   end
 end

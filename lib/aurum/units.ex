@@ -208,10 +208,7 @@ defmodule Aurum.Units do
 
   # Private helpers
 
-  defp to_decimal(%Decimal{} = d), do: d
-  defp to_decimal(n) when is_integer(n), do: Decimal.new(n)
-  defp to_decimal(n) when is_float(n), do: Decimal.from_float(n)
-  defp to_decimal(n) when is_binary(n), do: Decimal.new(n)
+  defp to_decimal(value), do: Aurum.DecimalUtils.to_decimal(value)
 
   defp round_weight(decimal) do
     Decimal.round(decimal, @weight_precision)

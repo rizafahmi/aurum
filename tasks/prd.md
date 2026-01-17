@@ -216,16 +216,16 @@ Tone: calm, serious, utilitarian.
 
 ---
 
-### US-004: Edit Gold Item
+### US-004: Edit Gold Item ✅
 **Description:** As a gold owner, I want to edit an existing gold item so that I can correct mistakes or update details.
 
 **Acceptance Criteria:**
-- [ ] Edit form pre-populates with existing item data
-- [ ] All fields from creation are editable
-- [ ] Validation rules match creation form
-- [ ] Changes are persisted to database on save
-- [ ] Cancel button returns to previous view without saving
-- [ ] mix test passes
+- [x] Edit form pre-populates with existing item data
+- [x] All fields from creation are editable
+- [x] Validation rules match creation form
+- [x] Changes are persisted to database on save
+- [x] Cancel button returns to previous view without saving
+- [x] mix test passes
 
 ---
 

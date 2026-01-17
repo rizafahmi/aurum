@@ -69,6 +69,7 @@ defmodule AurumWeb.ItemLive.Edit do
         <.input field={@form[:notes]} type="textarea" label="Notes" id="item-notes" />
 
         <.button type="submit">Save</.button>
+        <.link navigate={~p"/items/#{@item.id}"}>Cancel</.link>
       </.form>
     </Layouts.app>
     """

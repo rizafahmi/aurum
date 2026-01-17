@@ -82,6 +82,7 @@ defmodule AurumWeb.ItemLive.New do
     {:noreply, assign(socket, form: to_form(changeset))}
   end
 
+  @impl true
   def handle_event("save", %{"item" => item_params}, socket) do
     case Portfolio.create_item(item_params) do
       {:ok, _item} ->

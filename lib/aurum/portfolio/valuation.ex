@@ -93,9 +93,7 @@ defmodule Aurum.Portfolio.Valuation do
   Calculates gain/loss as a percentage of purchase price.
   Returns nil if purchase price is zero (to avoid division by zero).
   """
-  @spec gain_loss_percent(Decimal.t(), Decimal.t()) :: Decimal.t() | nil
-  def gain_loss_percent(_gain_loss, purchase_price) when purchase_price == 0, do: nil
-
+  @spec gain_loss_percent(Decimal.t(), Decimal.t() | number()) :: Decimal.t() | nil
   def gain_loss_percent(gain_loss_amount, purchase_price) do
     purchase_dec = to_decimal(purchase_price)
 
@@ -231,10 +229,7 @@ defmodule Aurum.Portfolio.Valuation do
   defp convert_to_grams(weight, :grams), do: weight
   defp convert_to_grams(weight, :troy_oz), do: Decimal.mult(weight, @troy_oz_to_grams)
 
-  defp to_decimal(%Decimal{} = d), do: d
-  defp to_decimal(n) when is_integer(n), do: Decimal.new(n)
-  defp to_decimal(n) when is_float(n), do: Decimal.from_float(n)
-  defp to_decimal(n) when is_binary(n), do: Decimal.new(n)
+  defp to_decimal(value), do: Aurum.DecimalUtils.to_decimal(value)
 
   defp round_weight(decimal) do
     Decimal.round(decimal, @weight_precision)

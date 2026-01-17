@@ -1,5 +1,84 @@
 # Progress Log
 
+## 2026-01-17 02:30
+
+### Code Review & Refactoring (Oracle-guided)
+
+**Critical bug fixes:**
+1. **Missing delete handler** - `ItemLive.Show` had Delete button but no `handle_event("delete", ...)`
+   - Added handler that calls `Portfolio.delete_item/1` and redirects to `/items`
+
+2. **`format_currency/1` crash bug** - Previous implementation crashed on:
+   - Strings without decimal point
+   - Negative numbers
+   - Fixed with robust `add_commas/1` that handles sign, missing decimals
+
+3. **Misleading guard in `gain_loss_percent/2`** - `when purchase_price == 0` only matched integer 0
+   - Removed dead guard clause, kept only `Decimal.eq?` check
+
+**DRY improvements:**
+1. **Centralized `to_decimal/1`** - Created `Aurum.DecimalUtils` module
+   - Single source of truth for Decimal coercion
+   - Both `Valuation` and `Units` modules now delegate to it
+
+2. **Added missing `@impl true`** - `ItemLive.New` save handler
+
+**Deferred (documented for future):**
+- Extract FormComponent to DRY up New/Edit forms (adds test complexity with PhoenixTest)
+- Move presentation helpers out of `Item` schema module
+- Add `@type t()` for Item struct
+
+**Files created:**
+- `lib/aurum/decimal_utils.ex` - Centralized Decimal coercion
+
+**Files modified:**
+- `lib/aurum_web/live/item_live/show.ex` - Added delete handler
+- `lib/aurum/portfolio/item.ex` - Fixed `format_currency/1` with robust `add_commas/1`
+- `lib/aurum/portfolio/valuation.ex` - Removed misleading guard, centralized `to_decimal`
+- `lib/aurum/units.ex` - Centralized `to_decimal`
+- `lib/aurum_web/live/item_live/new.ex` - Added `@impl true`
+
+**Test status:** ✅ PASSED (140 tests, 0 failures, 17 skipped)
+
+**Key learnings:**
+- Always verify that UI event handlers actually exist before shipping
+- `Decimal.zero/0` doesn't exist in Decimal 2.3 - use `Decimal.new("0")`
+- Currency formatting needs to handle edge cases: negative numbers, no decimals
+- Centralizing utility functions like `to_decimal/1` prevents drift and bugs
+- LiveComponent extraction adds testing complexity with PhoenixTest
+
+---
+
+## 2026-01-17 02:00
+
+### US-004: Edit Gold Item — COMPLETE ✅
+
+**All 5 acceptance tests passing:**
+1. ✅ edit form pre-populates with existing data
+2. ✅ all fields from creation are editable
+3. ✅ successfully updates item with new data
+4. ✅ validation rules match creation form
+5. ✅ cancel button returns to previous view without saving
+
+**Implementation:**
+- Edit form already existed at `ItemLive.Edit` with all fields
+- Added Cancel link with `navigate={~p"/items/#{@item.id}"}`
+- Added `data-test="item-name"` to Show page `<h1>` for test assertions
+
+**Files modified:**
+- `lib/aurum_web/live/item_live/edit.ex` - Added Cancel link
+- `lib/aurum_web/live/item_live/show.ex` - Added data-test attribute to item name
+- `test/aurum_web/features/edit_gold_item_test.exs` - Fixed tests with proper setup, dynamic item IDs
+
+**Test status:** ✅ PASSED (140 tests, 0 failures, 17 skipped)
+
+**Key learnings:**
+- Tests must create their own items in setup, not rely on hardcoded IDs
+- Use `data-test` attributes for reliable test assertions on dynamic content
+- Redirect after save goes to item show page (`/items/#{item.id}`)
+
+---
+
 ## 2026-01-17 01:30
 
 ### Code Review & Refactoring

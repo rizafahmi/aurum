@@ -76,23 +76,36 @@ defmodule Aurum.Portfolio.Item do
 
   def purity_label(k), do: "#{k}K"
 
-  def format_currency(decimal) do
+  def format_currency(%Decimal{} = decimal) do
     decimal
     |> Decimal.round(2)
-    |> Decimal.to_string()
-    |> format_with_commas()
+    |> Decimal.to_string(:normal)
+    |> add_commas()
     |> then(&"$#{&1}")
   end
 
-  defp format_with_commas(str) do
-    [integer, decimal] = String.split(str, ".")
-    formatted_integer =
-      integer
+  defp add_commas(str) do
+    {sign, rest} =
+      case str do
+        "-" <> r -> {"-", r}
+        r -> {"", r}
+      end
+
+    {int, frac} =
+      case String.split(rest, ".", parts: 2) do
+        [i, f] -> {i, String.pad_trailing(f, 2, "0")}
+        [i] -> {i, "00"}
+      end
+
+    int_with_commas =
+      int
       |> String.reverse()
       |> String.graphemes()
       |> Enum.chunk_every(3)
+      |> Enum.map(&Enum.join(&1, ""))
       |> Enum.join(",")
       |> String.reverse()
-    "#{formatted_integer}.#{String.pad_trailing(decimal, 2, "0")}"
+
+    sign <> int_with_commas <> "." <> frac
   end
 end
