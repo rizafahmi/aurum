@@ -51,12 +51,15 @@ defmodule AurumWeb.DashboardLive do
           label="Gain/Loss"
           value={Item.format_currency(@summary.total_gain_loss)}
           subtitle_id="gain-loss-percent"
-          subtitle={"#{@summary.total_gain_loss_percent}%"}
+          subtitle={format_percent(@summary.total_gain_loss_percent)}
         />
       </div>
     </Layouts.app>
     """
   end
+
+  defp format_percent(nil), do: nil
+  defp format_percent(percent), do: "#{percent}%"
 
   attr :id, :string, required: true
   attr :label, :string, required: true

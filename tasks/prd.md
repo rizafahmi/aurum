@@ -229,15 +229,15 @@ Tone: calm, serious, utilitarian.
 
 ---
 
-### US-005: Delete Gold Item
+### US-005: Delete Gold Item ✅
 **Description:** As a gold owner, I want to delete a gold item so that I can remove items I no longer own.
 
 **Acceptance Criteria:**
-- [ ] Delete button shows confirmation dialog before deleting
-- [ ] Confirmation dialog clearly states item name being deleted
-- [ ] Item is permanently removed from database upon confirmation
-- [ ] User is redirected to portfolio list after deletion
-- [ ] mix test passes
+- [x] Delete button shows confirmation dialog before deleting
+- [x] Confirmation dialog clearly states item name being deleted
+- [x] Item is permanently removed from database upon confirmation
+- [x] User is redirected to portfolio list after deletion
+- [x] mix test passes
 
 ---
 

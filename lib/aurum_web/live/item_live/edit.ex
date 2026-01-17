@@ -1,15 +1,20 @@
 defmodule AurumWeb.ItemLive.Edit do
+  @moduledoc """
+  LiveView for editing existing gold items.
+  """
   use AurumWeb, :live_view
 
   alias Aurum.Portfolio
-  alias Aurum.Portfolio.Item
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
     item = Portfolio.get_item!(id)
-    changeset = Portfolio.change_item(item)
 
-    {:ok, assign(socket, item: item, form: to_form(changeset), page_title: "Edit #{item.name}")}
+    {:ok,
+     assign(socket,
+       item: item,
+       page_title: "Edit #{item.name}"
+     )}
   end
 
   @impl true
@@ -18,84 +23,14 @@ defmodule AurumWeb.ItemLive.Edit do
     <Layouts.app flash={@flash}>
       <h1>Edit {@item.name}</h1>
 
-      <.form for={@form} id="item-form" phx-change="validate" phx-submit="save">
-        <.input field={@form[:name]} type="text" label="Name" id="item-name" />
-
-        <.input
-          field={@form[:category]}
-          type="select"
-          label="Category"
-          id="item-category"
-          prompt="Select category"
-          options={Item.category_options()}
-        />
-
-        <.input field={@form[:weight]} type="number" label="Weight" id="item-weight" step="any" />
-
-        <.input
-          field={@form[:weight_unit]}
-          type="select"
-          label="Weight unit"
-          id="item-weight-unit"
-          options={Item.weight_unit_options()}
-        />
-
-        <.input
-          field={@form[:purity]}
-          type="select"
-          label="Purity"
-          id="item-purity"
-          prompt="Select purity"
-          options={Item.purity_options()}
-        />
-
-        <.input field={@form[:quantity]} type="number" label="Quantity" id="item-quantity" />
-
-        <.input
-          field={@form[:purchase_price]}
-          type="number"
-          label="Purchase price"
-          id="item-purchase-price"
-          step="0.01"
-        />
-
-        <.input
-          field={@form[:purchase_date]}
-          type="date"
-          label="Purchase date"
-          id="item-purchase-date"
-        />
-
-        <.input field={@form[:notes]} type="textarea" label="Notes" id="item-notes" />
-
-        <.button type="submit">Save</.button>
-        <.link navigate={~p"/items/#{@item.id}"}>Cancel</.link>
-      </.form>
+      <.live_component
+        module={AurumWeb.ItemLive.FormComponent}
+        id="edit-item-form"
+        item={@item}
+        action={:edit}
+        return_to={~p"/items/#{@item.id}"}
+      />
     </Layouts.app>
     """
-  end
-
-  @impl true
-  def handle_event("validate", %{"item" => item_params}, socket) do
-    changeset =
-      socket.assigns.item
-      |> Portfolio.change_item(item_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign(socket, form: to_form(changeset))}
-  end
-
-  @impl true
-  def handle_event("save", %{"item" => item_params}, socket) do
-    case Portfolio.update_item(socket.assigns.item, item_params) do
-      {:ok, item} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Gold item updated successfully")
-         |> push_navigate(to: ~p"/items/#{item.id}")}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
-    end
   end
 end

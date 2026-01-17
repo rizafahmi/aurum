@@ -1,5 +1,104 @@
 # Progress Log
 
+## 2026-01-17 03:30
+
+### Code Review & Refactoring (Oracle-guided)
+
+**DRY improvements:**
+1. **Extracted FormComponent** - Created `AurumWeb.ItemLive.FormComponent` as shared LiveComponent
+   - New/Edit LiveViews are now thin wrappers (~15 lines each instead of ~100)
+   - Component handles validate/save events, accepts `:action` and `:return_to` props
+   - Eliminated ~150 lines of duplicated form markup and event handlers
+
+2. **Unified unit conversions** - `Valuation` now delegates to `Units` module
+   - Removed duplicate `@troy_oz_to_grams` constant from Valuation
+   - `troy_oz_to_grams/1` and `grams_to_troy_oz/1` use `defdelegate`
+   - Single source of truth in `Aurum.Units`
+
+**Error handling improvements:**
+3. **Fixed crash on delete failure** - `ItemLive.Show` now handles `{:error, _}` case
+   - Shows flash error instead of crashing LiveView
+   - Closes confirmation dialog on failure
+
+4. **Fixed nil percent display** - Dashboard handles `total_gain_loss_percent: nil`
+   - Added `format_percent/1` helper that returns nil for nil input
+   - Prevents "nil%" from displaying when purchase_price is zero
+
+**Typespecs & documentation:**
+5. **Added `@type t()` to Item schema** - Full struct type definition
+   - Added `@type category` and `@type weight_unit`
+
+6. **Added typespecs to Portfolio context** - All public functions now have `@spec`
+   - `list_items/0`, `valuate_item/2`, `dashboard_summary/1`
+   - CRUD functions: `get_item!/1`, `create_item/1`, `update_item/2`, `delete_item/1`
+
+7. **Added typespecs to Item helpers** - All label/format functions have `@spec`
+   - `category_options/0`, `weight_unit_options/0`, `purity_options/0`
+   - `category_label/1`, `weight_unit_label/1`, `format_currency/1`
+
+**Code style fixes:**
+8. **Fixed line length** - Extracted `@cast_fields` module attribute in Item changeset
+9. **Fixed alias ordering** - Alphabetical order in Portfolio context
+
+**Files created:**
+- `lib/aurum_web/live/item_live/form_component.ex` - Shared form LiveComponent
+
+**Files modified:**
+- `lib/aurum_web/live/item_live/new.ex` - Thin wrapper using FormComponent
+- `lib/aurum_web/live/item_live/edit.ex` - Thin wrapper using FormComponent
+- `lib/aurum_web/live/item_live/show.ex` - Proper error handling on delete
+- `lib/aurum_web/live/dashboard_live.ex` - Handle nil percent
+- `lib/aurum/portfolio/valuation.ex` - Delegate to Units for conversions
+- `lib/aurum/portfolio/item.ex` - Added types, specs, extracted @cast_fields
+- `lib/aurum/portfolio.ex` - Added docs, specs, fixed alias order
+
+**Test status:** ✅ PASSED (141 tests, 0 failures, 13 skipped)
+
+**Key learnings:**
+- LiveComponents are ideal for DRY-ing up forms with shared validation logic
+- `defdelegate` is cleaner than wrapper functions for module delegation
+- Always handle `{:error, _}` in LiveView event handlers to avoid crashes
+- Typespecs on context functions help document the API contract
+- Use module attributes (`@cast_fields`) to avoid long lines in changesets
+
+---
+
+## 2026-01-17 03:00
+
+### US-005: Delete Gold Item — COMPLETE ✅
+
+**All 5 acceptance tests passing:**
+1. ✅ delete button shows confirmation dialog
+2. ✅ confirmation dialog states item name
+3. ✅ item is removed after confirmation
+4. ✅ cancel deletion keeps item
+5. ✅ user is redirected to portfolio list after deletion
+
+**Implementation:**
+- Added `show_confirm_dialog` assign to `ItemLive.Show` mount
+- Delete button now triggers `show_confirm` event (shows modal)
+- Confirmation modal displays item name with Confirm/Cancel buttons
+- `confirm_delete` event deletes item and redirects with flash
+- `cancel_delete` event hides modal without action
+
+**Files modified:**
+- `lib/aurum_web/live/item_live/show.ex` - Added confirmation dialog flow
+- `test/aurum_web/features/delete_gold_item_test.exs` - Fixed tests with proper setup, dynamic item IDs
+- `config/test.exs` - Added SQLite WAL mode and busy_timeout for concurrency
+- `lib/aurum/portfolio/item.ex` - Credo fix: use `Enum.map_join/3`
+
+**Test status:** ✅ PASSED (141 tests, 0 failures, 13 skipped with --max-cases=1)
+
+**Note:** SQLite "Database busy" errors occur with parallel test execution. This is a known SQLite limitation with concurrent writes. Tests pass reliably with `--max-cases=1`.
+
+**Key learnings:**
+- LiveView state-based modals are simpler than JS-based solutions
+- `show_confirm_dialog` boolean assign + `:if` directive is clean pattern
+- SQLite concurrency requires WAL mode + busy_timeout for async tests
+- Confirmation dialogs should clearly state what's being deleted
+
+---
+
 ## 2026-01-17 02:30
 
 ### Code Review & Refactoring (Oracle-guided)

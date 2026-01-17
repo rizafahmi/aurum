@@ -13,11 +13,11 @@ defmodule Aurum.Portfolio.Valuation do
   - Gain/loss % = (gain/loss / purchase price) × 100
   """
 
+  alias Aurum.Units
+
   @weight_precision 4
   @currency_precision 2
   @purity_precision 2
-
-  @troy_oz_to_grams Decimal.new("31.1035")
 
   @type weight_unit :: :grams | :troy_oz
   @type valuation_result :: %{
@@ -187,25 +187,17 @@ defmodule Aurum.Portfolio.Valuation do
 
   @doc """
   Converts troy ounces to grams.
+  Delegates to `Aurum.Units.troy_oz_to_grams/1`.
   """
   @spec troy_oz_to_grams(Decimal.t() | number()) :: Decimal.t()
-  def troy_oz_to_grams(troy_oz) do
-    troy_oz
-    |> to_decimal()
-    |> Decimal.mult(@troy_oz_to_grams)
-    |> round_weight()
-  end
+  defdelegate troy_oz_to_grams(troy_oz), to: Units
 
   @doc """
   Converts grams to troy ounces.
+  Delegates to `Aurum.Units.grams_to_troy_oz/1`.
   """
   @spec grams_to_troy_oz(Decimal.t() | number()) :: Decimal.t()
-  def grams_to_troy_oz(grams) do
-    grams
-    |> to_decimal()
-    |> Decimal.div(@troy_oz_to_grams)
-    |> round_weight()
-  end
+  defdelegate grams_to_troy_oz(grams), to: Units
 
   @doc """
   Returns the purity percentage for common karat values.
@@ -227,7 +219,7 @@ defmodule Aurum.Portfolio.Valuation do
   # Private helpers
 
   defp convert_to_grams(weight, :grams), do: weight
-  defp convert_to_grams(weight, :troy_oz), do: Decimal.mult(weight, @troy_oz_to_grams)
+  defp convert_to_grams(weight, :troy_oz), do: Units.troy_oz_to_grams(weight)
 
   defp to_decimal(value), do: Aurum.DecimalUtils.to_decimal(value)
 
