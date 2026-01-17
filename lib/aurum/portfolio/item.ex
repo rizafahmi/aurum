@@ -103,36 +103,11 @@ defmodule Aurum.Portfolio.Item do
   @spec purity_label(integer()) :: String.t()
   def purity_label(k), do: "#{k}K"
 
+  @doc """
+  Formats a Decimal as currency. Delegates to `AurumWeb.Format.currency/1`.
+
+  Deprecated: Use `AurumWeb.Format.currency/1` directly in templates.
+  """
   @spec format_currency(Decimal.t()) :: String.t()
-  def format_currency(%Decimal{} = decimal) do
-    decimal
-    |> Decimal.round(2)
-    |> Decimal.to_string(:normal)
-    |> add_commas()
-    |> then(&"$#{&1}")
-  end
-
-  defp add_commas(str) do
-    {sign, rest} =
-      case str do
-        "-" <> r -> {"-", r}
-        r -> {"", r}
-      end
-
-    {int, frac} =
-      case String.split(rest, ".", parts: 2) do
-        [i, f] -> {i, String.pad_trailing(f, 2, "0")}
-        [i] -> {i, "00"}
-      end
-
-    int_with_commas =
-      int
-      |> String.reverse()
-      |> String.graphemes()
-      |> Enum.chunk_every(3)
-      |> Enum.map_join(",", &Enum.join(&1, ""))
-      |> String.reverse()
-
-    sign <> int_with_commas <> "." <> frac
-  end
+  def format_currency(%Decimal{} = decimal), do: AurumWeb.Format.currency(decimal)
 end

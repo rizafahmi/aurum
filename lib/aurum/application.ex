@@ -14,8 +14,7 @@ defmodule Aurum.Application do
        repos: Application.fetch_env!(:aurum, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:aurum, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Aurum.PubSub},
-      # Start a worker by calling: Aurum.Worker.start_link(arg)
-      # {Aurum.Worker, arg},
+      {Aurum.Gold.PriceCache, auto_refresh: true},
       # Start to serve requests, typically the last entry
       AurumWeb.Endpoint
     ]

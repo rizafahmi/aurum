@@ -3,6 +3,7 @@ defmodule AurumWeb.ItemLive.Show do
 
   alias Aurum.Portfolio
   alias Aurum.Portfolio.Item
+  alias AurumWeb.Format
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
@@ -47,7 +48,7 @@ defmodule AurumWeb.ItemLive.Show do
 
         <div>
           <dt class="text-sm text-gray-500">Purchase Price</dt>
-          <dd data-test="purchase-price">{Item.format_currency(@item.purchase_price)}</dd>
+          <dd data-test="purchase-price">{Format.currency(@item.purchase_price)}</dd>
         </div>
 
         <div>
@@ -67,12 +68,12 @@ defmodule AurumWeb.ItemLive.Show do
 
         <div>
           <dt class="text-sm text-gray-500">Current Value</dt>
-          <dd data-test="current-value">{Item.format_currency(@valuation.current_value)}</dd>
+          <dd data-test="current-value">{Format.currency(@valuation.current_value)}</dd>
         </div>
 
         <div>
           <dt class="text-sm text-gray-500">Gain/Loss</dt>
-          <dd data-test="gain-loss">{Item.format_currency(@valuation.gain_loss)}</dd>
+          <dd data-test="gain-loss">{Format.currency(@valuation.gain_loss)}</dd>
         </div>
       </dl>
 

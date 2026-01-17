@@ -3,11 +3,18 @@ defmodule AurumWeb.ItemLive.Index do
 
   alias Aurum.Portfolio
   alias Aurum.Portfolio.Item
+  alias AurumWeb.Format
 
   @impl true
   def mount(_params, _session, socket) do
-    items = if connected?(socket), do: Portfolio.list_items_with_current_values(), else: []
-    {:ok, assign(socket, items: items)}
+    if connected?(socket), do: send(self(), :load_data)
+    {:ok, assign(socket, items: [])}
+  end
+
+  @impl true
+  def handle_info(:load_data, socket) do
+    items = Portfolio.list_items_with_current_values()
+    {:noreply, assign(socket, items: items)}
   end
 
   @impl true
@@ -37,8 +44,8 @@ defmodule AurumWeb.ItemLive.Index do
             <td>{item.weight} {Item.weight_unit_short(item.weight_unit)}</td>
             <td>{Item.purity_label(item.purity)}</td>
             <td>{item.quantity}</td>
-            <td>{Item.format_currency(item.purchase_price)}</td>
-            <td data-test="current-value">{Item.format_currency(item.current_value)}</td>
+            <td>{Format.currency(item.purchase_price)}</td>
+            <td data-test="current-value">{Format.currency(item.current_value)}</td>
           </tr>
         </tbody>
       </table>

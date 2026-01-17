@@ -1,5 +1,105 @@
 # Progress Log
 
+## 2026-01-17 05:00
+
+### SQLite Concurrency Fix
+
+**Problem:** Intermittent "Database busy" errors during parallel test execution.
+
+**Solution:** Reduced pool_size and increased timeout in `config/test.exs`:
+- `pool_size: 5` → `pool_size: 1` (SQLite is single-writer)
+- `busy_timeout: 5000` → `busy_timeout: 10_000`
+
+Tests now pass consistently without `--max-cases=1`.
+
+---
+
+## 2026-01-17 04:30
+
+### Code Review & Refactoring (Oracle-guided)
+
+**Critical fix: Spot price unit consistency**
+1. **Fixed spot price usage** - Context functions now use live price from `PriceCache`
+   - Added `Portfolio.current_spot_price_per_gram/0` - fetches from cache, falls back to default
+   - `valuate_item/2`, `list_items_with_current_values/1`, `dashboard_summary/1` now use live prices
+   - Renamed `default_spot_price` → `default_spot_price_per_gram` for clarity
+
+**Presentation layer extraction**
+2. **Created `AurumWeb.Format` module** - Centralized formatting helpers
+   - `currency/1` - Decimal to "$1,234.56" format
+   - `price/1` - Decimal to "1234.56" format  
+   - `percent/1` - Decimal to "12.34%" format (handles nil)
+   - `datetime/1` - DateTime to "2026-01-17 04:00 UTC" format
+   - `weight/2` - Decimal + unit to "100 g" format
+
+3. **Deprecated `Item.format_currency/1`** - Now delegates to `Format.currency/1`
+   - Keeps backward compatibility during transition
+   - Updated Dashboard, Show, Index to use `Format` directly
+
+**LiveView loading pattern improvement**
+4. **Changed to `handle_info` pattern** - Cleaner mount, easier refresh
+   - `DashboardLive` and `ItemLive.Index` now use `send(self(), :load_data)`
+   - Removes nested `if connected?` branching
+   - Prepares for future periodic price refresh
+
+**Error handling improvement**
+5. **Added `Portfolio.get_item/1`** - Returns nil instead of raising
+   - Safer alternative to `get_item!/1` for user-facing code
+   - Can be used to show flash error instead of 500 page
+
+**Files created:**
+- `lib/aurum_web/format.ex` - Presentation formatting module
+
+**Files modified:**
+- `lib/aurum/portfolio.ex` - Added `current_spot_price_per_gram/0`, `get_item/1`, fixed specs
+- `lib/aurum/portfolio/item.ex` - `format_currency/1` now delegates to Format
+- `lib/aurum_web/live/dashboard_live.ex` - Uses Format, handle_info pattern
+- `lib/aurum_web/live/item_live/index.ex` - Uses Format, handle_info pattern
+- `lib/aurum_web/live/item_live/show.ex` - Uses Format
+
+**Test status:** ✅ PASSED (141 tests, 0 failures, 10 skipped)
+
+**Key learnings:**
+- Keep formatting/presentation out of schema modules to avoid coupling
+- `handle_info(:load_data)` pattern is cleaner than branching in mount
+- Canonical units (price per gram) should be used internally; convert only for display
+- Default values with `nil` fallback pattern: `spot_price || current_spot_price_per_gram()`
+
+---
+
+## 2026-01-17 04:00
+
+### US-006: Fetch Live Gold Price — COMPLETE ✅
+
+**All 3 acceptance tests passing:**
+1. ✅ displays gold spot price on dashboard
+2. ✅ displays last updated timestamp
+3. ✅ handles API errors gracefully
+
+**Implementation:**
+- Added `Aurum.Gold.PriceCache` GenServer to application supervision tree
+- Dashboard now fetches price via `PriceCache.get_price()` on mount
+- Created `price_display/1` component showing:
+  - Current spot price (XAU/oz) with currency
+  - "Last updated" timestamp (UTC format)
+  - "Price unavailable" fallback when API fails
+  - Stale indicator when price is >15 minutes old (prepares for US-007)
+
+**Files modified:**
+- `lib/aurum/application.ex` - Added PriceCache to supervision tree
+- `lib/aurum_web/live/dashboard_live.ex` - Added price display component
+- `test/aurum_web/features/gold_price_test.exs` - Enabled US-006 tests, skipped US-007/US-010
+
+**Test status:** ✅ PASSED (141 tests, 0 failures, 10 skipped)
+
+**Key learnings:**
+- PriceCache already had staleness detection built-in from risk validation
+- Dashboard uses `connected?(socket)` pattern to avoid fetching on initial static render
+- Price component handles nil gracefully with "Price unavailable" fallback
+- Stale indicator is ready but only shows when `price_info.stale == true`
+
+---
+
 ## 2026-01-17 03:30
 
 ### Code Review & Refactoring (Oracle-guided)

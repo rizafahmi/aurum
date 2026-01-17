@@ -5,16 +5,28 @@ defmodule Aurum.Portfolio do
   Provides CRUD operations and valuation calculations for gold holdings.
   """
   import Ecto.Query
+  alias Aurum.Gold.PriceCache
   alias Aurum.Portfolio.{Item, Valuation}
   alias Aurum.Repo
 
-  @default_spot_price Decimal.new("85.00")
+  @default_spot_price_per_gram Decimal.new("85.00")
 
   @doc """
-  Returns the default spot price per gram used for valuations.
+  Returns the default spot price per gram used for valuations when API is unavailable.
   """
-  @spec default_spot_price() :: Decimal.t()
-  def default_spot_price, do: @default_spot_price
+  @spec default_spot_price_per_gram() :: Decimal.t()
+  def default_spot_price_per_gram, do: @default_spot_price_per_gram
+
+  @doc """
+  Returns the current spot price per gram from cache, falling back to default.
+  """
+  @spec current_spot_price_per_gram() :: Decimal.t()
+  def current_spot_price_per_gram do
+    case PriceCache.get_price() do
+      {:ok, %{price_data: %{price_per_gram: price}}} -> price
+      _ -> @default_spot_price_per_gram
+    end
+  end
 
   @doc """
   Returns all items ordered by creation date (newest first).
@@ -36,8 +48,9 @@ defmodule Aurum.Portfolio do
   - `:gain_loss` - Absolute gain/loss
   - `:gain_loss_percent` - Percentage gain/loss (nil if purchase price is zero)
   """
-  @spec valuate_item(Item.t(), Decimal.t()) :: {Item.t(), Valuation.valuation_result()}
-  def valuate_item(%Item{} = item, spot_price \\ @default_spot_price) do
+  @spec valuate_item(Item.t(), Decimal.t() | nil) :: {Item.t(), Valuation.valuation_result()}
+  def valuate_item(%Item{} = item, spot_price \\ nil) do
+    spot_price = spot_price || current_spot_price_per_gram()
     purity = Valuation.karat_to_purity(item.purity)
 
     valuation =
@@ -56,8 +69,9 @@ defmodule Aurum.Portfolio do
   @doc """
   Returns all items with their current value populated.
   """
-  @spec list_items_with_current_values(Decimal.t()) :: [Item.t()]
-  def list_items_with_current_values(spot_price \\ @default_spot_price) do
+  @spec list_items_with_current_values(Decimal.t() | nil) :: [Item.t()]
+  def list_items_with_current_values(spot_price \\ nil) do
+    spot_price = spot_price || current_spot_price_per_gram()
     list_items()
     |> Enum.map(fn item ->
       {_item, valuation} = valuate_item(item, spot_price)
@@ -71,8 +85,9 @@ defmodule Aurum.Portfolio do
   ## Returns
   A tuple of `{items, summary}` where summary is nil for empty portfolios.
   """
-  @spec dashboard_summary(Decimal.t()) :: {[Item.t()], map() | nil}
-  def dashboard_summary(spot_price \\ @default_spot_price) do
+  @spec dashboard_summary(Decimal.t() | nil) :: {[Item.t()], map() | nil}
+  def dashboard_summary(spot_price \\ nil) do
+    spot_price = spot_price || current_spot_price_per_gram()
     items = list_items()
     summary = calculate_summary(items, spot_price)
     {items, summary}
@@ -91,6 +106,12 @@ defmodule Aurum.Portfolio do
 
     Valuation.aggregate_portfolio(valuations, purchase_prices)
   end
+
+  @doc """
+  Gets a single item by ID. Returns nil if not found.
+  """
+  @spec get_item(term()) :: Item.t() | nil
+  def get_item(id), do: Repo.get(Item, id)
 
   @doc """
   Gets a single item by ID. Raises if not found.

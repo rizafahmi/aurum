@@ -1,7 +1,7 @@
 defmodule AurumWeb.GoldPriceTest do
-  use AurumWeb.ConnCase, async: true
+  use AurumWeb.ConnCase, async: false
 
-  @moduletag :skip
+  import PhoenixTest
 
   describe "US-006: Fetch Live Gold Price" do
     test "displays gold spot price on dashboard", %{conn: conn} do
@@ -17,7 +17,6 @@ defmodule AurumWeb.GoldPriceTest do
     end
 
     test "handles API errors gracefully", %{conn: conn} do
-      # When API fails, should show cached price or placeholder
       conn
       |> visit("/")
       |> refute_has(".error-crash")
@@ -25,6 +24,8 @@ defmodule AurumWeb.GoldPriceTest do
   end
 
   describe "US-010: Refresh Gold Price Manually" do
+    @describetag :skip
+
     test "displays refresh button near price", %{conn: conn} do
       conn
       |> visit("/")
@@ -40,8 +41,9 @@ defmodule AurumWeb.GoldPriceTest do
   end
 
   describe "US-007: Display Stale Price Indicator" do
+    @describetag :skip
+
     test "shows stale indicator when price is old", %{conn: conn} do
-      # This would require setting up a stale price in the cache
       conn
       |> visit("/")
       |> assert_has("#stale-price-indicator")

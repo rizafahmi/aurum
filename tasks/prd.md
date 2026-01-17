@@ -241,16 +241,16 @@ Tone: calm, serious, utilitarian.
 
 ---
 
-### US-006: Fetch Live Gold Price
+### US-006: Fetch Live Gold Price ✅
 **Description:** As a gold owner, I want the app to fetch current gold spot price so that my portfolio valuation is accurate.
 
 **Acceptance Criteria:**
-- [ ] App fetches XAU/USD spot price from a public API on dashboard load
-- [ ] Fetched price is cached locally in database
-- [ ] "Last updated" timestamp is displayed next to price
-- [ ] Price fetch does not require user authentication
-- [ ] API errors are handled gracefully without crashing
-- [ ] mix test passes
+- [x] App fetches XAU/USD spot price from a public API on dashboard load
+- [x] Fetched price is cached locally in database
+- [x] "Last updated" timestamp is displayed next to price
+- [x] Price fetch does not require user authentication
+- [x] API errors are handled gracefully without crashing
+- [x] mix test passes
 
 ---
 
