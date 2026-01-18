@@ -52,10 +52,12 @@ defmodule AurumWeb.Format do
   @doc """
   Formats a weight with its unit abbreviation.
   """
-  @spec weight(Decimal.t() | nil, atom()) :: String.t()
+  @spec weight(Decimal.t() | nil, Aurum.Units.weight_unit()) :: String.t()
   def weight(nil, _unit), do: "—"
-  def weight(%Decimal{} = value, :grams), do: "#{value} g"
-  def weight(%Decimal{} = value, :troy_oz), do: "#{value} oz"
+
+  def weight(%Decimal{} = value, unit) do
+    "#{value} #{Aurum.Units.unit_label(unit)}"
+  end
 
   defp add_commas(str) do
     {sign, rest} =

@@ -57,13 +57,33 @@ defmodule Aurum.Portfolio.Item do
     |> validate_number(:quantity, greater_than: 0)
     |> validate_number(:purchase_price, greater_than_or_equal_to: 0)
     |> validate_inclusion(:purity, @purity_karats)
+    |> normalize_weight_to_grams()
+  end
+
+  defp normalize_weight_to_grams(changeset) do
+    weight = get_change(changeset, :weight)
+    unit = get_change(changeset, :weight_unit) || get_field(changeset, :weight_unit)
+
+    case {weight, unit} do
+      {nil, _} -> changeset
+      {_, :troy_oz} ->
+        normalized = Aurum.Units.troy_oz_to_grams(weight)
+
+        changeset
+        |> put_change(:weight, normalized)
+        |> put_change(:weight_unit, :grams)
+
+      _ -> changeset
+    end
   end
 
   defp maybe_trim(nil), do: nil
 
-  defp maybe_trim(str) do
-    trimmed = String.trim(str)
-    if trimmed == "", do: nil, else: trimmed
+  defp maybe_trim(str) when is_binary(str) do
+    case String.trim(str) do
+      "" -> nil
+      trimmed -> trimmed
+    end
   end
 
   @spec category_options() :: [{String.t(), category()}]
@@ -98,8 +118,7 @@ defmodule Aurum.Portfolio.Item do
   def weight_unit_label(:troy_oz), do: "troy oz"
 
   @spec weight_unit_short(weight_unit()) :: String.t()
-  def weight_unit_short(:grams), do: "g"
-  def weight_unit_short(:troy_oz), do: "oz"
+  defdelegate weight_unit_short(unit), to: Aurum.Units, as: :unit_label
 
   @spec purity_label(integer()) :: String.t()
   def purity_label(k), do: "#{k}K"

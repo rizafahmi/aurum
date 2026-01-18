@@ -277,15 +277,15 @@ Tone: calm, serious, utilitarian.
 
 ---
 
-### US-009: Convert Weight Units
+### US-009: Convert Weight Units ✅
 **Description:** As a gold owner, I want to enter weight in grams or troy ounces so that I can use my preferred unit.
 
 **Acceptance Criteria:**
-- [ ] Weight unit selector offers "grams" and "troy oz" options
-- [ ] Internal storage normalizes to grams
-- [ ] Display converts back to user's preferred unit
-- [ ] Conversion uses 1 troy oz = 31.1035 grams
-- [ ] mix test passes
+- [x] Weight unit selector offers "grams" and "troy oz" options
+- [x] Internal storage normalizes to grams
+- [x] Display converts back to user's preferred unit
+- [x] Conversion uses 1 troy oz = 31.1035 grams
+- [x] mix test passes
 
 ---
 

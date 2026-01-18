@@ -1,5 +1,64 @@
 # Progress Log
 
+## 2026-01-18 08:30
+
+### Code Review & Refactoring (Oracle-guided)
+
+**Idiomatic Elixir improvements:**
+1. **Pattern matching in `maybe_trim/1`** - Added guard `when is_binary(str)` and used `case` instead of `if`
+2. **Centralized unit labels** - `Item.weight_unit_short/1` now delegates to `Units.unit_label/1`
+3. **Tightened typespec** - `Format.weight/2` uses `Aurum.Units.weight_unit()` instead of `atom()`
+4. **DRY weight formatting** - `Format.weight/2` now calls `Units.unit_label/1` instead of duplicating labels
+
+**Reviewed but kept as-is:**
+- `Valuation` delegations to `Units` - kept for backward compatibility with existing tests
+- `current_spot_price_per_gram/0` with `case` - cleaner than `with` for simple pattern
+
+**Design decision documented:**
+- Current design: stores canonical grams AND unit as `:grams` (normalization)
+- PRD says "display converts back" but we don't store original unit preference
+- This is acceptable for MVP; user preference storage could be added later
+
+**Files modified:**
+- `lib/aurum/portfolio/item.ex` - Idiomatic `maybe_trim/1`, delegate `weight_unit_short/1`
+- `lib/aurum_web/format.ex` - Tighter typespec, delegate to `Units.unit_label/1`
+
+**Test status:** ✅ PASSED (151 tests, 0 failures, 9 skipped)
+
+---
+
+## 2026-01-18 08:00
+
+### US-009: Convert Weight Units — COMPLETE ✅
+
+**All 4 acceptance tests passing:**
+1. ✅ weight unit selector offers "grams" and "troy oz" options
+2. ✅ internal storage normalizes to grams
+3. ✅ display converts back to user's preferred unit
+4. ✅ conversion uses 1 troy oz = 31.1035 grams
+
+**Implementation:**
+- Added `normalize_weight_to_grams/1` to `Item.changeset/2`
+- When `weight_unit` is `:troy_oz`, converts weight to grams using `Units.troy_oz_to_grams/1`
+- Sets `weight_unit` to `:grams` after normalization
+- Display already worked via existing `Item.weight_unit_short/1`
+
+**Files created:**
+- `test/aurum_web/features/convert_weight_units_test.exs` - US-009 feature tests
+
+**Files modified:**
+- `lib/aurum/portfolio/item.ex` - Added `normalize_weight_to_grams/1` private function
+
+**Test status:** ✅ PASSED (151 tests, 0 failures, 9 skipped)
+
+**Key learnings:**
+- PRD specifies internal storage should normalize to grams
+- `Aurum.Units` module already had `troy_oz_to_grams/1` ready to use
+- Changeset is the right place to normalize data before persistence
+- Validation happens before normalization to give meaningful errors on original input
+
+---
+
 ## 2026-01-18 07:00
 
 ### US-008: Calculate Item Valuation — Test 1
