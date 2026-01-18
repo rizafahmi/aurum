@@ -1,8 +1,6 @@
 defmodule AurumWeb.ValidateItemFormTest do
   use AurumWeb.ConnCase, async: true
 
-  @moduletag :skip
-
   describe "US-012: Validate Item Form Inputs" do
     test "empty name shows required error", %{conn: conn} do
       conn
@@ -77,8 +75,8 @@ defmodule AurumWeb.ValidateItemFormTest do
       |> fill_in("Weight", with: "-1")
       |> fill_in("Quantity", with: "0")
       |> click_button("Save")
-      |> assert_has("#item-name + p", text: "can't be blank")
-      |> assert_has("#item-weight + p", text: "must be greater than 0")
+      |> assert_has(".fieldset:has(#item-name) p", text: "can't be blank")
+      |> assert_has(".fieldset:has(#item-weight) p", text: "must be greater than 0")
     end
 
     test "form does not submit until validations pass", %{conn: conn} do

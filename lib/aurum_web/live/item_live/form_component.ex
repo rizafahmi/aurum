@@ -63,6 +63,17 @@ defmodule AurumWeb.ItemLive.FormComponent do
           options={Item.purity_options()}
         />
 
+        <.input
+          field={@form[:custom_purity]}
+          type="number"
+          label="Custom purity"
+          id="item-custom-purity"
+          step="0.01"
+          min="0.01"
+          max="100"
+          placeholder="Or enter custom %"
+        />
+
         <.input field={@form[:quantity]} type="number" label="Quantity" id="item-quantity" />
 
         <.input

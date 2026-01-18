@@ -23,6 +23,7 @@ defmodule Aurum.Portfolio.Item do
           purchase_date: Date.t() | nil,
           notes: String.t() | nil,
           current_value: Decimal.t() | nil,
+          custom_purity: Decimal.t() | nil,
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil
         }
@@ -39,11 +40,12 @@ defmodule Aurum.Portfolio.Item do
     field :notes, :string
 
     field :current_value, :decimal, virtual: true
+    field :custom_purity, :decimal, virtual: true
 
     timestamps()
   end
 
-  @cast_fields ~w(name category weight weight_unit purity quantity purchase_price purchase_date notes)a
+  @cast_fields ~w(name category weight weight_unit purity custom_purity quantity purchase_price purchase_date notes)a
 
   @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(item, attrs) do
@@ -51,13 +53,48 @@ defmodule Aurum.Portfolio.Item do
     |> cast(attrs, @cast_fields)
     |> update_change(:name, &maybe_trim/1)
     |> update_change(:notes, &maybe_trim/1)
+    |> validate_custom_purity()
+    |> apply_custom_purity()
     |> validate_required([:name, :category, :weight, :weight_unit, :purity, :quantity, :purchase_price])
     |> validate_length(:name, min: 1, max: 100)
     |> validate_number(:weight, greater_than: 0)
     |> validate_number(:quantity, greater_than: 0)
     |> validate_number(:purchase_price, greater_than_or_equal_to: 0)
-    |> validate_inclusion(:purity, @purity_karats)
+    |> validate_preset_purity()
     |> normalize_weight_to_grams()
+  end
+
+  defp validate_custom_purity(changeset) do
+    case get_field(changeset, :custom_purity) do
+      nil -> changeset
+      _ -> validate_number(changeset, :custom_purity, greater_than: 0, less_than_or_equal_to: 100)
+    end
+  end
+
+  defp apply_custom_purity(changeset) do
+    custom = get_field(changeset, :custom_purity)
+
+    cond do
+      is_nil(custom) ->
+        changeset
+
+      Keyword.has_key?(changeset.errors, :custom_purity) ->
+        changeset
+
+      Decimal.gt?(custom, 0) ->
+        put_change(changeset, :purity, custom |> Decimal.round(0) |> Decimal.to_integer())
+
+      true ->
+        changeset
+    end
+  end
+
+  defp validate_preset_purity(changeset) do
+    if is_nil(get_field(changeset, :custom_purity)) do
+      validate_inclusion(changeset, :purity, @purity_karats, message: "is invalid")
+    else
+      changeset
+    end
   end
 
   defp normalize_weight_to_grams(changeset) do

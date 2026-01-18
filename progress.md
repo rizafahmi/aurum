@@ -1,5 +1,164 @@
 # Progress Log
 
+## 2026-01-18 13:35
+
+### US-012: Code Review & Refactoring (Oracle-guided)
+
+**Idiomatic Elixir improvements:**
+
+1. **Split validation into single-purpose functions:**
+   - `validate_custom_purity/1` - validates custom_purity range before applying
+   - `apply_custom_purity/1` - only applies if custom_purity is valid (checks `changeset.errors`)
+   - `validate_preset_purity/1` - uses `validate_inclusion/3` instead of manual `cond` + `add_error`
+
+2. **Use `get_field/2` consistently** instead of mixing `get_change/2` and `get_field/2`
+   - More robust: works whether value is changed or pre-existing
+
+3. **Avoid double-errors:** Don't add `:purity` errors when `custom_purity` has cast/validation errors
+
+4. **Fixed type spec:** Added `custom_purity: Decimal.t() | nil` to `@type t`
+
+5. **UI/validation alignment:** Changed `min="0"` to `min="0.01"` in custom purity input
+
+**Files modified:**
+- `lib/aurum/portfolio/item.ex` - Refactored purity validation pipeline
+- `lib/aurum_web/live/item_live/form_component.ex` - Fixed min attribute
+
+**Test status:** ✅ PASSED (152 tests, 0 failures)
+
+---
+
+## 2026-01-18 13:30
+
+### US-012: Validate Item Form Inputs — COMPLETE ✅
+
+**All 7 acceptance criteria passing:**
+1. ✅ Empty required fields show "can't be blank" error
+2. ✅ Negative weight shows "must be greater than 0" error
+3. ✅ Zero weight shows "must be greater than 0" error
+4. ✅ Purity over 100% shows "must be less than or equal to 100" error
+5. ✅ Negative purity shows "must be greater than 0" error
+6. ✅ Errors display inline next to relevant field
+7. ✅ Form does not submit until all validations pass
+
+**Implementation summary:**
+- Added `custom_purity` virtual field for custom percentage input (0-100%)
+- Added "Custom purity" number input to form
+- `apply_custom_purity/1` converts custom percentage to purity integer
+- `validate_purity/1` validates custom purity range or preset karat selection
+- Existing validations for weight, quantity, purchase_price already worked
+
+**Files modified:**
+- `lib/aurum/portfolio/item.ex` - Added `custom_purity` field, `apply_custom_purity/1`, `validate_purity/1`
+- `lib/aurum_web/live/item_live/form_component.ex` - Added Custom purity input
+- `test/aurum_web/features/validate_item_form_test.exs` - All tests unskipped, fixed CSS selectors
+
+**Test status:** ✅ PASSED (152 tests, 0 failures)
+
+---
+
+## 2026-01-18 13:25
+
+### US-012: Validate Item Form Inputs — Test 6
+
+**Test 6: errors display inline next to relevant field** ✅
+
+**Implementation:**
+- Already working! Errors render inside same `.fieldset` container as input
+- Fixed test selector: `.fieldset:has(#item-name) p` instead of `#item-name + p`
+- Phoenix's `<.input>` wraps input in `<label>`, error `<p>` is sibling of label
+
+**Files modified:**
+- `test/aurum_web/features/validate_item_form_test.exs` - Updated CSS selectors
+
+**Test status:** ✅ PASSED (152 tests, 0 failures, 1 skipped)
+
+---
+
+## 2026-01-18 13:20
+
+### US-012: Validate Item Form Inputs — Test 5
+
+**Test 5: negative purity shows error** ✅
+
+**Implementation:**
+- Fixed `validate_purity/1` condition: `custom != nil` instead of `Decimal.gt?(custom, 0)`
+- Now validates custom_purity even when negative, showing "must be greater than 0"
+
+**Files modified:**
+- `lib/aurum/portfolio/item.ex` - Fixed condition in `validate_purity/1`
+
+**Test status:** ✅ PASSED (152 tests, 0 failures, 2 skipped)
+
+---
+
+## 2026-01-18 13:15
+
+### US-012: Validate Item Form Inputs — Test 4
+
+**Test 4: purity over 100% shows error** ✅
+
+**Implementation:**
+- Added `custom_purity` virtual field to `Item` schema
+- Added "Custom purity" number input to `FormComponent`
+- `apply_custom_purity/1` converts custom_purity to purity integer
+- `validate_purity/1` validates custom purity with `less_than_or_equal_to: 100`
+- Replaced `validate_inclusion(:purity, @purity_karats)` with flexible `validate_purity/1`
+
+**Files modified:**
+- `lib/aurum/portfolio/item.ex` - Added `custom_purity` field, `apply_custom_purity/1`, `validate_purity/1`
+- `lib/aurum_web/live/item_live/form_component.ex` - Added Custom purity input
+
+**Test status:** ✅ PASSED (152 tests, 0 failures, 3 skipped)
+
+---
+
+## 2026-01-18 13:10
+
+### US-012: Validate Item Form Inputs — Test 3
+
+**Test 3: zero weight shows appropriate error** ✅
+
+**Implementation:**
+- Already implemented! `validate_number(:weight, greater_than: 0)` rejects zero
+- Same error message "must be greater than 0" as negative weight
+
+**Test status:** ✅ PASSED (3 tests, 0 failures, 4 skipped in US-012 tests)
+
+---
+
+## 2026-01-18 13:05
+
+### US-012: Validate Item Form Inputs — Test 2
+
+**Test 2: negative weight shows appropriate error** ✅
+
+**Implementation:**
+- Already implemented! `Item.changeset/2` has `validate_number(:weight, greater_than: 0)`
+- Error message "must be greater than 0" displayed by `<.input>` component
+
+**Test status:** ✅ PASSED (2 tests, 0 failures, 5 skipped in US-012 tests)
+
+---
+
+## 2026-01-18 13:00
+
+### US-012: Validate Item Form Inputs — Test 1
+
+**Test 1: empty name shows required error** ✅
+
+**Implementation:**
+- Already implemented! The `Item.changeset/2` has `validate_required([:name, ...])` 
+- `FormComponent` sets `action: :validate` on phx-change, showing errors inline
+- Phoenix's `<.input>` component renders error messages as `<p>` elements
+
+**Files modified:**
+- `test/aurum_web/features/validate_item_form_test.exs` - Removed `@moduletag :skip`, added `@tag :skip` to remaining tests
+
+**Test status:** ✅ PASSED (1 test, 0 failures, 6 skipped in US-012 tests)
+
+---
+
 ## 2026-01-18 12:40
 
 ### US-010: Refresh Gold Price Manually — COMPLETE ✅

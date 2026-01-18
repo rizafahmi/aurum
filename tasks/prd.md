@@ -315,16 +315,16 @@ Tone: calm, serious, utilitarian.
 
 ---
 
-### US-012: Validate Item Form Inputs
+### US-012: Validate Item Form Inputs ✅
 **Description:** As a gold owner, I want clear validation errors when I enter invalid data so that I can correct my input.
 
 **Acceptance Criteria:**
-- [ ] Empty required fields show "is required" error
-- [ ] Negative weight shows "must be greater than 0" error
-- [ ] Invalid purity (>100% or <0%) shows appropriate error
-- [ ] Errors display inline next to the relevant field
-- [ ] Form does not submit until all validations pass
-- [ ] mix test passes
+- [x] Empty required fields show "is required" error
+- [x] Negative weight shows "must be greater than 0" error
+- [x] Invalid purity (>100% or <0%) shows appropriate error
+- [x] Errors display inline next to the relevant field
+- [x] Form does not submit until all validations pass
+- [x] mix test passes
 
 ---
 
