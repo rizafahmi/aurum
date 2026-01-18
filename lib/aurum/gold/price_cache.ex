@@ -75,6 +75,13 @@ defmodule Aurum.Gold.PriceCache do
     GenServer.call(server, :age_ms)
   end
 
+  @doc """
+  Sets a test price with custom fetched_at timestamp. For testing only.
+  """
+  def set_test_price(server \\ __MODULE__, price_data, fetched_at) do
+    GenServer.call(server, {:set_test_price, price_data, fetched_at})
+  end
+
   # Server callbacks
 
   @impl true
@@ -169,6 +176,18 @@ defmodule Aurum.Gold.PriceCache do
   @impl true
   def handle_call(:age_ms, _from, state) do
     {:reply, calculate_age(state), state}
+  end
+
+  @impl true
+  def handle_call({:set_test_price, price_data, fetched_at}, _from, state) do
+    new_cache = %{
+      state.cache
+      | price_data: price_data,
+        fetched_at: fetched_at,
+        last_error: nil
+    }
+
+    {:reply, :ok, %{state | cache: new_cache}}
   end
 
   @impl true

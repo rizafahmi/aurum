@@ -1,5 +1,32 @@
 # Progress Log
 
+## 2026-01-18 06:00
+
+### US-007: Display Stale Price Indicator — COMPLETE ✅
+
+**All 3 acceptance tests passing:**
+1. ✅ uses cached price when available
+2. ✅ shows stale indicator when price is old (>15 minutes)
+3. ✅ displays time since last update
+
+**Implementation:**
+- Stale indicator was already in `price_display/1` component (from US-006)
+- Added `PriceCache.set_test_price/3` for test injection of stale state
+- Tests verify stale indicator appears when `fetched_at` is >15 minutes old
+
+**Files modified:**
+- `lib/aurum/gold/price_cache.ex` - Added `set_test_price/3` for testing
+- `test/aurum_web/features/gold_price_test.exs` - Added US-007 tests, removed skip
+
+**Test status:** ✅ PASSED (143 tests, 0 failures, 9 skipped)
+
+**Key learnings:**
+- Stale detection was already built into PriceCache from risk validation phase
+- Adding test helpers like `set_test_price/3` enables testing time-dependent behavior
+- Feature was mostly complete from US-006; just needed test coverage
+
+---
+
 ## 2026-01-17 05:00
 
 ### SQLite Concurrency Fix

@@ -1,0 +1,57 @@
+{
+  "project": "Aurum Vault",
+  "theme": "Cyber-Security Terminal",
+  "colors": {
+    "background": {
+      "base": "#0f172a",
+      "grid_lines": "rgba(212, 175, 55, 0.05)"
+    },
+    "surface": {
+      "card_bg": "rgba(15, 23, 42, 0.8)",
+      "border": "#d4af37",
+      "border_muted": "rgba(212, 175, 55, 0.3)"
+    },
+    "text": {
+      "primary": "#d4af37",
+      "secondary": "rgba(212, 175, 55, 0.7)",
+      "success": "#4ade80",
+      "warning": "#fbbf24",
+      "danger": "#f87171"
+    },
+    "accents": {
+      "gold_glow": "0 0 10px rgba(212, 175, 55, 0.4)",
+      "terminal_cursor": "#d4af37"
+    }
+  },
+  "typography": {
+    "font_family": "JetBrains Mono, monospace",
+    "weights": {
+      "regular": 400,
+      "bold": 700
+    },
+    "scaling": {
+      "headers": "1.25rem",
+      "body": "0.875rem",
+      "data": "1rem"
+    }
+  },
+  "ui_elements": {
+    "borders": {
+      "width": "1px",
+      "style": "solid"
+    },
+    "spacing": {
+      "container_padding": "24px",
+      "card_gap": "16px"
+    },
+    "components": {
+      "brackets": "[ ]",
+      "prompt": ">_",
+      "table_row_height": "48px"
+    }
+  },
+  "visual_effects": {
+    "background_overlay": "circuit-pattern-svg",
+    "scanline_effect": "linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02))"
+  }
+}

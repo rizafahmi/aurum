@@ -254,14 +254,14 @@ Tone: calm, serious, utilitarian.
 
 ---
 
-### US-007: Display Stale Price Indicator
+### US-007: Display Stale Price Indicator ✅
 **Description:** As a gold owner, I want to know when the displayed gold price is outdated so that I understand my valuation may be stale.
 
 **Acceptance Criteria:**
-- [ ] When offline or API fails, app uses last cached price
-- [ ] Visual indicator (badge/icon) shows when price is stale (>15 minutes old)
-- [ ] Tooltip or text explains "Price last updated X minutes/hours ago"
-- [ ] mix test passes
+- [x] When offline or API fails, app uses last cached price
+- [x] Visual indicator (badge/icon) shows when price is stale (>15 minutes old)
+- [x] Tooltip or text explains "Price last updated X minutes/hours ago"
+- [x] mix test passes
 
 ---
 
