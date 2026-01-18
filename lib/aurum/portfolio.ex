@@ -72,11 +72,15 @@ defmodule Aurum.Portfolio do
   @spec list_items_with_current_values(Decimal.t() | nil) :: [Item.t()]
   def list_items_with_current_values(spot_price \\ nil) do
     spot_price = spot_price || current_spot_price_per_gram()
+
     list_items()
-    |> Enum.map(fn item ->
-      {_item, valuation} = valuate_item(item, spot_price)
-      %{item | current_value: valuation.current_value}
-    end)
+    |> valuate_items(spot_price)
+    |> Enum.map(fn {item, valuation} -> %{item | current_value: valuation.current_value} end)
+  end
+
+  @spec valuate_items([Item.t()], Decimal.t()) :: [{Item.t(), Valuation.valuation_result()}]
+  defp valuate_items(items, spot_price) do
+    Enum.map(items, &valuate_item(&1, spot_price))
   end
 
   @doc """
@@ -98,10 +102,8 @@ defmodule Aurum.Portfolio do
   defp calculate_summary(items, spot_price) do
     {valuations, purchase_prices} =
       items
-      |> Enum.map(fn item ->
-        {_item, valuation} = valuate_item(item, spot_price)
-        {valuation, item.purchase_price}
-      end)
+      |> valuate_items(spot_price)
+      |> Enum.map(fn {item, valuation} -> {valuation, item.purchase_price} end)
       |> Enum.unzip()
 
     Valuation.aggregate_portfolio(valuations, purchase_prices)

@@ -31,8 +31,16 @@ defmodule Aurum.Gold.PriceCache do
 
   defstruct [:price_data, :fetched_at, :last_error, :fetch_count, :error_count]
 
+  @type price_response :: %{
+          price_data: map(),
+          stale: boolean(),
+          age_ms: non_neg_integer() | nil,
+          fetched_at: DateTime.t() | nil
+        }
+
   # Client API
 
+  @spec start_link(keyword()) :: GenServer.on_start()
   def start_link(opts \\ []) do
     name = Keyword.get(opts, :name, __MODULE__)
     GenServer.start_link(__MODULE__, opts, name: name)
@@ -42,6 +50,7 @@ defmodule Aurum.Gold.PriceCache do
   Gets the current gold price. Fetches from API if cache is empty.
   Returns cached price even if stale, with staleness indicator.
   """
+  @spec get_price(GenServer.server()) :: {:ok, price_response()} | {:error, term()}
   def get_price(server \\ __MODULE__) do
     GenServer.call(server, :get_price)
   end
@@ -49,6 +58,7 @@ defmodule Aurum.Gold.PriceCache do
   @doc """
   Returns true if the cached price is older than the staleness threshold.
   """
+  @spec stale?(GenServer.server()) :: boolean()
   def stale?(server \\ __MODULE__) do
     GenServer.call(server, :stale?)
   end
@@ -56,6 +66,7 @@ defmodule Aurum.Gold.PriceCache do
   @doc """
   Forces a refresh from the API, updating the cache.
   """
+  @spec refresh(GenServer.server()) :: {:ok, price_response()} | {:error, term()}
   def refresh(server \\ __MODULE__) do
     GenServer.call(server, :refresh, 15_000)
   end
@@ -63,6 +74,7 @@ defmodule Aurum.Gold.PriceCache do
   @doc """
   Returns the current cache status including staleness info.
   """
+  @spec status(GenServer.server()) :: map()
   def status(server \\ __MODULE__) do
     GenServer.call(server, :status)
   end
@@ -71,6 +83,7 @@ defmodule Aurum.Gold.PriceCache do
   Returns the age of the cached price in milliseconds.
   Returns nil if no price is cached.
   """
+  @spec age_ms(GenServer.server()) :: non_neg_integer() | nil
   def age_ms(server \\ __MODULE__) do
     GenServer.call(server, :age_ms)
   end
@@ -78,6 +91,7 @@ defmodule Aurum.Gold.PriceCache do
   @doc """
   Sets a test price with custom fetched_at timestamp. For testing only.
   """
+  @spec set_test_price(GenServer.server(), map(), DateTime.t()) :: :ok
   def set_test_price(server \\ __MODULE__, price_data, fetched_at) do
     GenServer.call(server, {:set_test_price, price_data, fetched_at})
   end

@@ -12,7 +12,9 @@ defmodule AurumWeb.Format do
       iex> Format.currency(Decimal.new("1234.56"))
       "$1,234.56"
   """
-  @spec currency(Decimal.t()) :: String.t()
+  @spec currency(Decimal.t() | nil) :: String.t()
+  def currency(nil), do: "—"
+
   def currency(%Decimal{} = decimal) do
     decimal
     |> Decimal.round(2)
@@ -24,11 +26,13 @@ defmodule AurumWeb.Format do
   @doc """
   Formats a Decimal as a price (rounds to 2 decimals).
   """
-  @spec price(Decimal.t()) :: String.t()
+  @spec price(Decimal.t() | nil) :: String.t()
+  def price(nil), do: "—"
+
   def price(%Decimal{} = decimal) do
     decimal
     |> Decimal.round(2)
-    |> Decimal.to_string()
+    |> Decimal.to_string(:normal)
   end
 
   @doc """
@@ -48,9 +52,10 @@ defmodule AurumWeb.Format do
   @doc """
   Formats a weight with its unit abbreviation.
   """
-  @spec weight(Decimal.t(), atom()) :: String.t()
-  def weight(value, :grams), do: "#{value} g"
-  def weight(value, :troy_oz), do: "#{value} oz"
+  @spec weight(Decimal.t() | nil, atom()) :: String.t()
+  def weight(nil, _unit), do: "—"
+  def weight(%Decimal{} = value, :grams), do: "#{value} g"
+  def weight(%Decimal{} = value, :troy_oz), do: "#{value} oz"
 
   defp add_commas(str) do
     {sign, rest} =

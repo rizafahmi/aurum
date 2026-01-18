@@ -20,16 +20,21 @@ defmodule AurumWeb.DashboardLive do
 
   defp fetch_price_info do
     case PriceCache.get_price() do
-      {:ok, data} ->
+      {:ok,
+       %{
+         price_data: %{price_per_oz: oz, price_per_gram: gram, currency: currency},
+         fetched_at: fetched_at,
+         stale: stale
+       }} ->
         %{
-          price_per_oz: data.price_data.price_per_oz,
-          price_per_gram: data.price_data.price_per_gram,
-          currency: data.price_data.currency,
-          fetched_at: data.fetched_at,
-          stale: data.stale
+          price_per_oz: oz,
+          price_per_gram: gram,
+          currency: currency,
+          fetched_at: fetched_at,
+          stale: stale
         }
 
-      {:error, _reason} ->
+      _ ->
         nil
     end
   end

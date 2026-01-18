@@ -1,5 +1,48 @@
 # Progress Log
 
+## 2026-01-18 06:30
+
+### Code Review & Refactoring (Oracle-guided)
+
+**Nil-safety improvements:**
+1. **Made Format module nil-safe** - `currency/1`, `price/1`, `weight/2` now handle nil
+   - Returns "—" for nil values instead of crashing
+   - Prevents LiveView crashes from unexpected nils
+
+**Idiomatic pattern matching:**
+2. **Fixed `fetch_price_info/0`** - Uses pattern matching instead of chained dot access
+   - More idiomatic Elixir, safer against shape changes
+
+**Error handling:**
+3. **Handle not-found in ItemLive.Show** - Uses `get_item/1` with redirect on nil
+   - Shows friendly flash instead of 500 error page
+
+**DRY improvements:**
+4. **Added `valuate_items/2` helper** - Centralized valuation loop in Portfolio
+   - `list_items_with_current_values/1` and `calculate_summary/2` now use it
+   - Reduces duplication and ensures consistency
+
+**Type safety:**
+5. **Added typespecs to PriceCache** - All public functions now have `@spec`
+   - Added `@type price_response` for return type documentation
+   - `get_price/1`, `refresh/1`, `stale?/1`, `status/1`, `age_ms/1`
+
+**Files modified:**
+- `lib/aurum_web/format.ex` - Nil-safe formatters
+- `lib/aurum_web/live/dashboard_live.ex` - Pattern matching in fetch_price_info
+- `lib/aurum_web/live/item_live/show.ex` - Graceful not-found handling
+- `lib/aurum/portfolio.ex` - Added valuate_items helper
+- `lib/aurum/gold/price_cache.ex` - Added typespecs
+
+**Test status:** ✅ PASSED (143 tests, 0 failures, 9 skipped)
+
+**Key learnings:**
+- Pattern matching in case clauses is safer than chained dot access
+- Nil-safe formatters prevent crashes when API/data is unavailable
+- Small private helpers like `valuate_items/2` reduce duplication
+
+---
+
 ## 2026-01-18 06:00
 
 ### US-007: Display Stale Price Indicator — COMPLETE ✅

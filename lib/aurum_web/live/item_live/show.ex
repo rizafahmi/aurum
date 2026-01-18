@@ -7,16 +7,24 @@ defmodule AurumWeb.ItemLive.Show do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
-    item = Portfolio.get_item!(id)
-    {_item, valuation} = Portfolio.valuate_item(item)
+    case Portfolio.get_item(id) do
+      nil ->
+        {:ok,
+         socket
+         |> put_flash(:error, "Item not found")
+         |> push_navigate(to: ~p"/items")}
 
-    {:ok,
-     assign(socket,
-       item: item,
-       valuation: valuation,
-       page_title: item.name,
-       show_confirm_dialog: false
-     )}
+      item ->
+        {_item, valuation} = Portfolio.valuate_item(item)
+
+        {:ok,
+         assign(socket,
+           item: item,
+           valuation: valuation,
+           page_title: item.name,
+           show_confirm_dialog: false
+         )}
+    end
   end
 
   @impl true
