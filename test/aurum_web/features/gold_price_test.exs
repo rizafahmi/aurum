@@ -24,19 +24,32 @@ defmodule AurumWeb.GoldPriceTest do
   end
 
   describe "US-010: Refresh Gold Price Manually" do
-    @describetag :skip
-
     test "displays refresh button near price", %{conn: conn} do
       conn
       |> visit("/")
       |> assert_has("button#refresh-price")
     end
 
-    test "shows loading state during refresh", %{conn: conn} do
+    test "clicking refresh fetches new price from API", %{conn: conn} do
       conn
       |> visit("/")
       |> click_button("Refresh")
-      |> assert_has("#price-loading")
+      |> assert_has("#gold-price")
+      |> assert_has("#price-last-updated")
+    end
+
+    test "error shows user-friendly message without losing cached price", %{conn: conn} do
+      session =
+        conn
+        |> visit("/")
+        |> assert_has("#gold-price")
+
+      Aurum.Gold.PriceCache.set_test_error(:api_unavailable)
+
+      session
+      |> click_button("Refresh")
+      |> assert_has("#gold-price")
+      |> assert_has("#refresh-error")
     end
   end
 

@@ -32,10 +32,11 @@ defmodule Aurum.Gold.PriceCache do
   defstruct [:price_data, :fetched_at, :last_error, :fetch_count, :error_count]
 
   @type price_response :: %{
-          price_data: map(),
-          stale: boolean(),
-          age_ms: non_neg_integer() | nil,
-          fetched_at: DateTime.t() | nil
+          required(:price_data) => map(),
+          required(:stale) => boolean(),
+          required(:age_ms) => non_neg_integer() | nil,
+          required(:fetched_at) => DateTime.t() | nil,
+          optional(:refresh_failed) => boolean()
         }
 
   # Client API
@@ -88,12 +89,16 @@ defmodule Aurum.Gold.PriceCache do
     GenServer.call(server, :age_ms)
   end
 
-  @doc """
-  Sets a test price with custom fetched_at timestamp. For testing only.
-  """
+  @doc false
   @spec set_test_price(GenServer.server(), map(), DateTime.t()) :: :ok
   def set_test_price(server \\ __MODULE__, price_data, fetched_at) do
     GenServer.call(server, {:set_test_price, price_data, fetched_at})
+  end
+
+  @doc false
+  @spec set_test_error(GenServer.server(), term()) :: :ok
+  def set_test_error(server \\ __MODULE__, error) do
+    GenServer.call(server, {:set_test_error, error})
   end
 
   # Server callbacks
@@ -113,7 +118,8 @@ defmodule Aurum.Gold.PriceCache do
         error_count: 0
       },
       stale_threshold_ms: stale_threshold,
-      price_client: price_client
+      price_client: price_client,
+      force_error: nil
     }
 
     if auto_refresh do
@@ -172,11 +178,13 @@ defmodule Aurum.Gold.PriceCache do
 
   @impl true
   def handle_call(:status, _from, state) do
+    age = calculate_age(state)
+
     status = %{
       has_cached_price: state.cache.price_data != nil,
       stale: stale_cache?(state),
-      age_ms: calculate_age(state),
-      age_human: format_age(calculate_age(state)),
+      age_ms: age,
+      age_human: format_age(age),
       fetched_at: state.cache.fetched_at,
       fetch_count: state.cache.fetch_count,
       error_count: state.cache.error_count,
@@ -205,6 +213,11 @@ defmodule Aurum.Gold.PriceCache do
   end
 
   @impl true
+  def handle_call({:set_test_error, error}, _from, state) do
+    {:reply, :ok, %{state | force_error: error}}
+  end
+
+  @impl true
   def handle_info(:auto_refresh, state) do
     {_result, new_state} = do_fetch(state)
     schedule_refresh()
@@ -212,6 +225,16 @@ defmodule Aurum.Gold.PriceCache do
   end
 
   # Private functions
+
+  defp do_fetch(%{force_error: error} = state) when error != nil do
+    new_cache = %{
+      state.cache
+      | last_error: error,
+        error_count: state.cache.error_count + 1
+    }
+
+    {{:error, error}, %{state | cache: new_cache, force_error: nil}}
+  end
 
   defp do_fetch(state) do
     fetch_fn = get_fetch_function(state.price_client)

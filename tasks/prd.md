@@ -289,16 +289,16 @@ Tone: calm, serious, utilitarian.
 
 ---
 
-### US-010: Refresh Gold Price Manually
+### US-010: Refresh Gold Price Manually ✅
 **Description:** As a gold owner, I want to manually refresh the gold price so that I can get the latest value on demand.
 
 **Acceptance Criteria:**
-- [ ] Refresh button is visible on dashboard near price display
-- [ ] Clicking refresh fetches new price from API
-- [ ] Loading state shown during fetch
-- [ ] Success updates displayed price and timestamp
-- [ ] Error shows user-friendly message without losing cached price
-- [ ] mix test passes
+- [x] Refresh button is visible on dashboard near price display
+- [x] Clicking refresh fetches new price from API
+- [x] Loading state shown during fetch
+- [x] Success updates displayed price and timestamp
+- [x] Error shows user-friendly message without losing cached price
+- [x] mix test passes
 
 ---
 

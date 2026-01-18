@@ -8,7 +8,7 @@ defmodule AurumWeb.DashboardLive do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: send(self(), :load_data)
-    {:ok, assign(socket, items: [], summary: nil, price_info: nil)}
+    {:ok, assign(socket, items: [], summary: nil, price_info: nil, refresh_error: false)}
   end
 
   @impl true
@@ -18,25 +18,40 @@ defmodule AurumWeb.DashboardLive do
     {:noreply, assign(socket, items: items, summary: summary, price_info: price_info)}
   end
 
+  @impl true
+  def handle_event("refresh_price", _params, socket) do
+    case PriceCache.refresh() do
+      {:ok, resp} ->
+        {:noreply,
+         assign(socket,
+           price_info: to_price_info(resp),
+           refresh_error: Map.get(resp, :refresh_failed, false)
+         )}
+
+      {:error, _} ->
+        {:noreply, assign(socket, refresh_error: true)}
+    end
+  end
+
   defp fetch_price_info do
     case PriceCache.get_price() do
-      {:ok,
-       %{
+      {:ok, resp} -> to_price_info(resp)
+      _ -> nil
+    end
+  end
+
+  defp to_price_info(%{
          price_data: %{price_per_oz: oz, price_per_gram: gram, currency: currency},
          fetched_at: fetched_at,
          stale: stale
-       }} ->
-        %{
-          price_per_oz: oz,
-          price_per_gram: gram,
-          currency: currency,
-          fetched_at: fetched_at,
-          stale: stale
-        }
-
-      _ ->
-        nil
-    end
+       }) do
+    %{
+      price_per_oz: oz,
+      price_per_gram: gram,
+      currency: currency,
+      fetched_at: fetched_at,
+      stale: stale
+    }
   end
 
   @impl true
@@ -45,7 +60,7 @@ defmodule AurumWeb.DashboardLive do
     <Layouts.app flash={@flash}>
       <h1 class="text-2xl font-bold mb-6">Aurum</h1>
 
-      <.price_display price_info={@price_info} />
+      <.price_display price_info={@price_info} refresh_error={@refresh_error} />
 
       <div :if={@items == []} id="empty-portfolio" class="text-center py-12">
         <p class="text-gray-500 mb-4">Your portfolio is empty</p>
@@ -83,6 +98,7 @@ defmodule AurumWeb.DashboardLive do
   end
 
   attr :price_info, :map, default: nil
+  attr :refresh_error, :boolean, default: false
 
   defp price_display(assigns) do
     ~H"""
@@ -97,16 +113,24 @@ defmodule AurumWeb.DashboardLive do
             Price unavailable
           </div>
         </div>
-        <div :if={@price_info} class="text-right">
-          <div id="price-last-updated" class="text-xs text-gray-500">
-            Last updated: {Format.datetime(@price_info.fetched_at)}
-          </div>
-          <div
-            :if={@price_info.stale}
-            id="stale-price-indicator"
-            class="text-xs text-amber-600 font-medium"
-          >
-            ⚠ Price may be stale
+        <div class="flex items-center gap-4">
+          <button id="refresh-price" phx-click="refresh_price" class="btn btn-sm btn-ghost">
+            Refresh
+          </button>
+          <div class="text-right">
+            <div :if={@price_info} id="price-last-updated" class="text-xs text-gray-500">
+              Last updated: {Format.datetime(@price_info.fetched_at)}
+            </div>
+            <div
+              :if={@price_info && @price_info.stale}
+              id="stale-price-indicator"
+              class="text-xs text-amber-600 font-medium"
+            >
+              ⚠ Price may be stale
+            </div>
+            <div :if={@refresh_error} id="refresh-error" class="text-xs text-red-600 font-medium">
+              Failed to refresh price
+            </div>
           </div>
         </div>
       </div>
