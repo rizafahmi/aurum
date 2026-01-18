@@ -1,5 +1,128 @@
 # Progress Log
 
+## 2026-01-18 07:00
+
+### US-008: Calculate Item Valuation — Test 1
+
+**Test 1: pure gold weight = weight × (purity% / 100) × quantity** ✅
+
+**Implementation:**
+- Created feature test file `test/aurum_web/features/item_valuation_test.exs`
+- Test verifies `[data-test='pure-gold-weight']` shows correct calculated value
+- Formula: 100g × (99.99/100) × 1 = 99.99g pure gold
+
+**Already implemented:**
+- `ItemLive.Show` already calls `Portfolio.valuate_item/1` in mount
+- `valuation.pure_gold_grams` is displayed with `data-test='pure-gold-weight'`
+- Valuation module uses `@weight_precision 4` for weight calculations
+
+**Files created:**
+- `test/aurum_web/features/item_valuation_test.exs` - US-008 feature tests
+
+**Test status:** ✅ PASSED (1 test, 0 failures, 3 skipped in US-008 tests)
+
+---
+
+## 2026-01-18 07:05
+
+### US-008: Calculate Item Valuation — Test 2
+
+**Test 2: current value = pure gold weight × spot price** ✅
+
+**Implementation:**
+- Test verifies `[data-test='current-value']` displays currency value
+- Formula: pure_gold_grams × spot_price_per_gram = current_value
+
+**Already implemented:**
+- `ItemLive.Show` displays `Format.currency(@valuation.current_value)`
+- `Valuation.current_value/2` multiplies pure grams by spot price
+- Uses `@currency_precision 2` for rounding
+
+**Test status:** ✅ PASSED (2 tests, 0 failures, 2 skipped in US-008 tests)
+
+---
+
+## 2026-01-18 07:10
+
+### US-008: Calculate Item Valuation — Test 3
+
+**Test 3: gain/loss = current value - purchase price** ✅
+
+**Implementation:**
+- Test verifies `[data-test='gain-loss']` element exists and displays value
+- Formula: gain_loss = current_value - purchase_price
+
+**Already implemented:**
+- `ItemLive.Show` displays `Format.currency(@valuation.gain_loss)`
+- `Valuation.gain_loss/2` subtracts purchase price from current value
+- Rounds to 2 decimal places for currency
+
+**Test status:** ✅ PASSED (3 tests, 0 failures, 1 skipped in US-008 tests)
+
+---
+
+## 2026-01-18 07:15
+
+### US-008: Calculate Item Valuation — COMPLETE ✅
+
+**Test 4: calculations use consistent precision** ✅
+
+**All 4 acceptance tests passing:**
+1. ✅ pure gold weight = weight × (purity% / 100) × quantity
+2. ✅ current value = pure gold weight × spot price
+3. ✅ gain/loss = current value - purchase price
+4. ✅ calculations use consistent precision (2 decimal places for currency, 4 for weight)
+
+**Implementation summary:**
+- All valuation logic was already implemented in `Aurum.Portfolio.Valuation`
+- `ItemLive.Show` calls `Portfolio.valuate_item/1` and displays results
+- Precision constants: `@weight_precision 4`, `@currency_precision 2`
+
+**Files created:**
+- `test/aurum_web/features/item_valuation_test.exs` - US-008 feature tests
+
+**Test status:** ✅ PASSED (147 tests, 0 failures, 9 skipped)
+
+**Key learnings:**
+- Valuation module was built with property-based tests ensuring precision invariants
+- Feature tests verify the UI displays calculated values correctly
+- No new implementation needed — existing code already satisfied all criteria
+
+---
+
+## 2026-01-18 07:30
+
+### Code Review & Refactoring (Oracle-guided)
+
+**Idiomatic Elixir - Multi-clause functions:**
+1. **Refactored nil-handling in Portfolio** - Uses pattern-matched function heads instead of rebinding
+   - `valuate_item/2`, `list_items_with_current_values/1`, `dashboard_summary/1`
+   - More idiomatic: `def foo(nil), do: foo(default())` pattern
+
+**LiveView best practices:**
+2. **Fixed double-fetch in ItemLive.Show** - Now uses `connected?` + `handle_info` pattern
+   - Mount only sets initial assigns, DB query happens after WebSocket connects
+   - Added loading state render clause for `%{item: nil}`
+   - Matches pattern already used in DashboardLive and Index
+
+**Type safety:**
+3. **Tightened typespecs** - Replaced `term()` with specific types
+   - `get_item/1` and `get_item!/1`: `term()` → `pos_integer() | binary()`
+   - Added `@spec changeset(t(), map()) :: Ecto.Changeset.t()` to Item
+
+**Dead code removal:**
+4. **Removed deprecated `Item.format_currency/1`** - Was only delegating to Format module
+   - All templates already use `AurumWeb.Format.currency/1` directly
+
+**Files modified:**
+- `lib/aurum/portfolio.ex` - Multi-clause functions, tighter specs
+- `lib/aurum/portfolio/item.ex` - Added changeset spec, removed deprecated function
+- `lib/aurum_web/live/item_live/show.ex` - Connected? pattern, loading state
+
+**Test status:** ✅ PASSED (147 tests, 0 failures, 9 skipped)
+
+---
+
 ## 2026-01-18 06:30
 
 ### Code Review & Refactoring (Oracle-guided)

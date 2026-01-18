@@ -7,9 +7,25 @@ defmodule AurumWeb.ItemLive.Show do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
-    case Portfolio.get_item(id) do
+    socket =
+      assign(socket,
+        item_id: id,
+        item: nil,
+        valuation: nil,
+        page_title: "Loading...",
+        show_confirm_dialog: false
+      )
+
+    if connected?(socket), do: send(self(), :load_item)
+
+    {:ok, socket}
+  end
+
+  @impl true
+  def handle_info(:load_item, socket) do
+    case Portfolio.get_item(socket.assigns.item_id) do
       nil ->
-        {:ok,
+        {:noreply,
          socket
          |> put_flash(:error, "Item not found")
          |> push_navigate(to: ~p"/items")}
@@ -17,17 +33,24 @@ defmodule AurumWeb.ItemLive.Show do
       item ->
         {_item, valuation} = Portfolio.valuate_item(item)
 
-        {:ok,
+        {:noreply,
          assign(socket,
            item: item,
            valuation: valuation,
-           page_title: item.name,
-           show_confirm_dialog: false
+           page_title: item.name
          )}
     end
   end
 
   @impl true
+  def render(%{item: nil} = assigns) do
+    ~H"""
+    <Layouts.app flash={@flash}>
+      <p class="text-gray-500">Loading...</p>
+    </Layouts.app>
+    """
+  end
+
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>

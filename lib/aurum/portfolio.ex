@@ -49,8 +49,12 @@ defmodule Aurum.Portfolio do
   - `:gain_loss_percent` - Percentage gain/loss (nil if purchase price is zero)
   """
   @spec valuate_item(Item.t(), Decimal.t() | nil) :: {Item.t(), Valuation.valuation_result()}
-  def valuate_item(%Item{} = item, spot_price \\ nil) do
-    spot_price = spot_price || current_spot_price_per_gram()
+  def valuate_item(item, spot_price \\ nil)
+
+  def valuate_item(%Item{} = item, nil),
+    do: valuate_item(item, current_spot_price_per_gram())
+
+  def valuate_item(%Item{} = item, %Decimal{} = spot_price) do
     purity = Valuation.karat_to_purity(item.purity)
 
     valuation =
@@ -70,9 +74,12 @@ defmodule Aurum.Portfolio do
   Returns all items with their current value populated.
   """
   @spec list_items_with_current_values(Decimal.t() | nil) :: [Item.t()]
-  def list_items_with_current_values(spot_price \\ nil) do
-    spot_price = spot_price || current_spot_price_per_gram()
+  def list_items_with_current_values(spot_price \\ nil)
 
+  def list_items_with_current_values(nil),
+    do: list_items_with_current_values(current_spot_price_per_gram())
+
+  def list_items_with_current_values(%Decimal{} = spot_price) do
     list_items()
     |> valuate_items(spot_price)
     |> Enum.map(fn {item, valuation} -> %{item | current_value: valuation.current_value} end)
@@ -90,8 +97,12 @@ defmodule Aurum.Portfolio do
   A tuple of `{items, summary}` where summary is nil for empty portfolios.
   """
   @spec dashboard_summary(Decimal.t() | nil) :: {[Item.t()], map() | nil}
-  def dashboard_summary(spot_price \\ nil) do
-    spot_price = spot_price || current_spot_price_per_gram()
+  def dashboard_summary(spot_price \\ nil)
+
+  def dashboard_summary(nil),
+    do: dashboard_summary(current_spot_price_per_gram())
+
+  def dashboard_summary(%Decimal{} = spot_price) do
     items = list_items()
     summary = calculate_summary(items, spot_price)
     {items, summary}
@@ -112,13 +123,13 @@ defmodule Aurum.Portfolio do
   @doc """
   Gets a single item by ID. Returns nil if not found.
   """
-  @spec get_item(term()) :: Item.t() | nil
+  @spec get_item(pos_integer() | binary()) :: Item.t() | nil
   def get_item(id), do: Repo.get(Item, id)
 
   @doc """
   Gets a single item by ID. Raises if not found.
   """
-  @spec get_item!(term()) :: Item.t()
+  @spec get_item!(pos_integer() | binary()) :: Item.t()
   def get_item!(id), do: Repo.get!(Item, id)
 
   @doc """

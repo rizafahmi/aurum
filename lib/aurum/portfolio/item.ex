@@ -45,6 +45,7 @@ defmodule Aurum.Portfolio.Item do
 
   @cast_fields ~w(name category weight weight_unit purity quantity purchase_price purchase_date notes)a
 
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(item, attrs) do
     item
     |> cast(attrs, @cast_fields)
@@ -102,12 +103,4 @@ defmodule Aurum.Portfolio.Item do
 
   @spec purity_label(integer()) :: String.t()
   def purity_label(k), do: "#{k}K"
-
-  @doc """
-  Formats a Decimal as currency. Delegates to `AurumWeb.Format.currency/1`.
-
-  Deprecated: Use `AurumWeb.Format.currency/1` directly in templates.
-  """
-  @spec format_currency(Decimal.t()) :: String.t()
-  def format_currency(%Decimal{} = decimal), do: AurumWeb.Format.currency(decimal)
 end

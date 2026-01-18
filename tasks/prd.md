@@ -265,15 +265,15 @@ Tone: calm, serious, utilitarian.
 
 ---
 
-### US-008: Calculate Item Valuation
+### US-008: Calculate Item Valuation ✅
 **Description:** As a gold owner, I want each item's current value calculated automatically so that I know what my gold is worth.
 
 **Acceptance Criteria:**
-- [ ] Pure gold weight = weight × (purity% / 100) × quantity
-- [ ] Current value = pure gold weight × spot price
-- [ ] Gain/loss = current value - purchase price
-- [ ] Calculations use consistent precision (2 decimal places for currency, 4 for weight)
-- [ ] mix test passes
+- [x] Pure gold weight = weight × (purity% / 100) × quantity
+- [x] Current value = pure gold weight × spot price
+- [x] Gain/loss = current value - purchase price
+- [x] Calculations use consistent precision (2 decimal places for currency, 4 for weight)
+- [x] mix test passes
 
 ---
 
