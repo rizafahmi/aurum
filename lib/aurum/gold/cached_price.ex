@@ -11,7 +11,7 @@ defmodule Aurum.Gold.CachedPrice do
   schema "cached_prices" do
     field :price_per_oz, :decimal
     field :price_per_gram, :decimal
-    field :currency, :string, default: "USD"
+    field :currency, :string, default: "IDR"
     field :source, :string
     field :fetched_at, :utc_datetime
 
@@ -37,7 +37,7 @@ defmodule Aurum.Gold.CachedPrice do
     %__MODULE__{
       price_per_oz: to_decimal(price_data[:price_per_oz] || price_data["price_per_oz"]),
       price_per_gram: to_decimal(price_data[:price_per_gram] || price_data["price_per_gram"]),
-      currency: price_data[:currency] || price_data["currency"] || "USD",
+      currency: price_data[:currency] || price_data["currency"] || "IDR",
       source: to_string(price_data[:source] || price_data["source"] || "unknown"),
       fetched_at: DateTime.truncate(fetched_at, :second)
     }
