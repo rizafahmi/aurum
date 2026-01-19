@@ -13,8 +13,9 @@ defmodule AurumWeb.DashboardLive do
 
   @impl true
   def handle_info(:load_data, socket) do
-    {items, summary} = Portfolio.dashboard_summary()
     price_info = fetch_price_info()
+    spot_price = if price_info, do: price_info.price_per_gram, else: nil
+    {items, summary} = Portfolio.dashboard_summary(spot_price)
     {:noreply, assign(socket, items: items, summary: summary, price_info: price_info)}
   end
 

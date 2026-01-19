@@ -328,14 +328,14 @@ Tone: calm, serious, utilitarian.
 
 ---
 
-### US-013: Persist Data Across Restarts
+### US-013: Persist Data Across Restarts ✅
 **Description:** As a gold owner, I want my data to persist after closing the app so that I don't lose my portfolio.
 
 **Acceptance Criteria:**
-- [ ] Items created are visible after stopping and restarting the Phoenix server
-- [ ] Cached gold price survives app restart
-- [ ] SQLite database file exists in priv/repo directory
-- [ ] mix test passes
+- [x] Items created are visible after stopping and restarting the Phoenix server
+- [x] Cached gold price survives app restart
+- [x] SQLite database file exists in priv/repo directory
+- [x] mix test passes
 
 ---
 

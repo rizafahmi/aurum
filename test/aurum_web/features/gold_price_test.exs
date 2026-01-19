@@ -72,6 +72,8 @@ defmodule AurumWeb.GoldPriceTest do
       }
 
       :ok = Aurum.Gold.PriceCache.set_test_price(stale_price_data, stale_fetched_at)
+      # Force refresh to fail so stale indicator shows
+      Aurum.Gold.PriceCache.set_test_error(:api_unavailable)
 
       conn
       |> visit("/")

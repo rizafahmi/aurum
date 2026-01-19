@@ -49,12 +49,8 @@ defmodule Aurum.Portfolio do
   - `:gain_loss_percent` - Percentage gain/loss (nil if purchase price is zero)
   """
   @spec valuate_item(Item.t(), Decimal.t() | nil) :: {Item.t(), Valuation.valuation_result()}
-  def valuate_item(item, spot_price \\ nil)
-
-  def valuate_item(%Item{} = item, nil),
-    do: valuate_item(item, current_spot_price_per_gram())
-
-  def valuate_item(%Item{} = item, %Decimal{} = spot_price) do
+  def valuate_item(%Item{} = item, spot_price \\ nil) do
+    price = resolve_spot_price(spot_price)
     purity = Valuation.karat_to_purity(item.purity)
 
     valuation =
@@ -64,7 +60,7 @@ defmodule Aurum.Portfolio do
         purity,
         item.quantity,
         item.purchase_price,
-        spot_price
+        price
       )
 
     {item, valuation}
@@ -74,14 +70,11 @@ defmodule Aurum.Portfolio do
   Returns all items with their current value populated.
   """
   @spec list_items_with_current_values(Decimal.t() | nil) :: [Item.t()]
-  def list_items_with_current_values(spot_price \\ nil)
+  def list_items_with_current_values(spot_price \\ nil) do
+    price = resolve_spot_price(spot_price)
 
-  def list_items_with_current_values(nil),
-    do: list_items_with_current_values(current_spot_price_per_gram())
-
-  def list_items_with_current_values(%Decimal{} = spot_price) do
     list_items()
-    |> valuate_items(spot_price)
+    |> valuate_items(price)
     |> Enum.map(fn {item, valuation} -> %{item | current_value: valuation.current_value} end)
   end
 
@@ -97,14 +90,10 @@ defmodule Aurum.Portfolio do
   A tuple of `{items, summary}` where summary is nil for empty portfolios.
   """
   @spec dashboard_summary(Decimal.t() | nil) :: {[Item.t()], map() | nil}
-  def dashboard_summary(spot_price \\ nil)
-
-  def dashboard_summary(nil),
-    do: dashboard_summary(current_spot_price_per_gram())
-
-  def dashboard_summary(%Decimal{} = spot_price) do
+  def dashboard_summary(spot_price \\ nil) do
+    price = resolve_spot_price(spot_price)
     items = list_items()
-    summary = calculate_summary(items, spot_price)
+    summary = calculate_summary(items, price)
     {items, summary}
   end
 
@@ -179,4 +168,7 @@ defmodule Aurum.Portfolio do
   def delete_item(%Item{} = item) do
     Repo.delete(item)
   end
+
+  defp resolve_spot_price(nil), do: current_spot_price_per_gram()
+  defp resolve_spot_price(%Decimal{} = price), do: price
 end

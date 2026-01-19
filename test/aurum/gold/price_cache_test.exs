@@ -18,7 +18,7 @@ defmodule Aurum.Gold.PriceCacheTest do
 
   defp start_cache(opts) do
     name = :"test_cache_#{:erlang.unique_integer()}"
-    opts = Keyword.merge([name: name, auto_refresh: false], opts)
+    opts = Keyword.merge([name: name, auto_refresh: false, persist: false], opts)
     {:ok, pid} = PriceCache.start_link(opts)
     {pid, name}
   end
@@ -88,7 +88,18 @@ defmodule Aurum.Gold.PriceCacheTest do
     end
 
     test "stale indicator included in price response" do
-      mock_client = fn -> {:ok, mock_price_data()} end
+      call_count = :counters.new(1, [:atomics])
+
+      mock_client = fn ->
+        count = :counters.add(call_count, 1, 1)
+
+        if :counters.get(call_count, 1) == 1 do
+          {:ok, mock_price_data()}
+        else
+          {:error, :api_unavailable}
+        end
+      end
+
       {_pid, name} = start_cache(price_client: mock_client, stale_threshold_ms: 50)
 
       {:ok, result1} = PriceCache.get_price(name)
@@ -96,8 +107,10 @@ defmodule Aurum.Gold.PriceCacheTest do
 
       Process.sleep(60)
 
+      # When stale, get_price triggers refresh. If refresh fails, returns stale data with refresh_failed
       {:ok, result2} = PriceCache.get_price(name)
       assert result2.stale == true
+      assert result2.refresh_failed == true
     end
 
     test "15 minute staleness threshold (simulated)" do

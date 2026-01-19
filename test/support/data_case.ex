@@ -37,6 +37,11 @@ defmodule Aurum.DataCase do
   """
   def setup_sandbox(tags) do
     pid = Ecto.Adapters.SQL.Sandbox.start_owner!(Aurum.Repo, shared: not tags[:async])
+
+    if price_cache_pid = Process.whereis(Aurum.Gold.PriceCache) do
+      Ecto.Adapters.SQL.Sandbox.allow(Aurum.Repo, pid, price_cache_pid)
+    end
+
     on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
   end
 

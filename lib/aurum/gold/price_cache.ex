@@ -24,6 +24,7 @@ defmodule Aurum.Gold.PriceCache do
 
   use GenServer
 
+  alias Aurum.Gold.CachedPrice
   alias Aurum.Gold.PriceClient
 
   @stale_threshold_ms 15 * 60 * 1000
@@ -108,18 +109,23 @@ defmodule Aurum.Gold.PriceCache do
     stale_threshold = Keyword.get(opts, :stale_threshold_ms, @stale_threshold_ms)
     auto_refresh = Keyword.get(opts, :auto_refresh, true)
     price_client = Keyword.get(opts, :price_client, PriceClient)
+    persist = Keyword.get(opts, :persist, true)
+
+    {price_data, fetched_at} =
+      if persist, do: load_from_database(), else: {nil, nil}
 
     state = %{
       cache: %__MODULE__{
-        price_data: nil,
-        fetched_at: nil,
+        price_data: price_data,
+        fetched_at: fetched_at,
         last_error: nil,
         fetch_count: 0,
         error_count: 0
       },
       stale_threshold_ms: stale_threshold,
       price_client: price_client,
-      force_error: nil
+      force_error: nil,
+      persist: persist
     }
 
     if auto_refresh do
@@ -131,21 +137,19 @@ defmodule Aurum.Gold.PriceCache do
 
   @impl true
   def handle_call(:get_price, _from, state) do
-    case state.cache.price_data do
-      nil ->
+    cond do
+      state.cache.price_data == nil ->
         {result, new_state} = do_fetch(state)
+        {reply, final_state} = build_reply(result, new_state)
+        {:reply, reply, final_state}
 
-        case result do
-          {:ok, price_data} ->
-            reply = {:ok, build_price_response(price_data, new_state)}
-            {:reply, reply, new_state}
+      stale_cache?(state) ->
+        {result, new_state} = do_fetch(state)
+        {reply, final_state} = build_reply(result, new_state)
+        {:reply, reply, final_state}
 
-          {:error, reason} ->
-            {:reply, {:error, reason}, new_state}
-        end
-
-      price_data ->
-        reply = {:ok, build_price_response(price_data, state)}
+      true ->
+        reply = {:ok, build_price_response(state.cache.price_data, state)}
         {:reply, reply, state}
     end
   end
@@ -158,22 +162,8 @@ defmodule Aurum.Gold.PriceCache do
   @impl true
   def handle_call(:refresh, _from, state) do
     {result, new_state} = do_fetch(state)
-
-    case result do
-      {:ok, price_data} ->
-        reply = {:ok, build_price_response(price_data, new_state)}
-        {:reply, reply, new_state}
-
-      {:error, reason} ->
-        case new_state.cache.price_data do
-          nil ->
-            {:reply, {:error, reason}, new_state}
-
-          price_data ->
-            reply = {:ok, build_price_response(price_data, new_state) |> Map.put(:refresh_failed, true)}
-            {:reply, reply, new_state}
-        end
-    end
+    {reply, final_state} = build_reply(result, new_state)
+    {:reply, reply, final_state}
   end
 
   @impl true
@@ -202,6 +192,10 @@ defmodule Aurum.Gold.PriceCache do
 
   @impl true
   def handle_call({:set_test_price, price_data, fetched_at}, _from, state) do
+    if state.persist do
+      persist_to_database(price_data, fetched_at)
+    end
+
     new_cache = %{
       state.cache
       | price_data: price_data,
@@ -297,6 +291,24 @@ defmodule Aurum.Gold.PriceCache do
     }
   end
 
+  defp build_reply({:ok, price_data}, state) do
+    {{:ok, build_price_response(price_data, state)}, state}
+  end
+
+  defp build_reply({:error, reason}, state) do
+    case state.cache.price_data do
+      nil ->
+        {{:error, reason}, state}
+
+      price_data ->
+        resp =
+          build_price_response(price_data, state)
+          |> Map.put(:refresh_failed, true)
+
+        {{:ok, resp}, state}
+    end
+  end
+
   defp format_age(nil), do: "never"
 
   defp format_age(age_ms) when age_ms < 60_000 do
@@ -313,5 +325,16 @@ defmodule Aurum.Gold.PriceCache do
 
   defp schedule_refresh do
     Process.send_after(self(), :auto_refresh, @refresh_interval_ms)
+  end
+
+  defp load_from_database do
+    case CachedPrice.get_latest() do
+      nil -> {nil, nil}
+      cached -> {CachedPrice.to_price_data(cached), cached.fetched_at}
+    end
+  end
+
+  defp persist_to_database(price_data, fetched_at) do
+    CachedPrice.save(price_data, fetched_at)
   end
 end
