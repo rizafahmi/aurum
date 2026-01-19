@@ -1,5 +1,65 @@
 # Progress Log
 
+## 2026-01-19 22:45
+
+### UI Redesign: Cyber-Security Terminal Theme
+
+**Applied design from `styles.json`:**
+- Dark slate background (`#0f172a`) with grid overlay
+- Gold/amber color scheme (`#d4af37`) with glow effects
+- JetBrains Mono monospace font
+- Scanline CRT effect overlay
+- Terminal-styled components with bracket labels
+
+**New CSS classes:**
+- `.vault-card` / `.vault-card-glow` - Card containers with glass effect
+- `.btn-terminal` / `.btn-terminal-primary` - Terminal-styled buttons
+- `.input-terminal` - Gold-bordered inputs with focus glow
+- `.table-terminal` - Themed table with hover states
+- `.stat-value` / `.stat-label` - Dashboard statistics
+
+**Files created/modified:**
+- `assets/css/app.css` - Complete theme rewrite
+- `lib/aurum_web/components/layouts.ex` - New header with Au logo
+- `lib/aurum_web/components/layouts/root.html.heex` - JetBrains Mono font
+- `lib/aurum_web/controllers/page_html/home.html.heex` - Redesigned landing
+- All LiveViews updated with terminal aesthetics
+
+**Test status:** ✅ PASSED (155 tests, 0 failures)
+
+---
+
+## 2026-01-19 23:30
+
+### Code Review & Refactoring (Oracle-guided)
+
+**DRY improvements:**
+1. **Extracted `page_header` component** - Unified bracketed headers across all pages
+2. **Extracted `empty_state` component** - Reusable empty state with message + CTA
+3. **Extracted `back_link` component** - Consistent back navigation
+4. **Extracted `terminal_label` helper** - DRY'd repeated label markup in inputs
+
+**Idiomatic Elixir/Phoenix fixes:**
+5. **Fixed `button/1` API** - Module attribute for variants, proper class composition
+6. **Fixed Decimal comparisons** - Created `decimal_sign_class/1` helper with pattern matching
+7. **Changed `<a href>` to `<.link navigate>`** - Proper LiveView navigation
+8. **Dynamic form IDs** - FormComponent uses `id={"#{@id}-form"}`
+9. **Removed unused `current_scope` attr** from layouts
+
+**Files modified:**
+- `lib/aurum_web/components/core_components.ex` - New components, fixed button API
+- `lib/aurum_web/components/layouts.ex` - Use `<.link navigate>`
+- `lib/aurum_web/live/dashboard_live.ex` - Use components, Decimal-safe comparisons
+- `lib/aurum_web/live/item_live/index.ex` - Use `page_header`, `empty_state`
+- `lib/aurum_web/live/item_live/show.ex` - Use components, `decimal_sign_class/1`
+- `lib/aurum_web/live/item_live/new.ex` - Use `page_header`, `back_link`
+- `lib/aurum_web/live/item_live/edit.ex` - Use `page_header`, `back_link`
+- `lib/aurum_web/live/item_live/form_component.ex` - Dynamic form ID
+
+**Test status:** ✅ PASSED (155 tests, 0 failures)
+
+---
+
 ## 2026-01-18 14:30
 
 ### Code Review & Refactoring (Oracle-guided)

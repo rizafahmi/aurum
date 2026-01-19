@@ -55,28 +55,28 @@ defmodule AurumWeb.CoreComponents do
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
-      class="toast toast-top toast-end z-50"
+      class={[
+        "flash-terminal w-80 sm:w-96",
+        @kind == :info && "flash-info",
+        @kind == :error && "flash-error"
+      ]}
       {@rest}
     >
-      <div class={[
-        "alert w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap",
-        @kind == :info && "alert-info",
-        @kind == :error && "alert-error"
-      ]}>
-        <.icon :if={@kind == :info} name="hero-information-circle" class="size-5 shrink-0" />
-        <.icon :if={@kind == :error} name="hero-exclamation-circle" class="size-5 shrink-0" />
-        <div>
-          <p :if={@title} class="font-semibold">{@title}</p>
-          <p>{msg}</p>
+      <div class="flex items-start gap-3">
+        <span class="text-sm">{if @kind == :info, do: "[OK]", else: "[ERR]"}</span>
+        <div class="flex-1">
+          <p :if={@title} class="font-bold text-sm">{@title}</p>
+          <p class="text-sm">{msg}</p>
         </div>
-        <div class="flex-1" />
-        <button type="button" class="group self-start cursor-pointer" aria-label="close">
-          <.icon name="hero-x-mark" class="size-5 opacity-40 group-hover:opacity-70" />
+        <button type="button" class="cursor-pointer opacity-60 hover:opacity-100" aria-label="close">
+          <span class="text-sm">[×]</span>
         </button>
       </div>
     </div>
     """
   end
+
+  @button_variants %{"primary" => "btn-terminal-primary", "default" => "btn-terminal"}
 
   @doc """
   Renders a button with navigation support.
@@ -87,18 +87,14 @@ defmodule AurumWeb.CoreComponents do
       <.button phx-click="go" variant="primary">Send!</.button>
       <.button navigate={~p"/"}>Home</.button>
   """
+  attr :class, :any, default: nil
+  attr :variant, :string, values: ~w(primary default), default: "default"
   attr :rest, :global, include: ~w(href navigate patch method download name value disabled)
-  attr :class, :string
-  attr :variant, :string, values: ~w(primary)
   slot :inner_block, required: true
 
   def button(%{rest: rest} = assigns) do
-    variants = %{"primary" => "btn-primary", nil => "btn-primary btn-soft"}
-
-    assigns =
-      assign_new(assigns, :class, fn ->
-        ["btn", Map.fetch!(variants, assigns[:variant])]
-      end)
+    variant_class = Map.fetch!(@button_variants, assigns.variant)
+    assigns = assign(assigns, :class, [variant_class, assigns.class])
 
     if rest[:href] || rest[:navigate] || rest[:patch] do
       ~H"""
@@ -184,20 +180,19 @@ defmodule AurumWeb.CoreComponents do
       end)
 
     ~H"""
-    <div class="fieldset mb-2">
-      <label>
+    <div class="mb-4">
+      <label class="flex items-center gap-2 cursor-pointer">
         <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
-        <span class="label">
-          <input
-            type="checkbox"
-            id={@id}
-            name={@name}
-            value="true"
-            checked={@checked}
-            class={@class || "checkbox checkbox-sm"}
-            {@rest}
-          />{@label}
-        </span>
+        <input
+          type="checkbox"
+          id={@id}
+          name={@name}
+          value="true"
+          checked={@checked}
+          class={@class || "w-4 h-4 accent-[#d4af37] bg-transparent border border-[rgba(212,175,55,0.3)]"}
+          {@rest}
+        />
+        <span class="text-gold-muted text-sm">{@label}</span>
       </label>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
@@ -206,20 +201,18 @@ defmodule AurumWeb.CoreComponents do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div class="fieldset mb-2">
-      <label>
-        <span :if={@label} class="label mb-1">{@label}</span>
-        <select
-          id={@id}
-          name={@name}
-          class={[@class || "w-full select", @errors != [] && (@error_class || "select-error")]}
-          multiple={@multiple}
-          {@rest}
-        >
-          <option :if={@prompt} value="">{@prompt}</option>
-          {Phoenix.HTML.Form.options_for_select(@options, @value)}
-        </select>
-      </label>
+    <div class="mb-4">
+      <.terminal_label :if={@label} id={@id} label={@label} />
+      <select
+        id={@id}
+        name={@name}
+        class={[@class || "input-terminal", @errors != [] && (@error_class || "border-[#f87171]")]}
+        multiple={@multiple}
+        {@rest}
+      >
+        <option :if={@prompt} value="">{@prompt}</option>
+        {Phoenix.HTML.Form.options_for_select(@options, @value)}
+      </select>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
@@ -227,52 +220,55 @@ defmodule AurumWeb.CoreComponents do
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <div class="fieldset mb-2">
-      <label>
-        <span :if={@label} class="label mb-1">{@label}</span>
-        <textarea
-          id={@id}
-          name={@name}
-          class={[
-            @class || "w-full textarea",
-            @errors != [] && (@error_class || "textarea-error")
-          ]}
-          {@rest}
-        >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
-      </label>
+    <div class="mb-4">
+      <.terminal_label :if={@label} id={@id} label={@label} />
+      <textarea
+        id={@id}
+        name={@name}
+        class={[
+          @class || "input-terminal min-h-24 resize-y",
+          @errors != [] && (@error_class || "border-[#f87171]")
+        ]}
+        {@rest}
+      >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
 
-  # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div class="fieldset mb-2">
-      <label>
-        <span :if={@label} class="label mb-1">{@label}</span>
-        <input
-          type={@type}
-          name={@name}
-          id={@id}
-          value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-          class={[
-            @class || "w-full input",
-            @errors != [] && (@error_class || "input-error")
-          ]}
-          {@rest}
-        />
-      </label>
+    <div class="mb-4">
+      <.terminal_label :if={@label} id={@id} label={@label} />
+      <input
+        type={@type}
+        name={@name}
+        id={@id}
+        value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+        class={[
+          @class || "input-terminal",
+          @errors != [] && (@error_class || "border-[#f87171]")
+        ]}
+        {@rest}
+      />
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
 
-  # Helper used by inputs to generate form errors
+  defp terminal_label(assigns) do
+    ~H"""
+    <div class="flex items-center gap-1 text-gold-muted text-xs uppercase tracking-wide mb-2">
+      <span class="opacity-50">{">_"}</span>
+      <label for={@id}>{@label}</label>
+    </div>
+    """
+  end
+
   defp error(assigns) do
     ~H"""
-    <p class="mt-1.5 flex gap-2 items-center text-sm text-error">
-      <.icon name="hero-exclamation-circle" class="size-5" />
+    <p class="mt-2 flex gap-2 items-center text-xs text-danger">
+      <span>[!]</span>
       {render_slot(@inner_block)}
     </p>
     """
@@ -287,17 +283,97 @@ defmodule AurumWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6", "pb-4"]}>
+    <header class={[@actions != [] && "flex items-center justify-between gap-6", "pb-6 border-b border-gold-dim mb-6"]}>
       <div>
-        <h1 class="text-lg font-semibold leading-8">
+        <h1 class="text-xl font-bold text-gold tracking-wide">
           {render_slot(@inner_block)}
         </h1>
-        <p :if={@subtitle != []} class="text-sm text-base-content/70">
+        <p :if={@subtitle != []} class="text-sm text-gold-muted mt-1">
           {render_slot(@subtitle)}
         </p>
       </div>
       <div class="flex-none">{render_slot(@actions)}</div>
     </header>
+    """
+  end
+
+  @doc """
+  Renders a page header with terminal-style brackets.
+
+  ## Examples
+
+      <.page_header title="VAULT STATUS" subtitle="Portfolio Overview">
+        <:actions>
+          <.link navigate={~p"/items/new"}>Add Item</.link>
+        </:actions>
+      </.page_header>
+  """
+  attr :title, :string, required: true
+  attr :subtitle, :string, default: nil
+  attr :title_test_id, :string, default: nil
+  slot :actions
+
+  def page_header(assigns) do
+    ~H"""
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1
+          class="text-2xl font-bold text-gold tracking-wide"
+          data-test={@title_test_id}
+        >
+          <span class="text-gold-muted">[</span> {@title} <span class="text-gold-muted">]</span>
+        </h1>
+        <p :if={@subtitle} class="text-gold-muted text-sm mt-1">{@subtitle}</p>
+      </div>
+      <div :if={@actions != []} class="flex gap-3">
+        {render_slot(@actions)}
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders an empty state with terminal styling.
+
+  ## Examples
+
+      <.empty_state id="empty-portfolio" message="NO ASSETS DETECTED" cta_text="ADD FIRST ITEM" cta_path={~p"/items/new"} />
+  """
+  attr :id, :string, required: true
+  attr :message, :string, required: true
+  attr :description, :string, default: nil
+  attr :cta_text, :string, default: nil
+  attr :cta_path, :string, default: nil
+
+  def empty_state(assigns) do
+    ~H"""
+    <div id={@id} class="vault-card p-12 text-center">
+      <div class="text-gold-muted mb-2">{">_"} {@message}</div>
+      <p :if={@description} class="text-gold-muted text-sm mb-6">{@description}</p>
+      <.link :if={@cta_text && @cta_path} navigate={@cta_path} class="btn-terminal-primary">
+        {@cta_text}
+      </.link>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a back navigation link.
+
+  ## Examples
+
+      <.back_link to={~p"/items"} label="Back to Portfolio" />
+  """
+  attr :to, :string, required: true
+  attr :label, :string, required: true
+
+  def back_link(assigns) do
+    ~H"""
+    <div class="mt-6">
+      <.link navigate={@to} class="text-gold-muted hover:text-gold text-sm">
+        ← {@label}
+      </.link>
+    </div>
     """
   end
 
@@ -333,34 +409,36 @@ defmodule AurumWeb.CoreComponents do
       end
 
     ~H"""
-    <table class="table table-zebra">
-      <thead>
-        <tr>
-          <th :for={col <- @col}>{col[:label]}</th>
-          <th :if={@action != []}>
-            <span class="sr-only">Actions</span>
-          </th>
-        </tr>
-      </thead>
-      <tbody id={@id} phx-update={is_struct(@rows, Phoenix.LiveView.LiveStream) && "stream"}>
-        <tr :for={row <- @rows} id={@row_id && @row_id.(row)}>
-          <td
-            :for={col <- @col}
-            phx-click={@row_click && @row_click.(row)}
-            class={@row_click && "hover:cursor-pointer"}
-          >
-            {render_slot(col, @row_item.(row))}
-          </td>
-          <td :if={@action != []} class="w-0 font-semibold">
-            <div class="flex gap-4">
-              <%= for action <- @action do %>
-                {render_slot(action, @row_item.(row))}
-              <% end %>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="vault-card overflow-hidden">
+      <table class="table-terminal">
+        <thead>
+          <tr>
+            <th :for={col <- @col}>{col[:label]}</th>
+            <th :if={@action != []}>
+              <span class="sr-only">Actions</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody id={@id} phx-update={is_struct(@rows, Phoenix.LiveView.LiveStream) && "stream"}>
+          <tr :for={row <- @rows} id={@row_id && @row_id.(row)}>
+            <td
+              :for={col <- @col}
+              phx-click={@row_click && @row_click.(row)}
+              class={@row_click && "hover:cursor-pointer"}
+            >
+              {render_slot(col, @row_item.(row))}
+            </td>
+            <td :if={@action != []} class="w-0">
+              <div class="flex gap-4">
+                <%= for action <- @action do %>
+                  {render_slot(action, @row_item.(row))}
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     """
   end
 
@@ -380,12 +458,10 @@ defmodule AurumWeb.CoreComponents do
 
   def list(assigns) do
     ~H"""
-    <ul class="list">
-      <li :for={item <- @item} class="list-row">
-        <div class="list-col-grow">
-          <div class="font-bold">{item.title}</div>
-          <div>{render_slot(item)}</div>
-        </div>
+    <ul class="vault-card divide-y divide-gold-dim">
+      <li :for={item <- @item} class="p-4">
+        <div class="text-gold-muted text-xs uppercase tracking-wide mb-1">{item.title}</div>
+        <div class="text-gold">{render_slot(item)}</div>
       </li>
     </ul>
     """

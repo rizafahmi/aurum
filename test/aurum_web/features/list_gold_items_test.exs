@@ -5,7 +5,7 @@ defmodule AurumWeb.ListGoldItemsTest do
     test "displays empty message when no items exist", %{conn: conn} do
       conn
       |> visit("/items")
-      |> assert_has("p", text: "No items yet")
+      |> assert_has("#empty-items")
     end
   end
 

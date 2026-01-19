@@ -6,7 +6,7 @@ defmodule AurumWeb.PortfolioDashboardTest do
       conn
       |> visit("/")
       |> assert_has("#empty-portfolio")
-      |> assert_has("a", text: "Add your first gold item")
+      |> assert_has("a", text: "ADD FIRST ITEM")
     end
   end
 

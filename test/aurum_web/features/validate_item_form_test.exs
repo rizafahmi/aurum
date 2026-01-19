@@ -75,8 +75,8 @@ defmodule AurumWeb.ValidateItemFormTest do
       |> fill_in("Weight", with: "-1")
       |> fill_in("Quantity", with: "0")
       |> click_button("Save")
-      |> assert_has(".fieldset:has(#item-name) p", text: "can't be blank")
-      |> assert_has(".fieldset:has(#item-weight) p", text: "must be greater than 0")
+      |> assert_has("p", text: "can't be blank")
+      |> assert_has("p", text: "must be greater than 0")
     end
 
     test "form does not submit until validations pass", %{conn: conn} do

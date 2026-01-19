@@ -21,34 +21,53 @@ defmodule AurumWeb.ItemLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
-      <h1>Gold Items</h1>
+      <.page_header title="PORTFOLIO" subtitle="Gold Assets Inventory">
+        <:actions>
+          <.link navigate={~p"/items/new"} class="btn-terminal-primary text-xs uppercase tracking-wide">
+            + Add Item
+          </.link>
+        </:actions>
+      </.page_header>
 
-      <p :if={@items == []}>No items yet</p>
+      <.empty_state
+        :if={@items == []}
+        id="empty-items"
+        message="NO ASSETS DETECTED"
+        description="Add gold items to build your portfolio"
+        cta_text="+ ADD FIRST ITEM"
+        cta_path={~p"/items/new"}
+      />
 
-      <table :if={@items != []} id="items-list">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Weight</th>
-            <th>Purity</th>
-            <th>Quantity</th>
-            <th>Purchase Price</th>
-            <th>Current Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr :for={item <- @items}>
-            <td><.link navigate={~p"/items/#{item.id}"}>{item.name}</.link></td>
-            <td>{Item.category_label(item.category)}</td>
-            <td>{item.weight} {Item.weight_unit_short(item.weight_unit)}</td>
-            <td>{Item.purity_label(item.purity)}</td>
-            <td>{item.quantity}</td>
-            <td>{Format.currency(item.purchase_price)}</td>
-            <td data-test="current-value">{Format.currency(item.current_value)}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div :if={@items != []} class="vault-card overflow-hidden">
+        <table id="items-list" class="table-terminal">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Weight</th>
+              <th>Purity</th>
+              <th>Qty</th>
+              <th class="text-right">Purchase</th>
+              <th class="text-right">Current</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={item <- @items}>
+              <td>
+                <.link navigate={~p"/items/#{item.id}"} class="hover:text-gold">
+                  {item.name}
+                </.link>
+              </td>
+              <td class="text-gold-muted">{Item.category_label(item.category)}</td>
+              <td>{item.weight} {Item.weight_unit_short(item.weight_unit)}</td>
+              <td>{Item.purity_label(item.purity)}</td>
+              <td>{item.quantity}</td>
+              <td class="text-right">{Format.currency(item.purchase_price)}</td>
+              <td class="text-right" data-test="current-value">{Format.currency(item.current_value)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </Layouts.app>
     """
   end

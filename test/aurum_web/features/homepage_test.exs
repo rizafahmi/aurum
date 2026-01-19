@@ -4,6 +4,6 @@ defmodule AurumWeb.HomepageTest do
   test "GET / has branding", %{conn: conn} do
     conn
     |> visit("/")
-    |> assert_has("h1", text: "Aurum")
+    |> assert_has("h1", text: "VAULT STATUS")
   end
 end

@@ -46,104 +46,118 @@ defmodule AurumWeb.ItemLive.Show do
   def render(%{item: nil} = assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
-      <p class="text-gray-500">Loading...</p>
+      <div class="vault-card p-8 text-center">
+        <span class="text-gold-muted">LOADING</span>
+        <span class="terminal-cursor ml-1"></span>
+      </div>
     </Layouts.app>
     """
   end
 
   def render(assigns) do
+    assigns = assign(assigns, :gain_loss_class, decimal_sign_class(assigns.valuation.gain_loss))
+
     ~H"""
     <Layouts.app flash={@flash}>
-      <h1 data-test="item-name">{@item.name}</h1>
+      <.page_header title={@item.name} subtitle="Asset Details" title_test_id="item-name">
+        <:actions>
+          <.link navigate={~p"/items/#{@item.id}/edit"} class="btn-terminal text-xs uppercase tracking-wide">
+            Edit
+          </.link>
+          <button id="delete-item" phx-click="show_confirm" class="btn-terminal text-xs uppercase tracking-wide text-danger border-[#f87171]">
+            Delete
+          </button>
+        </:actions>
+      </.page_header>
 
-      <dl class="grid grid-cols-2 gap-4 mt-6">
-        <div>
-          <dt class="text-sm text-gray-500">Category</dt>
-          <dd data-test="category">{Item.category_label(@item.category)}</dd>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="vault-card p-6">
+          <h2 class="text-gold-muted text-xs uppercase tracking-wide mb-4">{">_"} Physical Properties</h2>
+          <dl class="space-y-4">
+            <div class="flex justify-between border-b border-gold-dim pb-2">
+              <dt class="text-gold-muted text-sm">Category</dt>
+              <dd data-test="category" class="text-gold">{Item.category_label(@item.category)}</dd>
+            </div>
+            <div class="flex justify-between border-b border-gold-dim pb-2">
+              <dt class="text-gold-muted text-sm">Weight</dt>
+              <dd data-test="weight" class="text-gold">{@item.weight} {Item.weight_unit_short(@item.weight_unit)}</dd>
+            </div>
+            <div class="flex justify-between border-b border-gold-dim pb-2">
+              <dt class="text-gold-muted text-sm">Purity</dt>
+              <dd data-test="purity" class="text-gold">{Item.purity_label(@item.purity)}</dd>
+            </div>
+            <div class="flex justify-between border-b border-gold-dim pb-2">
+              <dt class="text-gold-muted text-sm">Quantity</dt>
+              <dd data-test="quantity" class="text-gold">{@item.quantity}</dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-gold-muted text-sm">Pure Gold</dt>
+              <dd data-test="pure-gold-weight" class="text-gold font-bold">{@valuation.pure_gold_grams} g</dd>
+            </div>
+          </dl>
         </div>
 
-        <div>
-          <dt class="text-sm text-gray-500">Weight</dt>
-          <dd data-test="weight">{@item.weight} {Item.weight_unit_short(@item.weight_unit)}</dd>
+        <div class="vault-card p-6">
+          <h2 class="text-gold-muted text-xs uppercase tracking-wide mb-4">{">_"} Valuation</h2>
+          <dl class="space-y-4">
+            <div class="flex justify-between border-b border-gold-dim pb-2">
+              <dt class="text-gold-muted text-sm">Purchase Price</dt>
+              <dd data-test="purchase-price" class="text-gold">{Format.currency(@item.purchase_price)}</dd>
+            </div>
+            <div class="flex justify-between border-b border-gold-dim pb-2">
+              <dt class="text-gold-muted text-sm">Purchase Date</dt>
+              <dd data-test="purchase-date" class="text-gold">{@item.purchase_date}</dd>
+            </div>
+            <div class="flex justify-between border-b border-gold-dim pb-2">
+              <dt class="text-gold-muted text-sm">Current Value</dt>
+              <dd data-test="current-value" class="text-gold font-bold">{Format.currency(@valuation.current_value)}</dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-gold-muted text-sm">Gain/Loss</dt>
+              <dd data-test="gain-loss" class={["font-bold", @gain_loss_class || "text-gold"]}>
+                {Format.currency(@valuation.gain_loss)}
+              </dd>
+            </div>
+          </dl>
         </div>
 
-        <div>
-          <dt class="text-sm text-gray-500">Purity</dt>
-          <dd data-test="purity">{Item.purity_label(@item.purity)}</dd>
+        <div :if={@item.notes} class="vault-card p-6 lg:col-span-2">
+          <h2 class="text-gold-muted text-xs uppercase tracking-wide mb-4">{">_"} Notes</h2>
+          <p data-test="notes" class="text-gold text-sm">{@item.notes}</p>
         </div>
-
-        <div>
-          <dt class="text-sm text-gray-500">Quantity</dt>
-          <dd data-test="quantity">{@item.quantity}</dd>
-        </div>
-
-        <div>
-          <dt class="text-sm text-gray-500">Purchase Price</dt>
-          <dd data-test="purchase-price">{Format.currency(@item.purchase_price)}</dd>
-        </div>
-
-        <div>
-          <dt class="text-sm text-gray-500">Purchase Date</dt>
-          <dd data-test="purchase-date">{@item.purchase_date}</dd>
-        </div>
-
-        <div :if={@item.notes} class="col-span-2">
-          <dt class="text-sm text-gray-500">Notes</dt>
-          <dd data-test="notes">{@item.notes}</dd>
-        </div>
-
-        <div>
-          <dt class="text-sm text-gray-500">Pure Gold Weight</dt>
-          <dd data-test="pure-gold-weight">{@valuation.pure_gold_grams} g</dd>
-        </div>
-
-        <div>
-          <dt class="text-sm text-gray-500">Current Value</dt>
-          <dd data-test="current-value">{Format.currency(@valuation.current_value)}</dd>
-        </div>
-
-        <div>
-          <dt class="text-sm text-gray-500">Gain/Loss</dt>
-          <dd data-test="gain-loss">{Format.currency(@valuation.gain_loss)}</dd>
-        </div>
-      </dl>
-
-      <div class="mt-8 flex gap-4">
-        <.link navigate={~p"/items/#{@item.id}/edit"} class="text-blue-600 hover:underline">
-          Edit
-        </.link>
-        <button id="delete-item" phx-click="show_confirm" class="text-red-600 hover:underline">
-          Delete
-        </button>
-        <.link navigate={~p"/items"} class="text-gray-600 hover:underline">
-          Back
-        </.link>
       </div>
+
+      <.back_link to={~p"/items"} label="Back to Portfolio" />
 
       <div
         :if={@show_confirm_dialog}
         id="confirm-dialog"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+        class="fixed inset-0 z-50 flex items-center justify-center"
+        style="background: rgba(15, 23, 42, 0.9)"
       >
-        <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4 shadow-xl">
-          <h2 class="text-lg font-semibold mb-4">Confirm Delete</h2>
-          <p class="mb-6">
-            Are you sure you want to delete <strong>{@item.name}</strong>?
+        <div class="vault-card-glow p-6 max-w-sm w-full mx-4">
+          <h2 class="text-lg font-bold text-gold mb-4">
+            <span class="text-danger">[!]</span> Confirm Delete
+          </h2>
+          <p class="text-gold-muted text-sm mb-6">
+            Are you sure you want to delete <span class="text-gold font-bold">{@item.name}</span>?
+            This action cannot be undone.
           </p>
           <div class="flex justify-end gap-3">
             <button
               id="cancel-delete"
               phx-click="cancel_delete"
-              class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded"
+              class="btn-terminal text-xs uppercase tracking-wide"
             >
               Cancel
             </button>
             <button
               id="confirm-delete"
               phx-click="confirm_delete"
-              class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              class="btn-terminal-primary text-xs uppercase tracking-wide"
+              style="background: #f87171; border-color: #f87171;"
             >
-              Confirm
+              Confirm Delete
             </button>
           </div>
         </div>
@@ -176,6 +190,16 @@ defmodule AurumWeb.ItemLive.Show do
          socket
          |> put_flash(:error, "Could not delete item")
          |> assign(show_confirm_dialog: false)}
+    end
+  end
+
+  defp decimal_sign_class(nil), do: nil
+
+  defp decimal_sign_class(%Decimal{} = d) do
+    case Decimal.compare(d, 0) do
+      :gt -> "text-success"
+      :lt -> "text-danger"
+      :eq -> nil
     end
   end
 end

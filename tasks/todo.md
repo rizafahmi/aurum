@@ -1,6 +1,6 @@
 # TODO
 
-- [ ] Improve the design
+- [x] Improve the design
 - [ ] Default currency IDR
 - [ ] Default measure gram
 - [x] Navigation

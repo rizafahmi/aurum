@@ -15,15 +15,19 @@ defmodule AurumWeb.ItemLive.New do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
-      <h1>Add Gold Item</h1>
+      <.page_header title="NEW ASSET" subtitle="Register Gold Item" />
 
-      <.live_component
-        module={AurumWeb.ItemLive.FormComponent}
-        id="new-item-form"
-        item={%Item{}}
-        action={:new}
-        return_to={~p"/items"}
-      />
+      <div class="vault-card p-6">
+        <.live_component
+          module={AurumWeb.ItemLive.FormComponent}
+          id="new-item-form"
+          item={%Item{}}
+          action={:new}
+          return_to={~p"/items"}
+        />
+      </div>
+
+      <.back_link to={~p"/items"} label="Back to Portfolio" />
     </Layouts.app>
     """
   end

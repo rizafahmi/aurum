@@ -28,74 +28,82 @@ defmodule AurumWeb.ItemLive.FormComponent do
     <div>
       <.form
         for={@form}
-        id="item-form"
+        id={"#{@id}-form"}
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:name]} type="text" label="Name" id="item-name" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+          <.input field={@form[:name]} type="text" label="Name" id="item-name" />
 
-        <.input
-          field={@form[:category]}
-          type="select"
-          label="Category"
-          id="item-category"
-          prompt="Select category"
-          options={Item.category_options()}
-        />
+          <.input
+            field={@form[:category]}
+            type="select"
+            label="Category"
+            id="item-category"
+            prompt="Select category"
+            options={Item.category_options()}
+          />
 
-        <.input field={@form[:weight]} type="number" label="Weight" id="item-weight" step="any" />
+          <.input field={@form[:weight]} type="number" label="Weight" id="item-weight" step="any" />
 
-        <.input
-          field={@form[:weight_unit]}
-          type="select"
-          label="Weight unit"
-          id="item-weight-unit"
-          options={Item.weight_unit_options()}
-        />
+          <.input
+            field={@form[:weight_unit]}
+            type="select"
+            label="Weight unit"
+            id="item-weight-unit"
+            options={Item.weight_unit_options()}
+          />
 
-        <.input
-          field={@form[:purity]}
-          type="select"
-          label="Purity"
-          id="item-purity"
-          prompt="Select purity"
-          options={Item.purity_options()}
-        />
+          <.input
+            field={@form[:purity]}
+            type="select"
+            label="Purity"
+            id="item-purity"
+            prompt="Select purity"
+            options={Item.purity_options()}
+          />
 
-        <.input
-          field={@form[:custom_purity]}
-          type="number"
-          label="Custom purity"
-          id="item-custom-purity"
-          step="0.01"
-          min="0.01"
-          max="100"
-          placeholder="Or enter custom %"
-        />
+          <.input
+            field={@form[:custom_purity]}
+            type="number"
+            label="Custom purity"
+            id="item-custom-purity"
+            step="0.01"
+            min="0.01"
+            max="100"
+            placeholder="Or enter custom %"
+          />
 
-        <.input field={@form[:quantity]} type="number" label="Quantity" id="item-quantity" />
+          <.input field={@form[:quantity]} type="number" label="Quantity" id="item-quantity" />
 
-        <.input
-          field={@form[:purchase_price]}
-          type="number"
-          label="Purchase price"
-          id="item-purchase-price"
-          step="0.01"
-        />
+          <.input
+            field={@form[:purchase_price]}
+            type="number"
+            label="Purchase price"
+            id="item-purchase-price"
+            step="0.01"
+          />
 
-        <.input
-          field={@form[:purchase_date]}
-          type="date"
-          label="Purchase date"
-          id="item-purchase-date"
-        />
+          <.input
+            field={@form[:purchase_date]}
+            type="date"
+            label="Purchase date"
+            id="item-purchase-date"
+          />
+        </div>
 
         <.input field={@form[:notes]} type="textarea" label="Notes" id="item-notes" />
 
-        <div class="mt-4 flex gap-4">
-          <.button type="submit">Save</.button>
-          <.link :if={@action == :edit} navigate={@return_to}>Cancel</.link>
+        <div class="mt-6 flex gap-4 border-t border-gold-dim pt-6">
+          <.button type="submit" variant="primary">Save Asset</.button>
+          <.link
+            :if={@action == :edit}
+            navigate={@return_to}
+            class="btn-terminal text-xs uppercase tracking-wide flex items-center"
+          >
+            Cancel
+          </.link>
         </div>
       </.form>
     </div>
