@@ -117,7 +117,7 @@ defmodule AurumWeb.DashboardLive do
             {">_"} GOLD SPOT PRICE
           </div>
           <div :if={@price_info} id="gold-price" class="stat-value">
-            {Format.price(@price_info.price_per_oz)} <span class="text-gold-muted text-sm">{@price_info.currency}/oz</span>
+            {Format.currency(@price_info.price_per_gram)} <span class="text-gold-muted text-sm">/gram</span>
           </div>
           <div :if={!@price_info} id="gold-price" class="stat-value text-gold-muted">
             -- AWAITING DATA --
