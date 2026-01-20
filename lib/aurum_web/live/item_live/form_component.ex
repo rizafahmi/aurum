@@ -9,13 +9,12 @@ defmodule AurumWeb.ItemLive.FormComponent do
   alias Aurum.Portfolio.Item
 
   @impl true
-  def update(%{item: item} = assigns, socket) do
-    changeset = Portfolio.change_item(item)
+  def update(%{item: item, action: :new} = assigns, socket) do
+    {:ok, socket |> assign(assigns) |> assign_form(Portfolio.change_item_quick(item))}
+  end
 
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign_form(changeset)}
+  def update(%{item: item} = assigns, socket) do
+    {:ok, socket |> assign(assigns) |> assign_form(Portfolio.change_item(item))}
   end
 
   defp assign_form(socket, changeset) do
@@ -33,70 +32,13 @@ defmodule AurumWeb.ItemLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-          <.input field={@form[:name]} type="text" label="Name" id="item-name" />
-
-          <.input
-            field={@form[:category]}
-            type="select"
-            label="Category"
-            id="item-category"
-            prompt="Select category"
-            options={Item.category_options()}
-          />
-
-          <.input field={@form[:weight]} type="number" label="Weight" id="item-weight" step="any" />
-
-          <.input
-            field={@form[:weight_unit]}
-            type="select"
-            label="Weight unit"
-            id="item-weight-unit"
-            options={Item.weight_unit_options()}
-          />
-
-          <.input
-            field={@form[:purity]}
-            type="select"
-            label="Purity"
-            id="item-purity"
-            prompt="Select purity"
-            options={Item.purity_options()}
-          />
-
-          <.input
-            field={@form[:custom_purity]}
-            type="number"
-            label="Custom purity"
-            id="item-custom-purity"
-            step="0.01"
-            min="0.01"
-            max="100"
-            placeholder="Or enter custom %"
-          />
-
-          <.input field={@form[:quantity]} type="number" label="Quantity" id="item-quantity" />
-
-          <.input
-            field={@form[:purchase_price]}
-            type="number"
-            label="Purchase price"
-            id="item-purchase-price"
-            step="0.01"
-          />
-
-          <.input
-            field={@form[:purchase_date]}
-            type="date"
-            label="Purchase date"
-            id="item-purchase-date"
-          />
-        </div>
-
-        <.input field={@form[:notes]} type="textarea" label="Notes" id="item-notes" />
+        <.quick_add_fields :if={@action == :new} form={@form} />
+        <.full_form_fields :if={@action != :new} form={@form} />
 
         <div class="mt-6 flex gap-4 border-t border-gold-dim pt-6">
-          <.button type="submit" variant="primary">Save Asset</.button>
+          <.button type="submit" variant="primary">
+            <%= if @action == :new, do: "Add Asset", else: "Save Asset" %>
+          </.button>
           <.link
             :if={@action == :edit}
             navigate={@return_to}
@@ -110,11 +52,107 @@ defmodule AurumWeb.ItemLive.FormComponent do
     """
   end
 
+  defp quick_add_fields(assigns) do
+    ~H"""
+    <div class="space-y-4">
+      <.input field={@form[:name]} type="text" label="Name" id="item-name" placeholder="e.g. 1oz Gold Bar" />
+
+      <div class="grid grid-cols-2 gap-4">
+        <.input field={@form[:weight]} type="number" label="Weight (grams)" id="item-weight" step="any" />
+
+        <.input
+          field={@form[:purity]}
+          type="select"
+          label="Purity"
+          id="item-purity"
+          prompt="Select"
+          options={Item.purity_options()}
+        />
+      </div>
+
+      <.input
+        field={@form[:purchase_price]}
+        type="number"
+        label="Purchase price"
+        id="item-purchase-price"
+        step="0.01"
+        placeholder="Total paid"
+      />
+    </div>
+    """
+  end
+
+  defp full_form_fields(assigns) do
+    ~H"""
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+      <.input field={@form[:name]} type="text" label="Name" id="item-name" />
+
+      <.input
+        field={@form[:category]}
+        type="select"
+        label="Category"
+        id="item-category"
+        prompt="Select category"
+        options={Item.category_options()}
+      />
+
+      <.input field={@form[:weight]} type="number" label="Weight" id="item-weight" step="any" />
+
+      <.input
+        field={@form[:weight_unit]}
+        type="select"
+        label="Weight unit"
+        id="item-weight-unit"
+        options={Item.weight_unit_options()}
+      />
+
+      <.input
+        field={@form[:purity]}
+        type="select"
+        label="Purity"
+        id="item-purity"
+        prompt="Select purity"
+        options={Item.purity_options()}
+      />
+
+      <.input
+        field={@form[:custom_purity]}
+        type="number"
+        label="Custom purity"
+        id="item-custom-purity"
+        step="0.01"
+        min="0.01"
+        max="100"
+        placeholder="Or enter custom %"
+      />
+
+      <.input field={@form[:quantity]} type="number" label="Quantity" id="item-quantity" />
+
+      <.input
+        field={@form[:purchase_price]}
+        type="number"
+        label="Purchase price"
+        id="item-purchase-price"
+        step="0.01"
+      />
+
+      <.input
+        field={@form[:purchase_date]}
+        type="date"
+        label="Purchase date"
+        id="item-purchase-date"
+      />
+    </div>
+
+    <.input field={@form[:notes]} type="textarea" label="Notes" id="item-notes" />
+    """
+  end
+
   @impl true
   def handle_event("validate", %{"item" => item_params}, socket) do
     changeset =
-      socket.assigns.item
-      |> Portfolio.change_item(item_params)
+      socket.assigns.action
+      |> changeset_for_action(socket.assigns.item, item_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign_form(socket, changeset)}
@@ -125,8 +163,11 @@ defmodule AurumWeb.ItemLive.FormComponent do
     save_item(socket, socket.assigns.action, item_params)
   end
 
+  defp changeset_for_action(:new, item, attrs), do: Portfolio.change_item_quick(item, attrs)
+  defp changeset_for_action(_action, item, attrs), do: Portfolio.change_item(item, attrs)
+
   defp save_item(socket, :new, params) do
-    case Portfolio.create_item(params) do
+    case Portfolio.quick_create_item(params) do
       {:ok, _item} ->
         {:noreply,
          socket

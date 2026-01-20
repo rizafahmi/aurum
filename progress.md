@@ -1,5 +1,55 @@
 # Progress Log
 
+## 2026-01-20
+
+### UX: Simplified Quick-Add Form
+
+**Problem:** The create item form had too much friction with 10 fields to fill.
+
+**Solution:** Simplified "quick add" form for new items (4 fields only):
+- Name
+- Weight (grams)
+- Purity (dropdown)
+- Purchase price
+
+**Auto-defaults applied:**
+- Category → "Other"
+- Quantity → 1
+- Weight unit → grams
+- Purchase date → today
+
+**Edit form retains all fields** for full control when updating items.
+
+**Files modified:**
+- `lib/aurum/portfolio/item.ex` - Added `quick_changeset/2` with defaults
+- `lib/aurum/portfolio.ex` - Added `quick_create_item/1`, `change_item_quick/2`
+- `lib/aurum_web/live/item_live/form_component.ex` - Dual form rendering
+
+**Test status:** ✅ PASSED (152 tests, 0 failures)
+
+---
+
+### Code Review & Refactoring (Oracle-guided)
+
+**Idiomatic Elixir improvements:**
+
+1. **Pattern match on action in `update/2`** - Separate function heads instead of `if`
+2. **Extracted `changeset_for_action/3`** - Avoids anonymous function selection
+3. **Replaced `<%= if %>` with `:if`** - Cleaner HEEx template syntax
+4. **Simplified `validate_custom_purity/1`** - Pattern match on `%Decimal{}`
+5. **Refactored `apply_custom_purity/1`** - Uses `with` for cleaner flow
+6. **Replaced `if` with `case`** - In `validate_preset_purity/1`
+7. **Grouped `handle_event` clauses** - Fixed compiler warning about clause ordering
+
+**Files modified:**
+- `lib/aurum_web/live/item_live/form_component.ex` - Idiomatic refactoring
+- `lib/aurum/portfolio/item.ex` - Changeset helper cleanup
+- `test/aurum/gold/price_cache_test.exs` - Fixed unused variable warning
+
+**Test status:** ✅ PASSED (152 tests, 0 failures)
+
+---
+
 ## 2026-01-19 22:45
 
 ### UI Redesign: Cyber-Security Terminal Theme

@@ -64,36 +64,47 @@ defmodule Aurum.Portfolio.Item do
     |> normalize_weight_to_grams()
   end
 
+  @doc """
+  Simplified changeset for quick add form with sensible defaults.
+  Only requires: name, weight, purity, purchase_price.
+  Defaults: category=:other, quantity=1, weight_unit=:grams, purchase_date=today.
+  """
+  @spec quick_changeset(t(), map()) :: Ecto.Changeset.t()
+  def quick_changeset(item, attrs) do
+    attrs_with_defaults =
+      Map.merge(
+        %{
+          "category" => "other",
+          "quantity" => "1",
+          "weight_unit" => "grams",
+          "purchase_date" => Date.utc_today() |> Date.to_string()
+        },
+        attrs
+      )
+
+    changeset(item, attrs_with_defaults)
+  end
+
   defp validate_custom_purity(changeset) do
     case get_field(changeset, :custom_purity) do
-      nil -> changeset
-      _ -> validate_number(changeset, :custom_purity, greater_than: 0, less_than_or_equal_to: 100)
+      %Decimal{} -> validate_number(changeset, :custom_purity, greater_than: 0, less_than_or_equal_to: 100)
+      _ -> changeset
     end
   end
 
   defp apply_custom_purity(changeset) do
-    custom = get_field(changeset, :custom_purity)
-
-    cond do
-      is_nil(custom) ->
-        changeset
-
-      Keyword.has_key?(changeset.errors, :custom_purity) ->
-        changeset
-
-      Decimal.gt?(custom, 0) ->
-        put_change(changeset, :purity, custom |> Decimal.round(0) |> Decimal.to_integer())
-
-      true ->
-        changeset
+    with %Decimal{} = custom <- get_field(changeset, :custom_purity),
+         false <- Keyword.has_key?(changeset.errors, :custom_purity) do
+      put_change(changeset, :purity, custom |> Decimal.round(0) |> Decimal.to_integer())
+    else
+      _ -> changeset
     end
   end
 
   defp validate_preset_purity(changeset) do
-    if is_nil(get_field(changeset, :custom_purity)) do
-      validate_inclusion(changeset, :purity, @purity_karats, message: "is invalid")
-    else
-      changeset
+    case get_field(changeset, :custom_purity) do
+      nil -> validate_inclusion(changeset, :purity, @purity_karats, message: "is invalid")
+      _ -> changeset
     end
   end
 

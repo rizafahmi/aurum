@@ -7,17 +7,14 @@ defmodule AurumWeb.DataPersistenceTest do
     test "items created are visible after stopping and restarting the Phoenix server", %{
       conn: conn
     } do
-      # Create an item via the form
+      # Create an item via the quick-add form
       conn
       |> visit("/items/new")
       |> fill_in("Name", with: "Persistence Test Bar")
-      |> select("Category", option: "Bar")
-      |> fill_in("Weight", with: "100")
-      |> select("Weight unit", option: "grams")
+      |> fill_in("Weight (grams)", with: "100")
       |> select("Purity", option: "24K")
-      |> fill_in("Quantity", with: "1")
       |> fill_in("Purchase price", with: "5000.00")
-      |> click_button("Save")
+      |> click_button("Add Asset")
 
       # Verify item exists in database directly (simulates restart - data persists in SQLite)
       items = Portfolio.list_items()

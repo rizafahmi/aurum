@@ -91,7 +91,7 @@ defmodule Aurum.Gold.PriceCacheTest do
       call_count = :counters.new(1, [:atomics])
 
       mock_client = fn ->
-        count = :counters.add(call_count, 1, 1)
+        :counters.add(call_count, 1, 1)
 
         if :counters.get(call_count, 1) == 1 do
           {:ok, mock_price_data()}

@@ -136,11 +136,33 @@ defmodule Aurum.Portfolio do
   end
 
   @doc """
+  Creates a new gold item using quick add (with sensible defaults).
+
+  ## Returns
+  - `{:ok, item}` on success
+  - `{:error, changeset}` on validation failure
+  """
+  @spec quick_create_item(map()) :: {:ok, Item.t()} | {:error, Ecto.Changeset.t()}
+  def quick_create_item(attrs \\ %{}) do
+    %Item{}
+    |> Item.quick_changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
   Returns a changeset for tracking item changes.
   """
   @spec change_item(Item.t(), map()) :: Ecto.Changeset.t()
   def change_item(%Item{} = item, attrs \\ %{}) do
     Item.changeset(item, attrs)
+  end
+
+  @doc """
+  Returns a quick changeset for the simplified add form.
+  """
+  @spec change_item_quick(Item.t(), map()) :: Ecto.Changeset.t()
+  def change_item_quick(%Item{} = item, attrs \\ %{}) do
+    Item.quick_changeset(item, attrs)
   end
 
   @doc """
