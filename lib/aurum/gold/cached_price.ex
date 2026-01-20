@@ -58,10 +58,15 @@ defmodule Aurum.Gold.CachedPrice do
     }
   end
 
-  @known_sources ["nbp", "kitco", "lbma", "test", "mock"]
+  @source_mapping %{
+    "goldapi" => :goldapi,
+    "metalpriceapi" => :metalpriceapi,
+    "test" => :test,
+    "mock" => :mock
+  }
 
-  defp source_to_atom(source) when source in @known_sources do
-    String.to_existing_atom(source)
+  defp source_to_atom(source) when is_binary(source) do
+    Map.get(@source_mapping, source, :unknown)
   end
 
   defp source_to_atom(_source), do: :unknown

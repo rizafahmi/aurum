@@ -58,7 +58,7 @@ defmodule AurumWeb.ListGoldItemsTest do
     test "displays item purchase price", %{conn: conn} do
       conn
       |> visit("/items")
-      |> assert_has("td", text: "$2,500.00")
+      |> assert_has("td", text: "Rp2,500.00")
     end
 
     test "displays item current value", %{conn: conn} do

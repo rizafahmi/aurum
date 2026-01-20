@@ -2,6 +2,59 @@
 
 ## 2026-01-20
 
+### Currency: Switch to Indonesian Rupiah (IDR)
+
+**Problem:** App displayed prices with `$` symbol and APIs returned PLN/USD prices.
+
+**Solution:**
+- Changed `Format.currency/1` to use `Rp` prefix instead of `$`
+- Updated GoldAPI.io to request `XAU/IDR` instead of `XAU/USD`
+- Updated MetalpriceAPI to use `base=IDR` instead of `base=USD`
+- Removed NBP (Polish National Bank) API - only returned PLN prices
+
+**Files modified:**
+- `lib/aurum_web/format.ex` - Changed currency prefix to Rp
+- `lib/aurum/gold/price_client.ex` - Updated API endpoints for IDR
+- `lib/aurum/gold/api_monitor.ex` - Removed NBP from monitoring
+- `lib/aurum/gold/cached_price.ex` - Updated source mapping
+- Tests updated to expect `Rp` instead of `$`
+
+**Test status:** ✅ PASSED (158 tests, 0 failures)
+
+---
+
+### Code Review & Refactoring (Oracle-guided)
+
+**DRY improvements in Format module:**
+1. **Extracted `decimal_to_2dp/1`** - Eliminated duplication between `currency/1` and `price/1`
+2. **Replaced interpolation with concatenation** - `"Rp" <>` instead of `"Rp#{}"`
+3. **Fixed `weight/2`** - Uses `Decimal.to_string/2` for consistent formatting
+
+**Major refactoring in PriceClient:**
+4. **Extracted `perform_request/4`** - Generic request handler reduces ~80 lines of duplication
+5. **Extracted `require_api_key/2`** - Consolidated API key validation
+6. **Replaced `if/else` with `with`** - More idiomatic pattern
+7. **Fixed `@type error_reason`** - Now includes all actual error types
+8. **Safe DateTime parsing** - Replaced `DateTime.from_unix!/1` with safe version
+9. **Added `@grams_per_oz` constant** - Eliminated magic number
+
+**CachedPrice fixes:**
+10. **Fixed `@source_mapping`** - Now includes actual sources (`goldapi`, `metalpriceapi`)
+
+**Test stability fix:**
+11. **Added setup block to gold_price_test.exs** - Ensures price cache has data before each test, eliminating race condition
+
+**Files modified:**
+- `lib/aurum_web/format.ex` - DRY refactoring
+- `lib/aurum/gold/price_client.ex` - Major refactoring (~60 lines removed)
+- `lib/aurum/gold/cached_price.ex` - Fixed source mapping
+- `test/aurum_web/format_test.exs` - New tests for Format module
+- `test/aurum_web/features/gold_price_test.exs` - Added setup block
+
+**Test status:** ✅ PASSED (158 tests, 0 failures)
+
+---
+
 ### UX: Simplified Quick-Add Form
 
 **Problem:** The create item form had too much friction with 10 fields to fill.

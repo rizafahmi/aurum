@@ -28,7 +28,6 @@ defmodule Aurum.Gold.ApiMonitor do
 
     results = %{
       timestamp: timestamp,
-      nbp: check_provider(:nbp, &PriceClient.fetch_nbp/0),
       goldapi: check_provider(:goldapi, &PriceClient.fetch_goldapi/0),
       metalpriceapi: check_provider(:metalpriceapi, &PriceClient.fetch_metalpriceapi/0)
     }

@@ -3,6 +3,20 @@ defmodule AurumWeb.GoldPriceTest do
 
   import PhoenixTest
 
+  setup do
+    price_data = %{
+      price_per_oz: Decimal.new("2650.00"),
+      price_per_gram: Decimal.new("85.20"),
+      currency: "IDR",
+      timestamp: DateTime.utc_now(),
+      source: :test
+    }
+
+    :ok = Aurum.Gold.PriceCache.set_test_price(price_data, DateTime.utc_now())
+    Aurum.Gold.PriceCache.set_test_error(nil)
+    :ok
+  end
+
   describe "US-006: Fetch Live Gold Price" do
     test "displays gold spot price on dashboard", %{conn: conn} do
       conn

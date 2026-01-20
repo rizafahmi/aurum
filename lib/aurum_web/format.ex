@@ -5,22 +5,18 @@ defmodule AurumWeb.Format do
   """
 
   @doc """
-  Formats a Decimal as currency with $ prefix and comma separators.
+  Formats a Decimal as currency with Rp prefix and comma separators (Indonesian Rupiah).
 
   ## Examples
 
       iex> Format.currency(Decimal.new("1234.56"))
-      "$1,234.56"
+      "Rp1,234.56"
   """
   @spec currency(Decimal.t() | nil) :: String.t()
   def currency(nil), do: "—"
 
   def currency(%Decimal{} = decimal) do
-    decimal
-    |> Decimal.round(2)
-    |> Decimal.to_string(:normal)
-    |> add_commas()
-    |> then(&"$#{&1}")
+    "Rp" <> (decimal |> decimal_to_2dp() |> add_commas())
   end
 
   @doc """
@@ -28,11 +24,10 @@ defmodule AurumWeb.Format do
   """
   @spec price(Decimal.t() | nil) :: String.t()
   def price(nil), do: "—"
+  def price(%Decimal{} = decimal), do: decimal_to_2dp(decimal)
 
-  def price(%Decimal{} = decimal) do
-    decimal
-    |> Decimal.round(2)
-    |> Decimal.to_string(:normal)
+  defp decimal_to_2dp(%Decimal{} = decimal) do
+    decimal |> Decimal.round(2) |> Decimal.to_string(:normal)
   end
 
   @doc """
@@ -56,7 +51,7 @@ defmodule AurumWeb.Format do
   def weight(nil, _unit), do: "—"
 
   def weight(%Decimal{} = value, unit) do
-    "#{value} #{Aurum.Units.unit_label(unit)}"
+    Decimal.to_string(value, :normal) <> " " <> Aurum.Units.unit_label(unit)
   end
 
   defp add_commas(str) do

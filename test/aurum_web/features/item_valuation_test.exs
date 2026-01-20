@@ -30,7 +30,7 @@ defmodule AurumWeb.ItemValuationTest do
       # We verify the element shows a calculated value
       conn
       |> visit("/items/#{item.id}")
-      |> assert_has("[data-test='current-value']", text: "$")
+      |> assert_has("[data-test='current-value']", text: "Rp")
     end
 
     test "gain/loss = current value - purchase price", %{conn: conn, item: item} do
@@ -46,7 +46,7 @@ defmodule AurumWeb.ItemValuationTest do
       # Weight should have 4 decimal precision (99.9900)
       |> assert_has("[data-test='pure-gold-weight']", text: "99.99")
       # Currency should have 2 decimal precision
-      |> assert_has("[data-test='purchase-price']", text: "$8,000.00")
+      |> assert_has("[data-test='purchase-price']", text: "Rp8,000.00")
     end
   end
 end
