@@ -1,6 +1,193 @@
 # Progress Log
 
+## 2026-01-21
+
+### Risk Validation: Encrypted Cookie Size Limits
+
+**Risk #5 from `tasks/multi-user-vaults-risks.md` — VALIDATED ✓**
+
+**Assumption:** Encrypted cookie payload fits within browser 4KB limit.
+
+**Test Setup:**
+- Session data: `vault_id` (UUID), `vault_token` (32 bytes base64), `current_scope_id` (UUID), CSRF token
+- Encrypted using Plug.Crypto.MessageEncryptor (AES-256-GCM) — same as Phoenix session
+- Base64 encoded for cookie transport
+
+**Results:**
+| Metric | Value |
+|--------|-------|
+| Raw JSON size | 211 bytes |
+| Encrypted cookie size | 452 bytes |
+| Browser limit | 4,096 bytes |
+| Headroom | 3,644 bytes (89%) |
+| Round-trip test | ✅ PASS |
+
+**Capacity Test:**
+- Can add 41 extra UUIDs before hitting 4KB limit
+- Each UUID adds ~60-70 bytes to encrypted cookie
+
+**Key Findings:**
+- Cookie uses only 11% of available space
+- Plenty of room for future session fields
+- No risk of CDN/proxy header issues (well under 8KB)
+- Encryption overhead is ~2x raw size (211 → 452 bytes)
+
+**Production Recommendations:**
+- No action needed — current design is safe
+- Monitor if adding many new session fields
+- Consider separate storage if session grows beyond ~30 fields
+
+**Test script:** `test_cookie_size.exs` — run with `mix run test_cookie_size.exs`
+
+---
+
+### Risk Validation: Per-Vault Migration Atomicity
+
+**Risk #4 from `tasks/multi-user-vaults-risks.md` — VALIDATED ✓**
+
+**Assumption:** Migrations run atomically on per-vault databases at scale without corrupting other vaults.
+
+**Test Setup:**
+- 10 vault DBs created with dynamic Ecto repos
+- 3 migrations: CreateItems → AddIndex → AddCategory
+- Vault #5 intentionally fails on migration 2 (duplicate index pre-created)
+
+**Results:**
+| Scenario | Outcome |
+|----------|---------|
+| Normal migration (10 vaults) | ✓ 10/10 succeeded, all have complete schema |
+| Failed vault #5 | ✗ Stops at migration 2, left in partial state |
+| Other 9 vaults | ✓ Unaffected, complete schema |
+
+**Key Findings:**
+- Each vault migration runs independently (different Repo PIDs)
+- Failure in one vault does NOT corrupt other vault migrations
+- SQLite + Ecto.Migrator handles DDL atomically per migration
+- Failed vault left in partial state (migration 1 done, 2 failed, 3 skipped)
+
+**Production Recommendations:**
+- Wrap migration runner in try/rescue and log failures per vault
+- Track migration version per-vault in central DB for monitoring
+- Implement retry logic for transient failures (network, disk)
+- Add health check before serving requests from a vault
+- Consider migration version checks on vault access
+
+**Test script:** `test_vault_migration_atomicity.exs` — run with `mix run test_vault_migration_atomicity.exs`
+
+---
+
+### Risk Validation: DynamicSupervisor Resource Management
+
+**Risk #3 from `tasks/multi-user-vaults-risks.md` — VALIDATED ✓**
+
+**Assumption:** DynamicSupervisor can start/stop hundreds of repo processes without memory/FD leaks.
+
+**Test Setup:**
+- 200 vault repos started via DynamicSupervisor
+- Each vault with `pool_size: 1`, WAL mode
+- Measured FDs via `lsof` and memory via `:erlang.memory(:total)`
+- Full lifecycle: start → query → stop → restart
+
+**Results:**
+| Metric | Before | Peak (200 repos) | After Cleanup |
+|--------|--------|------------------|---------------|
+| File Descriptors | 68 | 268 (+200) | 68 |
+| Memory | 76.6 MB | 113.4 MB | 78.8 MB |
+
+**Key Findings:**
+- Zero FD leak after repo termination
+- Memory returns to baseline after cleanup (~2 MB variance)
+- 200 repos started in 42ms (fast enough for on-demand startup)
+- Restart after cleanup works correctly
+
+**Production Recommendations:**
+- Each vault repo consumes ~1 FD + ~185 KB memory
+- Default `ulimit -n` (256) would limit to ~180 concurrent vaults
+- Increase to `ulimit -n 10000` for 500+ vaults
+- Consider idle timeout + LRU eviction for memory management
+
+**Test script:** `test_dynamic_supervisor_resources.exs` — run with `mix run test_dynamic_supervisor_resources.exs`
+
+---
+
 ## 2026-01-20
+
+### Risk Validation: Dynamic Ecto Repos Across LiveView Processes
+
+**Risk #1 from `tasks/multi-user-vaults-risks.md` — CONFIRMED ✗**
+
+**Problem:** `put_dynamic_repo/1` uses process dictionary; spawned processes (Task.async, PubSub handlers) lose repo binding.
+
+**Test Results:**
+| Scenario | Outcome |
+|----------|---------|
+| Task.async WITHOUT `put_dynamic_repo` | ✗ 6/6 crashed — "could not lookup Ecto repo" |
+| Task.async WITH `put_dynamic_repo` | ✓ 6/6 succeeded, no cross-vault leakage |
+
+**Failure Mode Confirmed:**
+- Parent process calls `VaultRepo.put_dynamic_repo(pid)`
+- Parent spawns `Task.async(fn -> VaultRepo.query!(...) end)`
+- Task runs in NEW process with empty process dictionary
+- Query fails: repo lookup defaults to module name which doesn't exist (`name: nil`)
+
+**The Fix:**
+```elixir
+Task.async(fn ->
+  VaultRepo.put_dynamic_repo(repo_pid)  # Must call in EVERY spawned process
+  VaultRepo.query!(...)
+end)
+```
+
+**Applies to:**
+- `Task.async` / `Task.Supervisor`
+- GenServer.cast handlers spawning work
+- PubSub message handlers
+- Any code path that spawns a new process
+
+**Test script:** `test_dynamic_repo_risk.exs` — run with `mix run test_dynamic_repo_risk.exs`
+
+---
+
+### Risk Validation: SQLite Concurrent Access
+
+**Risk #2 from `tasks/multi-user-vaults-risks.md` — VALIDATED ✓**
+
+**Assumption:** SQLite with WAL mode handles concurrent vault access without corruption.
+
+**Test Setup:**
+- 5 concurrent processes writing to same vault.db
+- `pool_size: 1` (worst case — single connection)
+- WAL mode enabled
+- `busy_timeout: 5000ms`
+- Duration: 60 seconds
+
+**Results:**
+| Metric | Value |
+|--------|-------|
+| Process 1 writes | 122,096 |
+| Process 2 writes | 122,096 |
+| Process 3 writes | 122,098 |
+| Process 4 writes | 122,100 |
+| Process 5 writes | 122,100 |
+| **Total writes** | **610,490** |
+| **Errors** | **0** |
+| **Data integrity** | ✅ PASS |
+
+**Key Findings:**
+- Zero SQLITE_BUSY errors with proper `busy_timeout`
+- WAL mode + single connection pool handles contention gracefully
+- ~10,175 writes/sec throughput even with serialized access
+- Ecto's connection pool queuing works well (queue times 0.3-0.7ms)
+
+**Production Recommendations:**
+- Always set `busy_timeout: 5000` or higher
+- WAL mode is essential for concurrent reads/writes
+- `pool_size: 1` is fine for single-vault scenarios
+- Consider `pool_size: 2-3` for read-heavy workloads
+
+**Test script:** `test_sqlite_concurrent.exs` — run with `mix run test_sqlite_concurrent.exs`
+
+---
 
 ### Currency: Switch to Indonesian Rupiah (IDR)
 
