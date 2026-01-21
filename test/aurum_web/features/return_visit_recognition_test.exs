@@ -68,9 +68,27 @@ defmodule AurumWeb.ReturnVisitRecognitionTest do
       Aurum.Portfolio.delete_item(item)
     end
 
-    @tag :skip
     test "cookie TTL refreshed on visit", %{conn: conn} do
-      # TODO: implement
+      # First visit: creates vault with cookie
+      conn1 = get(conn, "/")
+      original_cookie = conn1.resp_cookies["_aurum_vault"]
+      _original_max_age = original_cookie[:max_age]
+
+      # Second visit: cookie should be refreshed with new TTL
+      conn2 =
+        build_conn()
+        |> put_req_cookie("_aurum_vault", original_cookie.value)
+        |> get("/")
+
+      refreshed_cookie = conn2.resp_cookies["_aurum_vault"]
+
+      assert refreshed_cookie != nil, "Expected cookie to be refreshed on return visit"
+
+      refreshed_max_age = refreshed_cookie[:max_age]
+      one_year_seconds = 365 * 24 * 60 * 60
+
+      assert refreshed_max_age >= one_year_seconds - 86_400,
+             "Expected refreshed cookie to have ~1 year TTL"
     end
   end
 end

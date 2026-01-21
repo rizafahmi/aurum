@@ -16,14 +16,26 @@ defmodule AurumWeb.VaultPlug do
 
   def call(conn, _opts) do
     case get_vault_from_cookie(conn) do
-      {:ok, vault_id, _token} ->
+      {:ok, vault_id, token} ->
         conn
+        |> refresh_cookie(vault_id, token)
         |> put_private(:vault_id, vault_id)
         |> put_private(:vault_credentials, %{vault_id: vault_id})
 
       :error ->
         create_vault_and_set_cookie(conn)
     end
+  end
+
+  defp refresh_cookie(conn, vault_id, token) do
+    cookie_value = Jason.encode!(%{vault_id: vault_id, token: token})
+
+    put_resp_cookie(conn, @cookie_name, cookie_value,
+      encrypt: true,
+      max_age: @cookie_max_age,
+      http_only: true,
+      same_site: "Lax"
+    )
   end
 
   defp get_vault_from_cookie(conn) do

@@ -2,6 +2,23 @@
 
 ## 2026-01-21
 
+### US-102: Return Visit Recognition — Test 4
+
+**Test 4: cookie TTL refreshed on visit** ✅
+
+**Implementation:**
+- Added `refresh_cookie/3` to VaultPlug
+- On valid return visit, cookie is re-set with fresh 1-year max_age
+- Extends session lifetime for active users
+
+**Files modified:**
+- `lib/aurum_web/plugs/vault_plug.ex` - Added `refresh_cookie/3`, call it on valid cookie
+
+**Test status:** ✅ PASSED (4 tests, 0 failures)
+**Existing tests:** ✅ PASSED (169 tests, 0 failures)
+
+---
+
 ### US-102: Return Visit Recognition — Test 3
 
 **Test 3: dashboard displays previously created items** ✅
