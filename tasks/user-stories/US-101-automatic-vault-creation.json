@@ -1,0 +1,28 @@
+{
+  "id": "US-101",
+  "title": "Automatic Vault Creation",
+  "description": "As a new visitor, I want a vault created automatically so that I can start tracking gold immediately.",
+  "status": "pending",
+  "priority": 1,
+  "acceptance_criteria": [
+    "First visit creates vault without user input",
+    "Vault database file created at expected path",
+    "User redirected to dashboard within 2 seconds",
+    "Cookie set with vault credentials",
+    "mix test passes"
+  ],
+  "related_requirements": ["FR-001", "FR-002", "FR-003", "FR-004"],
+  "amendments": ["A-004", "A-005", "A-010", "A-011"],
+  "technical_notes": {
+    "modules": [
+      "Aurum.Accounts",
+      "Aurum.Accounts.Vault",
+      "Aurum.Accounts.Repo",
+      "Aurum.VaultDatabase.Manager",
+      "Aurum.VaultDatabase.Migrator"
+    ],
+    "token_generation": "Use :crypto.strong_rand_bytes(32) with SHA-256 hash + pepper",
+    "cookie": "Signed AND encrypted, HTTP-only, Secure, SameSite=Lax, 1 year TTL",
+    "database_path": "Configurable via VAULT_DATABASES_PATH env var"
+  }
+}

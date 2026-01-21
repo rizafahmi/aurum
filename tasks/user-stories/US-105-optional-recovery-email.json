@@ -1,0 +1,30 @@
+{
+  "id": "US-105",
+  "title": "Optional Recovery Email",
+  "description": "As a user, I want to optionally add a recovery email so that I can regain access if I lose my browser data.",
+  "status": "pending",
+  "priority": 5,
+  "acceptance_criteria": [
+    "Prompt appears after adding first item (dismissible)",
+    "Email saved to central database on submission",
+    "Email added confirmation shown",
+    "Prompt does not reappear after dismissal",
+    "mix test passes"
+  ],
+  "related_requirements": ["FR-010", "FR-011"],
+  "amendments": ["A-006", "A-007", "A-008", "A-009"],
+  "technical_notes": {
+    "modules": [
+      "Aurum.Accounts"
+    ],
+    "email_verification": "Send verification link before binding email to vault (A-007)",
+    "magic_link": {
+      "ttl": "15 minutes",
+      "single_use": true,
+      "storage": "Hashed in recovery_tokens table",
+      "rate_limit": "Max 3 recovery requests per email per hour"
+    },
+    "token_rotation": "Generate new vault_token on recovery, invalidate old token_hash",
+    "anti_enumeration": "Always show 'If this email is registered, you'll receive a link'"
+  }
+}

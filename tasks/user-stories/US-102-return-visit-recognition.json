@@ -1,0 +1,25 @@
+{
+  "id": "US-102",
+  "title": "Return Visit Recognition",
+  "description": "As a returning user, I want to be recognized automatically so that I see my existing portfolio.",
+  "status": "pending",
+  "priority": 2,
+  "acceptance_criteria": [
+    "Valid cookie loads correct vault data",
+    "No login prompt shown",
+    "Dashboard displays previously created items",
+    "Cookie TTL refreshed on visit",
+    "mix test passes"
+  ],
+  "related_requirements": ["FR-004", "FR-005", "FR-007"],
+  "amendments": ["A-004", "A-012"],
+  "technical_notes": {
+    "modules": [
+      "AurumWeb.VaultLoader",
+      "Aurum.VaultDatabase.DynamicRepo",
+      "Aurum.VaultRepo"
+    ],
+    "token_verification": "SHA-256 hash with constant-time comparison (Plug.Crypto.secure_compare)",
+    "repo_binding": "Use VaultRepo.with_vault/2 wrapper for safe dynamic repo access"
+  }
+}

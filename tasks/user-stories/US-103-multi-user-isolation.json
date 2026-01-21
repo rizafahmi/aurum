@@ -1,0 +1,24 @@
+{
+  "id": "US-103",
+  "title": "Multi-User Isolation",
+  "description": "As a user, I want my data isolated from other users so that my portfolio is private.",
+  "status": "pending",
+  "priority": 3,
+  "acceptance_criteria": [
+    "Two users in different browsers see different data",
+    "Creating item in one vault does not affect another",
+    "Invalid vault_id cannot access other vaults",
+    "mix test passes"
+  ],
+  "related_requirements": ["FR-007", "FR-009"],
+  "amendments": ["A-012", "A-013"],
+  "technical_notes": {
+    "modules": [
+      "Aurum.VaultDatabase.Supervisor",
+      "Aurum.VaultRepo"
+    ],
+    "isolation_strategy": "Each vault has separate SQLite file, dynamic repo binding per request",
+    "testing": "Add integration tests for concurrent requests across 2+ vaults, verify no data leakage",
+    "async_safety": "Ensure Tasks and PubSub handlers maintain correct repo binding"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "US-106",
+  "title": "Idle Vault Cleanup",
+  "description": "As the system, I want to stop idle vault repo processes so that server resources are conserved.",
+  "status": "pending",
+  "priority": 6,
+  "acceptance_criteria": [
+    "Repo process stops after 30 minutes of inactivity",
+    "Next request restarts repo transparently",
+    "No data loss on repo restart",
+    "mix test passes"
+  ],
+  "related_requirements": ["FR-008"],
+  "amendments": ["A-001", "A-003"],
+  "technical_notes": {
+    "modules": [
+      "Aurum.VaultDatabase.Supervisor",
+      "Aurum.VaultDatabase.DynamicRepo"
+    ],
+    "idle_timeout": "30 minutes",
+    "scale_target": "≤5,000 total vaults, ≤500 concurrent active sessions",
+    "abandoned_cleanup": {
+      "eligibility": "No activity for 90 days AND no recovery email",
+      "warning": "Send email 7 days before deletion if email configured",
+      "retention": "Keep central DB record with deleted_at for 30 days"
+    }
+  }
+}

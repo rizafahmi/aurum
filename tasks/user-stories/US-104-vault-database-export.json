@@ -1,0 +1,24 @@
+{
+  "id": "US-104",
+  "title": "Vault Database Export",
+  "description": "As a user, I want to download my vault database so that I own my data completely.",
+  "status": "pending",
+  "priority": 4,
+  "acceptance_criteria": [
+    "Export button available in settings",
+    "Downloads .db file with all user data",
+    "File is valid SQLite, openable with standard tools",
+    "Filename includes vault identifier",
+    "mix test passes"
+  ],
+  "related_requirements": ["FR-013"],
+  "amendments": ["A-014"],
+  "technical_notes": {
+    "modules": [
+      "Aurum.VaultDatabase.Manager"
+    ],
+    "export_method": "Use SQLite VACUUM INTO for atomic export during concurrent writes",
+    "implementation": "Exqlite.Sqlite3.execute(conn, \"VACUUM INTO 'export_path'\")",
+    "temp_file": "Export to System.tmp_dir!/0 before streaming to user"
+  }
+}
