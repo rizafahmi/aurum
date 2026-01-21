@@ -2,6 +2,30 @@
 
 ## 2026-01-21
 
+### US-102: Return Visit Recognition — Test 1
+
+**Test 1: valid cookie loads correct vault data** ✅
+
+**Implementation:**
+- Fixed `fetch_cookies` option from `signed:` to `encrypted:` in VaultPlug
+- The cookie was set with `encrypt: true` but fetched with `signed:`, causing decryption failure
+- Now returning visitors with valid encrypted cookies are recognized and load correct vault
+
+**Files modified:**
+- `lib/aurum_web/plugs/vault_plug.ex` - Changed `fetch_cookies(conn, signed: ...)` to `encrypted: ...`
+
+**Files created:**
+- `test/aurum_web/features/return_visit_recognition_test.exs` - US-102 test suite
+
+**Test status:** ✅ PASSED (1 test, 0 failures, 3 excluded)
+**Existing tests:** ✅ PASSED (169 tests, 0 failures, 3 excluded)
+
+**Key learnings:**
+- `put_resp_cookie(..., encrypt: true)` requires `fetch_cookies(..., encrypted: [cookie_name])` to decrypt
+- `signed:` vs `encrypted:` are different options—signed only verifies integrity, encrypted also hides content
+
+---
+
 ### US-101: Automatic Vault Creation — Test 2
 
 **Test 2: vault database file created at expected path** ✅

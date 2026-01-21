@@ -27,7 +27,7 @@ defmodule AurumWeb.VaultPlug do
   end
 
   defp get_vault_from_cookie(conn) do
-    conn = fetch_cookies(conn, signed: [@cookie_name])
+    conn = fetch_cookies(conn, encrypted: [@cookie_name])
 
     case conn.cookies[@cookie_name] do
       nil ->
