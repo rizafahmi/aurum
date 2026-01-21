@@ -7,6 +7,14 @@ config :aurum, Aurum.Repo,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true
 
+config :aurum, Aurum.Accounts.Repo,
+  database: Path.expand("../aurum_accounts_dev.db", __DIR__),
+  pool_size: 5,
+  stacktrace: true,
+  show_sensitive_data_on_connection_error: true
+
+config :aurum, :vault_databases_path, Path.expand("../data/vaults", __DIR__)
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #

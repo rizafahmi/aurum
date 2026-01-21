@@ -10,6 +10,7 @@ defmodule Aurum.Application do
     children = [
       AurumWeb.Telemetry,
       Aurum.Repo,
+      Aurum.Accounts.Repo,
       {Ecto.Migrator,
        repos: Application.fetch_env!(:aurum, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:aurum, :dns_cluster_query) || :ignore},

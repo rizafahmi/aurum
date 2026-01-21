@@ -12,6 +12,15 @@ config :aurum, Aurum.Repo,
   journal_mode: :wal,
   busy_timeout: 10_000
 
+config :aurum, Aurum.Accounts.Repo,
+  database: Path.expand("../aurum_accounts_test.db", __DIR__),
+  pool_size: 1,
+  pool: Ecto.Adapters.SQL.Sandbox,
+  journal_mode: :wal,
+  busy_timeout: 10_000
+
+config :aurum, :vault_databases_path, Path.expand("../tmp/test_vaults", __DIR__)
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :aurum, AurumWeb.Endpoint,

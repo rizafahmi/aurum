@@ -2,6 +2,83 @@
 
 ## 2026-01-21
 
+### US-101: Automatic Vault Creation — Test 2
+
+**Test 2: vault database file created at expected path** ✅
+
+**Implementation:**
+- Created full vault infrastructure:
+  - `Aurum.Accounts.Repo` - Central database for vault metadata
+  - `Aurum.Accounts.Vault` - Schema with token_hash, recovery_email, timestamps
+  - `Aurum.Accounts` - Context with `create_vault/0` and `verify_vault/2`
+  - `Aurum.VaultDatabase.Manager` - Creates per-vault SQLite files
+  - `AurumWeb.VaultPlug` - Creates vault on first visit, sets encrypted cookie
+- Added migration for vaults table with indexes
+- Configured separate `priv/accounts_repo` for Accounts.Repo migrations
+- Added VaultPlug to router's `:browser` pipeline
+
+**Files created:**
+- `lib/aurum/accounts.ex` - Vault management context
+- `lib/aurum/accounts/repo.ex` - Central DB repo
+- `lib/aurum/accounts/vault.ex` - Vault schema
+- `lib/aurum/vault_database/manager.ex` - Vault DB file manager
+- `lib/aurum_web/plugs/vault_plug.ex` - Cookie-based vault provisioning
+- `priv/accounts_repo/migrations/20260121000001_create_vaults.exs` - Vaults table
+
+**Files modified:**
+- `config/config.exs` - Added Accounts.Repo, token_pepper, priv path
+- `config/dev.exs` - Accounts.Repo config, vault_databases_path
+- `config/test.exs` - Accounts.Repo config, vault_databases_path
+- `lib/aurum/application.ex` - Start Accounts.Repo
+- `lib/aurum_web/router.ex` - Added VaultPlug to browser pipeline
+- `test/support/data_case.ex` - Sandbox setup for Accounts.Repo
+
+**Test status:** ✅ PASSED (1 test, 0 failures, 6 excluded)
+**Existing tests:** ✅ PASSED (165 tests, 0 failures, 7 excluded)
+
+**Key learnings:**
+- `encrypt: true` implies signing - can't use both options together
+- Must configure `priv:` option for repos with non-standard migration paths
+- Token uses SHA-256 with pepper (per A-004 amendment) instead of bcrypt
+- Encrypted cookie stores JSON with vault_id and raw token
+
+---
+
+### US-101: Automatic Vault Creation — Test 1
+
+**Test 1: first visit creates vault without user input** ✅
+
+**Implementation:**
+- Added `id="dashboard-content"` wrapper div to `DashboardLive.render/1`
+- Test visits "/" and confirms dashboard content is displayed
+
+**Files modified:**
+- `lib/aurum_web/live/dashboard_live.ex` - Added `#dashboard-content` wrapper
+
+**Test status:** ✅ PASSED (1 test, 0 failures, 6 excluded)
+
+---
+
+### Code Review & Refactoring (Oracle-guided) — DashboardLive
+
+**Idiomatic Elixir improvements:**
+1. **Fixed template indentation** - Consistent nesting under `#dashboard-content`
+2. **Replaced `@items == []` with `Enum.empty?(@items)`** - More idiomatic list emptiness check
+3. **Replaced `if price_info, do:` with `price_info &&`** - Simpler nil-safe access
+4. **Made `to_price_info/1` total** - Added fallback clause returning `:error` to prevent crashes on malformed data
+5. **Used `with` in `fetch_price_info/0`** - Clearer intent for chained pattern matches
+6. **Fixed duplicate DOM ID** - Single `#gold-price` element with conditional content
+
+**Bug fix:**
+7. **Refresh now recomputes summary** - `handle_event("refresh_price", ...)` now recalculates `items` and `summary` with new spot price, so dashboard stats update on refresh
+
+**Files modified:**
+- `lib/aurum_web/live/dashboard_live.ex` - All refactoring applied
+
+**Test status:** ✅ PASSED (165 tests, 0 failures, 7 excluded)
+
+---
+
 ### Risk Validation: Encrypted Cookie Size Limits
 
 **Risk #5 from `tasks/multi-user-vaults-risks.md` — VALIDATED ✓**

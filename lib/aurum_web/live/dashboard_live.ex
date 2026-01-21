@@ -14,7 +14,7 @@ defmodule AurumWeb.DashboardLive do
   @impl true
   def handle_info(:load_data, socket) do
     price_info = fetch_price_info()
-    spot_price = if price_info, do: price_info.price_per_gram, else: nil
+    spot_price = price_info && price_info.price_per_gram
     {items, summary} = Portfolio.dashboard_summary(spot_price)
     {:noreply, assign(socket, items: items, summary: summary, price_info: price_info)}
   end
@@ -23,11 +23,24 @@ defmodule AurumWeb.DashboardLive do
   def handle_event("refresh_price", _params, socket) do
     case PriceCache.refresh() do
       {:ok, resp} ->
-        {:noreply,
-         assign(socket,
-           price_info: to_price_info(resp),
-           refresh_error: Map.get(resp, :refresh_failed, false)
-         )}
+        refresh_failed = Map.get(resp, :refresh_failed, false)
+
+        case to_price_info(resp) do
+          {:ok, info} ->
+            spot_price = info.price_per_gram
+            {items, summary} = Portfolio.dashboard_summary(spot_price)
+
+            {:noreply,
+             assign(socket,
+               price_info: info,
+               refresh_error: refresh_failed,
+               items: items,
+               summary: summary
+             )}
+
+          :error ->
+            {:noreply, assign(socket, refresh_error: true)}
+        end
 
       {:error, _} ->
         {:noreply, assign(socket, refresh_error: true)}
@@ -35,8 +48,10 @@ defmodule AurumWeb.DashboardLive do
   end
 
   defp fetch_price_info do
-    case PriceCache.get_price() do
-      {:ok, resp} -> to_price_info(resp)
+    with {:ok, resp} <- PriceCache.get_price(),
+         {:ok, info} <- to_price_info(resp) do
+      info
+    else
       _ -> nil
     end
   end
@@ -46,60 +61,65 @@ defmodule AurumWeb.DashboardLive do
          fetched_at: fetched_at,
          stale: stale
        }) do
-    %{
-      price_per_oz: oz,
-      price_per_gram: gram,
-      currency: currency,
-      fetched_at: fetched_at,
-      stale: stale
-    }
+    {:ok,
+     %{
+       price_per_oz: oz,
+       price_per_gram: gram,
+       currency: currency,
+       fetched_at: fetched_at,
+       stale: stale
+     }}
   end
+
+  defp to_price_info(_), do: :error
 
   @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
-      <.page_header title="VAULT STATUS" subtitle="Portfolio Overview & Market Data" />
+      <div id="dashboard-content">
+        <.page_header title="VAULT STATUS" subtitle="Portfolio Overview & Market Data" />
 
-      <.price_display price_info={@price_info} refresh_error={@refresh_error} />
+        <.price_display price_info={@price_info} refresh_error={@refresh_error} />
 
-      <.empty_state
-        :if={@items == []}
-        id="empty-portfolio"
-        message="NO ASSETS DETECTED"
-        description="Initialize your portfolio by adding gold items"
-        cta_text="+ ADD FIRST ITEM"
-        cta_path={~p"/items/new"}
-      />
+        <.empty_state
+          :if={Enum.empty?(@items)}
+          id="empty-portfolio"
+          message="NO ASSETS DETECTED"
+          description="Initialize your portfolio by adding gold items"
+          cta_text="+ ADD FIRST ITEM"
+          cta_path={~p"/items/new"}
+        />
 
-      <div :if={@items != []} class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <.stat_card
-          id="total-gold-weight"
-          label="Pure Gold"
-          value={"#{@summary.total_pure_gold_grams} g"}
-          icon="◊"
-        />
-        <.stat_card
-          id="total-invested"
-          label="Invested"
-          value={Format.currency(@summary.total_invested)}
-          icon="$"
-        />
-        <.stat_card
-          id="total-current-value"
-          label="Current Value"
-          value={Format.currency(@summary.total_current_value)}
-          icon="≡"
-        />
-        <.stat_card
-          id="gain-loss-amount"
-          label="Gain/Loss"
-          value={Format.currency(@summary.total_gain_loss)}
-          subtitle_id="gain-loss-percent"
-          subtitle={Format.percent(@summary.total_gain_loss_percent)}
-          icon="Δ"
-          gain_loss={@summary.total_gain_loss}
-        />
+        <div :if={not Enum.empty?(@items)} class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <.stat_card
+            id="total-gold-weight"
+            label="Pure Gold"
+            value={"#{@summary.total_pure_gold_grams} g"}
+            icon="◊"
+          />
+          <.stat_card
+            id="total-invested"
+            label="Invested"
+            value={Format.currency(@summary.total_invested)}
+            icon="$"
+          />
+          <.stat_card
+            id="total-current-value"
+            label="Current Value"
+            value={Format.currency(@summary.total_current_value)}
+            icon="≡"
+          />
+          <.stat_card
+            id="gain-loss-amount"
+            label="Gain/Loss"
+            value={Format.currency(@summary.total_gain_loss)}
+            subtitle_id="gain-loss-percent"
+            subtitle={Format.percent(@summary.total_gain_loss_percent)}
+            icon="Δ"
+            gain_loss={@summary.total_gain_loss}
+          />
+        </div>
       </div>
     </Layouts.app>
     """
@@ -116,11 +136,13 @@ defmodule AurumWeb.DashboardLive do
           <div class="text-gold-muted text-xs uppercase tracking-wide mb-1">
             {">_"} GOLD SPOT PRICE
           </div>
-          <div :if={@price_info} id="gold-price" class="stat-value">
-            {Format.currency(@price_info.price_per_gram)} <span class="text-gold-muted text-sm">/gram</span>
-          </div>
-          <div :if={!@price_info} id="gold-price" class="stat-value text-gold-muted">
-            -- AWAITING DATA --
+          <div id="gold-price" class={["stat-value", !@price_info && "text-gold-muted"]}>
+            <%= if @price_info do %>
+              {Format.currency(@price_info.price_per_gram)}
+              <span class="text-gold-muted text-sm">/gram</span>
+            <% else %>
+              -- AWAITING DATA --
+            <% end %>
           </div>
         </div>
         <div class="flex items-center gap-6">

@@ -8,8 +8,12 @@
 import Config
 
 config :aurum,
-  ecto_repos: [Aurum.Repo],
-  generators: [timestamp_type: :utc_datetime, binary_id: true]
+  ecto_repos: [Aurum.Repo, Aurum.Accounts.Repo],
+  generators: [timestamp_type: :utc_datetime, binary_id: true],
+  token_pepper: "aurum_vault_pepper_change_in_prod"
+
+config :aurum, Aurum.Accounts.Repo,
+  priv: "priv/accounts_repo"
 
 # Configures the endpoint
 config :aurum, AurumWeb.Endpoint,
