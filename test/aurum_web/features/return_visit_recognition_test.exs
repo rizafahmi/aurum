@@ -46,9 +46,26 @@ defmodule AurumWeb.ReturnVisitRecognitionTest do
       refute html_response(conn2, 200) =~ "sign in"
     end
 
-    @tag :skip
     test "dashboard displays previously created items", %{conn: conn} do
-      # TODO: implement
+      # Create an item first
+      {:ok, item} =
+        Aurum.Portfolio.create_item(%{
+          name: "Test Gold Bar",
+          weight: "100.0",
+          weight_unit: "grams",
+          purity: 24,
+          category: "bar",
+          quantity: 1,
+          purchase_price: "5000.00"
+        })
+
+      # Visit items page (uses PhoenixTest which handles LiveView mount)
+      conn
+      |> visit("/items")
+      |> assert_has("#items-list", text: "Test Gold Bar")
+
+      # Cleanup
+      Aurum.Portfolio.delete_item(item)
     end
 
     @tag :skip

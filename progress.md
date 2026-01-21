@@ -2,6 +2,24 @@
 
 ## 2026-01-21
 
+### US-102: Return Visit Recognition — Test 3
+
+**Test 3: dashboard displays previously created items** ✅
+
+**Implementation:**
+- No code changes needed — already working
+- Test creates an item, then visits /items page to verify it appears in the list
+- Uses PhoenixTest's `visit` + `assert_has` for proper LiveView handling
+
+**Test status:** ✅ PASSED (3 tests, 0 failures, 1 excluded)
+**Existing tests:** ✅ PASSED (169 tests, 0 failures, 1 excluded)
+
+**Key learnings:**
+- Raw `get(conn, "/")` only gets static HTML; LiveView data loads after `connected?(socket)`
+- PhoenixTest's `visit/2` properly handles LiveView mount and async data loading
+
+---
+
 ### US-102: Return Visit Recognition — Test 2
 
 **Test 2: no login prompt shown** ✅
