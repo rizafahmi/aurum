@@ -2,7 +2,7 @@
   "id": "US-101",
   "title": "Automatic Vault Creation",
   "description": "As a new visitor, I want a vault created automatically so that I can start tracking gold immediately.",
-  "status": "pending",
+  "status": "done",
   "priority": 1,
   "acceptance_criteria": [
     "First visit creates vault without user input",

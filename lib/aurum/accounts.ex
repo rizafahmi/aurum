@@ -60,7 +60,7 @@ defmodule Aurum.Accounts do
   end
 
   defp hash_token(raw_token) do
-    :crypto.hash(:sha256, raw_token <> @token_pepper)
+    :crypto.mac(:hmac, :sha256, @token_pepper, raw_token)
     |> Base.encode64()
   end
 end

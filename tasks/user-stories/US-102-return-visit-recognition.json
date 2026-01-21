@@ -2,7 +2,7 @@
   "id": "US-102",
   "title": "Return Visit Recognition",
   "description": "As a returning user, I want to be recognized automatically so that I see my existing portfolio.",
-  "status": "pending",
+  "status": "done",
   "priority": 2,
   "acceptance_criteria": [
     "Valid cookie loads correct vault data",

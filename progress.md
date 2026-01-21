@@ -2,6 +2,31 @@
 
 ## 2026-01-21
 
+### Code Review & Refactoring (Oracle-guided) — VaultPlug & Accounts
+
+**Idiomatic Elixir improvements:**
+1. **Refactored VaultPlug with `with` pipelines** - Replaced nested `case` with linear `with` flow
+2. **DRY cookie options** - Extracted `cookie_opts/0` and `put_vault_cookie/3` helpers
+3. **DRY private assigns** - Extracted `put_vault_private/2` helper
+4. **UUID validation** - Added `Ecto.UUID.cast/1` check before DB lookup (security)
+5. **HMAC for token hashing** - Changed from `sha256(token <> pepper)` to `:crypto.mac(:hmac, ...)`
+6. **Added `secure: true` for production** - Cookie only sent over HTTPS in prod
+7. **Added moduledoc to Vault schema**
+
+**Files modified:**
+- `lib/aurum_web/plugs/vault_plug.ex` - Complete refactor with `with`, helpers, UUID validation
+- `lib/aurum/accounts.ex` - Changed `hash_token/1` to use HMAC
+- `lib/aurum/accounts/vault.ex` - Added `@moduledoc`
+
+**Test status:** ✅ PASSED (169 tests, 0 failures)
+
+**Key learnings:**
+- HMAC is the proper primitive for "hash with a secret" vs concatenation
+- `with` linearizes authentication flows and makes failure paths obvious
+- Pre-existing tokens will be invalidated by hash algorithm change
+
+---
+
 ### US-102: Return Visit Recognition — Test 4
 
 **Test 4: cookie TTL refreshed on visit** ✅

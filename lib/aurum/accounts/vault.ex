@@ -1,4 +1,11 @@
 defmodule Aurum.Accounts.Vault do
+  @moduledoc """
+  Schema for vault records in the central accounts database.
+
+  Each vault represents an anonymous user's data container, identified by
+  an encrypted cookie. The token_hash stores an HMAC of the bearer token.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 
