@@ -26,9 +26,24 @@ defmodule AurumWeb.ReturnVisitRecognitionTest do
       assert conn2.status == 200
     end
 
-    @tag :skip
     test "no login prompt shown", %{conn: conn} do
-      # TODO: implement
+      # First visit: creates vault
+      conn1 = get(conn, "/")
+      vault_cookie = conn1.resp_cookies["_aurum_vault"]
+
+      # Second visit: should go straight to dashboard, no login
+      conn2 =
+        build_conn()
+        |> put_req_cookie("_aurum_vault", vault_cookie.value)
+        |> get("/")
+
+      # Verify dashboard is shown
+      assert html_response(conn2, 200) =~ "dashboard-content"
+
+      # Verify no login elements present
+      refute html_response(conn2, 200) =~ "login"
+      refute html_response(conn2, 200) =~ "password"
+      refute html_response(conn2, 200) =~ "sign in"
     end
 
     @tag :skip

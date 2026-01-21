@@ -2,6 +2,20 @@
 
 ## 2026-01-21
 
+### US-102: Return Visit Recognition — Test 2
+
+**Test 2: no login prompt shown** ✅
+
+**Implementation:**
+- No code changes needed — already working
+- Test verifies returning user sees dashboard directly without any login/password prompts
+- Confirms vault-based authentication is seamless and automatic
+
+**Test status:** ✅ PASSED (2 tests, 0 failures, 2 excluded)
+**Existing tests:** ✅ PASSED (169 tests, 0 failures, 2 excluded)
+
+---
+
 ### US-102: Return Visit Recognition — Test 1
 
 **Test 1: valid cookie loads correct vault data** ✅
