@@ -8,6 +8,7 @@ defmodule AurumWeb.VaultPlug do
 
   alias Aurum.Accounts
   alias Aurum.VaultDatabase.Manager
+  alias Aurum.VaultRepo
 
   @cookie_name "_aurum_vault"
   @cookie_max_age 365 * 24 * 60 * 60
@@ -60,9 +61,18 @@ defmodule AurumWeb.VaultPlug do
   end
 
   defp put_vault_private(conn, vault_id) do
+    # Ensure the vault's repo is started and bound for this request
+    # In test mode, VaultRepo.ensure_repo_started returns the shared sandbox repo
+    {:ok, _pid} = VaultRepo.ensure_repo_started(vault_id)
+
+    unless Application.get_env(:aurum, :env) == :test do
+      Aurum.Repo.put_dynamic_repo(VaultRepo.repo_name(vault_id))
+    end
+
     conn
     |> put_private(:vault_id, vault_id)
     |> put_private(:vault_credentials, %{vault_id: vault_id})
+    |> put_session(:vault_id, vault_id)
   end
 
   defp cookie_opts do

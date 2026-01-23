@@ -2,7 +2,7 @@
   "id": "US-104",
   "title": "Vault Database Export",
   "description": "As a user, I want to download my vault database so that I own my data completely.",
-  "status": "pending",
+  "status": "complete",
   "priority": 4,
   "acceptance_criteria": [
     "Export button available in settings",

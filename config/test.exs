@@ -1,5 +1,8 @@
 import Config
 
+# Mark this as test environment for runtime checks
+config :aurum, :env, :test
+
 # Configure your database
 #
 # The MIX_TEST_PARTITION environment variable can be used

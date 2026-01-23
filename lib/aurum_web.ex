@@ -50,6 +50,8 @@ defmodule AurumWeb do
     quote do
       use Phoenix.LiveView
 
+      on_mount AurumWeb.VaultHooks
+
       unquote(html_helpers())
     end
   end

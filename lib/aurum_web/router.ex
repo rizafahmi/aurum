@@ -24,6 +24,10 @@ defmodule AurumWeb.Router do
     live "/items/new", ItemLive.New
     live "/items/:id", ItemLive.Show
     live "/items/:id/edit", ItemLive.Edit
+
+    live "/settings", SettingsLive
+
+    get "/settings/export", SettingsController, :export
   end
 
   # Other scopes may use custom stacks.

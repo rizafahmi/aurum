@@ -1,0 +1,2684 @@
+09:28:16.844 [debug] Child {XPLoggerFileBackend, :general_log} of Supervisor Logger.Backends.Supervisor started
+Pid: #PID<0.102.0>
+Start Call: Logger.Backends.Watcher.start_link({{XPLoggerFileBackend, :general_log}, {XPLoggerFileBackend, :general_log}})
+Restart: :transient
+Shutdown: 5000
+Type: :worker
+09:28:16.844 [info] Child Logger.Backends.Supervisor of Supervisor Logger.Backends.Internal started
+Pid: #PID<0.101.0>
+Start Call: Logger.Backends.Supervisor.start_link([{XPLoggerFileBackend, :general_log}])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:28:16.844 [info] Child Logger.Backends.Internal of Supervisor Logger.Supervisor started
+Pid: #PID<0.97.0>
+Start Call: Logger.Backends.Internal.start_link([])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:28:16.844 [info] Application logger started at :nonode@nohost
+09:28:16.844 [info] Application xp_mime started at :nonode@nohost
+09:28:16.844 [info] Application xp_hpax started at :nonode@nohost
+09:28:16.844 [info] Application crypto started at :nonode@nohost
+09:28:16.844 [info] Application asn1 started at :nonode@nohost
+09:28:16.844 [info] Application public_key started at :nonode@nohost
+09:28:16.846 [debug] Child :ssl_handler of Supervisor :logger_sup started
+Pid: #PID<0.107.0>
+Start Call: :logger_olp.start_link(:logger_std_h_ssl_handler, :logger_h_common, %{id: :ssl_handler, module: :logger_std_h, config: %{type: :standard_io, filesync_repeat_interval: :no_repeat}, level: :debug, filter_default: :stop, filters: [], formatter: {:ssl_logger, %{}}}, %{})
+Restart: :temporary
+Shutdown: 2000
+Type: :worker
+09:28:16.849 [info] Child :ssl_pem_cache of Supervisor :ssl_admin_sup started
+Pid: #PID<0.111.0>
+Start Call: :ssl_pem_cache.start_link([])
+Restart: :permanent
+Shutdown: 4000
+Type: :worker
+09:28:16.852 [info] Child :ssl_manager of Supervisor :ssl_admin_sup started
+Pid: #PID<0.112.0>
+Start Call: :ssl_manager.start_link([])
+Restart: :permanent
+Shutdown: 4000
+Type: :worker
+09:28:16.853 [info] Child :tls_client_ticket_store of Supervisor :ssl_admin_sup started
+Pid: #PID<0.113.0>
+Start Call: :tls_client_ticket_store.start_link(1000, 7200)
+Restart: :permanent
+Shutdown: 4000
+Type: :worker
+09:28:16.853 [info] Child :ssl_admin_sup of Supervisor :ssl_sup started
+Pid: #PID<0.110.0>
+Start Call: :ssl_admin_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:28:16.855 [info] Child :tls_connection_sup of Supervisor :tls_sup started
+Pid: #PID<0.116.0>
+Start Call: :tls_connection_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:28:16.855 [info] Child :ssl_listen_tracker_sup of Supervisor :tls_server_sup started
+Pid: #PID<0.118.0>
+Start Call: :ssl_listen_tracker_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:28:16.856 [info] Child :tls_server_session_ticket of Supervisor :tls_server_sup started
+Pid: #PID<0.119.0>
+Start Call: :tls_server_session_ticket_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:28:16.856 [info] Child :ssl_server_session_cache_sup of Supervisor :tls_server_sup started
+Pid: #PID<0.120.0>
+Start Call: :ssl_server_session_cache_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:28:16.857 [info] Child :ssl_upgrade_server_session_cache_sup of Supervisor :tls_server_sup started
+Pid: #PID<0.121.0>
+Start Call: :ssl_upgrade_server_session_cache_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:28:16.857 [info] Child :tls_server_sup of Supervisor :tls_sup started
+Pid: #PID<0.117.0>
+Start Call: :tls_server_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:28:16.857 [info] Child :tls_sup of Supervisor :ssl_connection_sup started
+Pid: #PID<0.115.0>
+Start Call: :tls_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:28:16.858 [info] Child :dtls_connection_sup of Supervisor :dtls_sup started
+Pid: #PID<0.123.0>
+Start Call: :dtls_connection_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:28:16.859 [info] Child :dtls_listener_sup of Supervisor :dtls_server_sup started
+Pid: #PID<0.125.0>
+Start Call: :dtls_listener_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:28:16.859 [info] Child :dtls_server_session_cache_sup of Supervisor :dtls_server_sup started
+Pid: #PID<0.126.0>
+Start Call: :dtls_server_session_cache_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:28:16.859 [info] Child :dtls_server_sup of Supervisor :dtls_sup started
+Pid: #PID<0.124.0>
+Start Call: :dtls_server_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:28:16.859 [info] Child :dtls_sup of Supervisor :ssl_connection_sup started
+Pid: #PID<0.122.0>
+Start Call: :dtls_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:28:16.859 [info] Child :ssl_connection_sup of Supervisor :ssl_sup started
+Pid: #PID<0.114.0>
+Start Call: :ssl_connection_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:28:16.859 [info] Application ssl started at :nonode@nohost
+09:28:16.860 [info] Application xp_mint started at :nonode@nohost
+09:28:16.860 [info] Application xp_nimble_options started at :nonode@nohost
+09:28:16.862 [info] Child XPNimblePool.TaskSupervisor of Supervisor #PID<0.132.0> (Supervisor.Default) started
+Pid: #PID<0.133.0>
+Start Call: Task.Supervisor.start_link([name: XPNimblePool.TaskSupervisor])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:28:16.863 [info] Application xp_nimble_pool started at :nonode@nohost
+09:28:16.864 [info] Child :telemetry_handler_table of Supervisor :telemetry_sup started
+Pid: #PID<0.137.0>
+Start Call: :telemetry_handler_table.start_link()
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:28:16.864 [info] Application xp_telemetry started at :nonode@nohost
+09:28:16.864 [info] Application xp_finch started at :nonode@nohost
+09:28:16.880 [info] Child XPReq.Finch.PIDPartition0 of Supervisor XPReq.Finch started
+Pid: #PID<0.143.0>
+Start Call: Registry.Partition.start_link(XPReq.Finch.PIDPartition0, {:duplicate, XPReq.Finch, 0, 1, XPReq.Finch.KeyPartition0, XPReq.Finch.PIDPartition0, [], false})
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:28:16.880 [info] Child XPReq.Finch of Supervisor XPReq.Finch.Supervisor started
+Pid: #PID<0.142.0>
+Start Call: Registry.start_link([keys: :duplicate, name: XPReq.Finch, meta: [config: %{pools: %{}, registry_name: XPReq.Finch, supervisor_name: XPReq.Finch.PoolSupervisor, manager_name: XPReq.Finch.PoolManager, default_pool_config: %{count: 1, size: 50, mod: XPFinch.HTTP1.Pool, conn_opts: [protocols: [:http1], transport_opts: [keepalive: true, nodelay: true, timeout: 5000], ssl_key_log_file_device: nil], pool_max_idle_time: :infinity, conn_max_idle_time: :infinity, start_pool_metrics?: false}}]])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:28:16.880 [info] Child XPReq.Finch.PoolSupervisor of Supervisor XPReq.Finch.Supervisor started
+Pid: #PID<0.144.0>
+Start Call: DynamicSupervisor.start_link([name: XPReq.Finch.PoolSupervisor, strategy: :one_for_one])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:28:16.880 [info] Child XPFinch.PoolManager of Supervisor XPReq.Finch.Supervisor started
+Pid: #PID<0.145.0>
+Start Call: XPFinch.PoolManager.start_link(%{pools: %{}, registry_name: XPReq.Finch, supervisor_name: XPReq.Finch.PoolSupervisor, manager_name: XPReq.Finch.PoolManager, default_pool_config: %{count: 1, size: 50, mod: XPFinch.HTTP1.Pool, conn_opts: [protocols: [:http1], transport_opts: [keepalive: true, nodelay: true, timeout: 5000], ssl_key_log_file_device: nil], pool_max_idle_time: :infinity, conn_max_idle_time: :infinity, start_pool_metrics?: false}})
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:28:16.880 [info] Child XPReq.Finch of Supervisor #PID<0.140.0> (Supervisor.Default) started
+Pid: #PID<0.141.0>
+Start Call: XPFinch.start_link([name: XPReq.Finch, pools: %{default: [protocols: [:http1]]}])
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:28:16.880 [info] Child XPReq.FinchSupervisor of Supervisor #PID<0.140.0> (Supervisor.Default) started
+Pid: #PID<0.146.0>
+Start Call: DynamicSupervisor.start_link([strategy: :one_for_one, name: XPReq.FinchSupervisor])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:28:16.880 [info] Child XPReq.Test.Ownership of Supervisor #PID<0.140.0> (Supervisor.Default) started
+Pid: #PID<0.147.0>
+Start Call: XPReq.Test.Ownership.start_link([name: XPReq.Test.Ownership])
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:28:16.880 [info] Application xp_req started at :nonode@nohost
+09:28:16.880 [info] Application burrito started at :nonode@nohost
+09:28:16.880 [info] Application xp_schematic started at :nonode@nohost
+09:28:16.880 [info] Application xp_typed_struct started at :nonode@nohost
+09:28:16.880 [info] Application xp_gen_lsp started at :nonode@nohost
+09:28:16.887 [info] Child XPSnowflake.Generator of Supervisor #PID<0.150.0> (Supervisor.Default) started
+Pid: #PID<0.151.0>
+Start Call: XPSnowflake.Generator.start_link(0, 1023)
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:28:16.887 [info] Application xp_snowflake started at :nonode@nohost
+09:28:16.887 [info] Application xp_sourceror started at :nonode@nohost
+09:28:16.887 [info] Application xp_forge started at :nonode@nohost
+09:28:16.887 [info] Application xp_logger_file_backend started at :nonode@nohost
+09:28:16.890 [info] Child :ttb_autostart of Supervisor :runtime_tools_sup started
+Pid: #PID<0.155.0>
+Start Call: :ttb_autostart.start_link()
+Restart: :temporary
+Shutdown: 3000
+Type: :worker
+09:28:16.890 [info] Application runtime_tools started at :nonode@nohost
+09:28:16.890 [info] Application et started at :nonode@nohost
+09:28:16.890 [info] Application observer started at :nonode@nohost
+09:28:16.890 [info] Application xp_path_glob started at :nonode@nohost
+09:28:16.901 [info] Starting NodePortMapper on nonode@nohost
+09:28:16.901 [info] Child XPForge.NodePortMapper of Supervisor XPExpert.Supervisor started
+Pid: #PID<0.159.0>
+Start Call: XPForge.NodePortMapper.start_link([])
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:28:16.902 [info] Child XPForge.Document.Store of Supervisor XPExpert.Supervisor started
+Pid: #PID<0.160.0>
+Start Call: XPForge.Document.Store.start_link([derive: [analysis: &XPForge.Ast.analyze/1]])
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:28:16.903 [info] Child XPExpert.ProjectSupervisor of Supervisor XPExpert.Supervisor started
+Pid: #PID<0.161.0>
+Start Call: DynamicSupervisor.start_link([name: XPExpert.ProjectSupervisor, strategy: :one_for_one])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:28:16.903 [info] Child XPExpert.DynamicSupervisor of Supervisor XPExpert.Supervisor started
+Pid: #PID<0.162.0>
+Start Call: DynamicSupervisor.start_link([name: XPExpert.DynamicSupervisor])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:28:16.904 [info] Child XPGenLSP.Assigns of Supervisor XPExpert.Supervisor started
+Pid: #PID<0.163.0>
+Start Call: XPGenLSP.Assigns.start_link([name: XPExpert.Assigns])
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:28:16.904 [info] Child :expert_task_queue of Supervisor XPExpert.Supervisor started
+Pid: #PID<0.164.0>
+Start Call: Task.Supervisor.start_link([name: :expert_task_queue])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:28:16.905 [info] Child XPGenLSP.Buffer of Supervisor XPExpert.Supervisor started
+Pid: #PID<0.165.0>
+Start Call: XPGenLSP.Buffer.start_link([name: XPExpert.Buffer])
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:28:16.905 [debug] [name: XPExpert, buffer: XPExpert.Buffer, task_supervisor: :expert_task_queue, dynamic_supervisor: XPExpert.DynamicSupervisor, assigns: XPExpert.Assigns]
+09:28:16.909 [info] Child XPExpert of Supervisor XPExpert.Supervisor started
+Pid: #PID<0.166.0>
+Start Call: XPExpert.start_link([name: XPExpert, buffer: XPExpert.Buffer, task_supervisor: :expert_task_queue, dynamic_supervisor: XPExpert.DynamicSupervisor, assigns: XPExpert.Assigns])
+Restart: :permanent
+Shutdown: 500
+Type: :worker
+09:28:16.909 [info] Application xp_expert started at :nonode@nohost
+09:28:16.979 [info] Starting project at uri file:///Users/riza/code/aurum
+09:28:16.989 [info] Child {XPExpert.Project.Progress, "aurum"} of Supervisor :"aurum::supervisor" started
+Pid: #PID<0.171.0>
+Start Call: XPExpert.Project.Progress.start_link(%XPForge.Project{root_uri: "file:///Users/riza/code/aurum", mix_exs_uri: "file:///Users/riza/code/aurum/mix.exs", mix_project?: true, mix_env: nil, mix_target: nil, env_variables: %{}, project_module: nil, entropy: 23402})
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:28:16.990 [info] Child {XPExpert.EngineSupervisor, "aurum"} of Supervisor :"aurum::supervisor" started
+Pid: #PID<0.172.0>
+Start Call: XPExpert.EngineSupervisor.start_link(%XPForge.Project{root_uri: "file:///Users/riza/code/aurum", mix_exs_uri: "file:///Users/riza/code/aurum/mix.exs", mix_project?: true, mix_env: nil, mix_target: nil, env_variables: %{}, project_module: nil, entropy: 23402})
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:28:16.994 [debug] sent request server -> client window/workDoneProgress/create
+09:28:16.996 [info] Child XPForge.EPMD of Supervisor :net_sup started
+Pid: #PID<0.175.0>
+Start Call: XPForge.EPMD.start_link()
+Restart: :permanent
+Shutdown: 2000
+Type: :worker
+09:28:16.998 [info] Child :auth of Supervisor :net_sup started
+Pid: #PID<0.176.0>
+Start Call: :auth.start_link()
+Restart: :permanent
+Shutdown: 2000
+Type: :worker
+09:28:17.001 [info] Child :net_kernel of Supervisor :net_sup started
+Pid: #PID<0.177.0>
+Start Call: :net_kernel.start_link(%{name: :"expert-manager-aurum-23402@127.0.0.1", supervisor: :net_sup_dynamic, net_tickintensity: 4, net_ticktime: 60, name_domain: :longnames, clean_halt: false})
+Restart: :permanent
+Shutdown: 2000
+Type: :worker
+09:28:17.001 [debug] Child :net_sup_dynamic of Supervisor :kernel_sup started
+Pid: #PID<0.174.0>
+Start Call: :erl_distribution.start_link(%{name: :"expert-manager-aurum-23402@127.0.0.1", supervisor: :net_sup_dynamic, net_tickintensity: 4, net_ticktime: 60, name_domain: :longnames, clean_halt: false})
+Restart: :permanent
+Shutdown: 1000
+Type: :supervisor
+09:28:17.006 [debug] sent notification server -> client $/progress
+09:28:17.037 [debug] handled request client -> server initialize in 120ms
+09:28:17.039 [debug] sent request server -> client client/registerCapability
+09:28:17.048 [debug] handled notification client -> server workspace/didChangeConfiguration in 6ms
+09:28:17.049 [debug] handled notification client -> server initialized in 11ms
+09:28:17.050 [info] Opened file:///Users/riza/code/aurum/mix.exs
+09:28:17.050 [debug] handled notification client -> server textDocument/didOpen in 8ms
+09:28:17.170 [debug] sent notification server -> client window/logMessage
+09:28:17.172 [debug] sent notification server -> client window/logMessage
+09:28:17.172 [debug] sent request server -> client window/workDoneProgress/create
+09:28:17.172 [debug] sent notification server -> client $/progress
+09:28:17.306 [debug] sent notification server -> client window/logMessage
+09:28:17.306 [debug] handled request client -> server textDocument/codeAction in 9ms
+09:28:17.333 [debug] sent notification server -> client window/logMessage
+09:28:17.333 [debug] handled request client -> server textDocument/codeLens in 1ms
+09:28:18.066 [debug] sent notification server -> client window/logMessage
+09:28:18.066 [debug] handled request client -> server textDocument/hover in 2ms
+09:28:18.074 [debug] handled notification client -> server $/cancelRequest in 1ms
+09:28:18.230 [debug] sent notification server -> client window/logMessage
+09:28:18.230 [debug] handled request client -> server textDocument/hover in 233µs
+09:28:18.367 [debug] handled notification client -> server $/cancelRequest in 118µs
+09:28:19.518 [debug] Building engine: * creating /Users/riza/.mix/archives/hex-2.3.1-otp-27
+
+09:28:20.709 [debug] Building engine: * creating /Users/riza/.mix/elixir/1-18-otp-27/rebar3
+
+09:28:21.040 [debug] Building engine: ==> elixir_sense
+
+09:28:21.040 [debug] Building engine: Compiling 5 files (.erl)
+
+09:28:21.276 [debug] Building engine: src/elixir_sense_parser.erl:7593:13: function yeccpars2_447_/1 undefined
+% 7593|  NewStack = yeccpars2_447_(Stack),
+%     |             ^
+
+
+09:28:21.288 [debug] Building engine: src/elixir_sense_parser.erl:7604:13: function yeccpars2_448_/1 undefined
+% 7604|  NewStack = yeccpars2_448_(Stack),
+%     |             ^
+
+
+09:28:21.300 [debug] Building engine: src/elixir_sense_parser.erl:7638:13: function yeccpars2_450_/1 undefined
+% 7638|  NewStack = yeccpars2_450_(Stack),
+%     |             ^
+
+
+09:28:21.321 [debug] Building engine: src/elixir_sense_parser.erl:7647:13: function yeccpars2_451_/1 undefined
+% 7647|  NewStack = yeccpars2_451_(Stack),
+%     |             ^
+
+
+09:28:21.342 [debug] Building engine: src/elixir_sense_parser.erl:7657:13: function yeccpars2_452_/1 undefined
+% 7657|  NewStack = yeccpars2_452_(Stack),
+%     |             ^
+
+
+09:28:21.364 [debug] Building engine: src/elixir_sense_parser.erl:7664:13: function yeccpars2_453_/1 undefined
+% 7664|  NewStack = yeccpars2_453_(Stack),
+%     |             ^
+
+
+09:28:21.386 [debug] Building engine: src/elixir_sense_parser.erl:7671:13: function yeccpars2_454_/1 undefined
+% 7671|  NewStack = yeccpars2_454_(Stack),
+%     |             ^
+
+
+09:28:21.407 [debug] Building engine: src/elixir_sense_parser.erl:7690:13: function yeccpars2_456_/1 undefined
+% 7690|  NewStack = yeccpars2_456_(Stack),
+%     |             ^
+
+
+09:28:21.429 [debug] Building engine: src/elixir_sense_parser.erl:7705:13: function yeccpars2_458_/1 undefined
+% 7705|  NewStack = yeccpars2_458_(Stack),
+%     |             ^
+
+
+09:28:21.451 [debug] Building engine: src/elixir_sense_parser.erl:7785:13: function yeccpars2_459_/1 undefined
+% 7785|  NewStack = yeccpars2_459_(Stack),
+%     |             ^
+
+
+09:28:21.473 [debug] Building engine: src/elixir_sense_parser.erl:7795:13: function yeccpars2_460_/1 undefined
+% 7795|  NewStack = yeccpars2_460_(Stack),
+%     |             ^
+
+
+09:28:21.495 [debug] Building engine: src/elixir_sense_parser.erl:7802:13: function yeccpars2_461_/1 undefined
+% 7802|  NewStack = yeccpars2_461_(Stack),
+%     |             ^
+
+
+09:28:21.516 [debug] Building engine: src/elixir_sense_parser.erl:7809:13: function yeccpars2_462_/1 undefined
+% 7809|  NewStack = yeccpars2_462_(Stack),
+%     |             ^
+
+
+09:28:21.538 [debug] Building engine: src/elixir_sense_parser.erl:7816:13: function yeccpars2_463_/1 undefined
+% 7816|  NewStack = yeccpars2_463_(Stack),
+%     |             ^
+
+
+09:28:21.560 [debug] Building engine: src/elixir_sense_parser.erl:7826:13: function yeccpars2_464_/1 undefined
+% 7826|  NewStack = yeccpars2_464_(Stack),
+%     |             ^
+
+
+09:28:21.565 [debug] Building engine: src/elixir_sense_parser.erl:7907:13: function yeccpars2_465_/1 undefined
+% 7907|  NewStack = yeccpars2_465_(Stack),
+%     |             ^
+
+
+09:28:21.587 [debug] Building engine: src/elixir_sense_parser.erl:7914:13: function yeccpars2_466_/1 undefined
+% 7914|  NewStack = yeccpars2_466_(Stack),
+%     |             ^
+
+
+09:28:21.609 [debug] Building engine: src/elixir_sense_parser.erl:7921:13: function yeccpars2_467_/1 undefined
+% 7921|  NewStack = yeccpars2_467_(Stack),
+%     |             ^
+
+
+09:28:21.615 [debug] Building engine: src/elixir_sense_parser.erl:8004:13: function yeccpars2_468_/1 undefined
+% 8004|  NewStack = yeccpars2_468_(Stack),
+%     |             ^
+
+
+09:28:21.637 [debug] Building engine: src/elixir_sense_parser.erl:8011:13: function yeccpars2_469_/1 undefined
+% 8011|  NewStack = yeccpars2_469_(Stack),
+%     |             ^
+
+
+09:28:21.659 [debug] Building engine: src/elixir_sense_parser.erl:8017:13: function yeccpars2_470_/1 undefined
+% 8017|  NewStack = yeccpars2_470_(Stack),
+%     |             ^
+
+
+09:28:21.682 [debug] Building engine: src/elixir_sense_parser.erl:8024:13: function yeccpars2_471_/1 undefined
+% 8024|  NewStack = yeccpars2_471_(Stack),
+%     |             ^
+
+
+09:28:21.687 [debug] Building engine: src/elixir_sense_parser.erl:8038:13: function yeccpars2_473_/1 undefined
+% 8038|  NewStack = yeccpars2_473_(Stack),
+%     |             ^
+
+
+09:28:21.709 [debug] Building engine: src/elixir_sense_parser.erl:8045:13: function yeccpars2_474_/1 undefined
+% 8045|  NewStack = yeccpars2_474_(Stack),
+%     |             ^
+
+
+09:28:21.733 [debug] Building engine: src/elixir_sense_parser.erl:8052:13: function 'yeccpars2_475_$end'/1 undefined
+% 8052|  NewStack = 'yeccpars2_475_$end'(Stack),
+%     |             ^
+
+
+09:28:21.755 [debug] Building engine: src/elixir_sense_parser.erl:8056:13: function 'yeccpars2_475_)'/1 undefined
+% 8056|  NewStack = 'yeccpars2_475_)'(Stack),
+%     |             ^
+
+
+09:28:21.778 [debug] Building engine: src/elixir_sense_parser.erl:8060:13: function 'yeccpars2_475_,'/1 undefined
+% 8060|  NewStack = 'yeccpars2_475_,'(Stack),
+%     |             ^
+
+
+09:28:21.800 [debug] Building engine: src/elixir_sense_parser.erl:8064:13: function 'yeccpars2_475_.'/1 undefined
+% 8064|  NewStack = 'yeccpars2_475_.'(Stack),
+%     |             ^
+
+
+09:28:21.824 [debug] Building engine: src/elixir_sense_parser.erl:8068:13: function 'yeccpars2_475_;'/1 undefined
+% 8068|  NewStack = 'yeccpars2_475_;'(Stack),
+%     |             ^
+
+
+09:28:21.829 [debug] Building engine: src/elixir_sense_parser.erl:8072:13: function 'yeccpars2_475_>>'/1 undefined
+% 8072|  NewStack = 'yeccpars2_475_>>'(Stack),
+%     |             ^
+
+
+09:28:21.852 [debug] Building engine: src/elixir_sense_parser.erl:8076:13: function 'yeccpars2_475_]'/1 undefined
+% 8076|  NewStack = 'yeccpars2_475_]'(Stack),
+%     |             ^
+
+
+09:28:21.874 [debug] Building engine: src/elixir_sense_parser.erl:8080:13: function yeccpars2_475_and_op/1 undefined
+% 8080|  NewStack = yeccpars2_475_and_op(Stack),
+%     |             ^
+
+
+09:28:21.897 [debug] Building engine: src/elixir_sense_parser.erl:8084:13: function yeccpars2_475_arrow_op/1 undefined
+% 8084|  NewStack = yeccpars2_475_arrow_op(Stack),
+%     |             ^
+
+
+09:28:21.919 [debug] Building engine: src/elixir_sense_parser.erl:8088:13: function yeccpars2_475_assoc_op/1 undefined
+% 8088|  NewStack = yeccpars2_475_assoc_op(Stack),
+%     |             ^
+
+
+09:28:21.942 [debug] Building engine: src/elixir_sense_parser.erl:8092:13: function yeccpars2_475_block_identifier/1 undefined
+% 8092|  NewStack = yeccpars2_475_block_identifier(Stack),
+%     |             ^
+
+
+09:28:21.965 [debug] Building engine: src/elixir_sense_parser.erl:8096:13: function yeccpars2_475_comp_op/1 undefined
+% 8096|  NewStack = yeccpars2_475_comp_op(Stack),
+%     |             ^
+
+
+09:28:21.987 [debug] Building engine: src/elixir_sense_parser.erl:8100:13: function yeccpars2_475_concat_op/1 undefined
+% 8100|  NewStack = yeccpars2_475_concat_op(Stack),
+%     |             ^
+
+
+09:28:22.010 [debug] Building engine: src/elixir_sense_parser.erl:8104:13: function yeccpars2_475_dot_call_op/1 undefined
+% 8104|  NewStack = yeccpars2_475_dot_call_op(Stack),
+%     |             ^
+
+
+09:28:22.033 [debug] Building engine: src/elixir_sense_parser.erl:8108:13: function yeccpars2_475_dual_op/1 undefined
+% 8108|  NewStack = yeccpars2_475_dual_op(Stack),
+%     |             ^
+
+
+09:28:22.055 [debug] Building engine: src/elixir_sense_parser.erl:8112:13: function yeccpars2_475_end/1 undefined
+% 8112|  NewStack = yeccpars2_475_end(Stack),
+%     |             ^
+
+
+09:28:22.078 [debug] Building engine: src/elixir_sense_parser.erl:8116:13: function yeccpars2_475_eol/1 undefined
+% 8116|  NewStack = yeccpars2_475_eol(Stack),
+%     |             ^
+
+
+09:28:22.101 [debug] Building engine: src/elixir_sense_parser.erl:8120:13: function yeccpars2_475_in_match_op/1 undefined
+% 8120|  NewStack = yeccpars2_475_in_match_op(Stack),
+%     |             ^
+
+
+09:28:22.124 [debug] Building engine: src/elixir_sense_parser.erl:8124:13: function yeccpars2_475_in_op/1 undefined
+% 8124|  NewStack = yeccpars2_475_in_op(Stack),
+%     |             ^
+
+
+09:28:22.147 [debug] Building engine: src/elixir_sense_parser.erl:8128:13: function yeccpars2_475_match_op/1 undefined
+% 8128|  NewStack = yeccpars2_475_match_op(Stack),
+%     |             ^
+
+
+09:28:22.169 [debug] Building engine: src/elixir_sense_parser.erl:8132:13: function yeccpars2_475_mult_op/1 undefined
+% 8132|  NewStack = yeccpars2_475_mult_op(Stack),
+%     |             ^
+
+
+09:28:22.192 [debug] Building engine: src/elixir_sense_parser.erl:8136:13: function yeccpars2_475_or_op/1 undefined
+% 8136|  NewStack = yeccpars2_475_or_op(Stack),
+%     |             ^
+
+
+09:28:22.215 [debug] Building engine: src/elixir_sense_parser.erl:8140:13: function yeccpars2_475_pipe_op/1 undefined
+% 8140|  NewStack = yeccpars2_475_pipe_op(Stack),
+%     |             ^
+
+
+09:28:22.237 [debug] Building engine: src/elixir_sense_parser.erl:8144:13: function yeccpars2_475_power_op/1 undefined
+% 8144|  NewStack = yeccpars2_475_power_op(Stack),
+%     |             ^
+
+
+09:28:22.260 [debug] Building engine: src/elixir_sense_parser.erl:8148:13: function yeccpars2_475_rel_op/1 undefined
+% 8148|  NewStack = yeccpars2_475_rel_op(Stack),
+%     |             ^
+
+
+09:28:22.266 [debug] Building engine: src/elixir_sense_parser.erl:8152:13: function yeccpars2_475_stab_op/1 undefined
+% 8152|  NewStack = yeccpars2_475_stab_op(Stack),
+%     |             ^
+
+
+09:28:22.289 [debug] Building engine: src/elixir_sense_parser.erl:8156:13: function yeccpars2_475_ternary_op/1 undefined
+% 8156|  NewStack = yeccpars2_475_ternary_op(Stack),
+%     |             ^
+
+
+09:28:22.311 [debug] Building engine: src/elixir_sense_parser.erl:8160:13: function yeccpars2_475_type_op/1 undefined
+% 8160|  NewStack = yeccpars2_475_type_op(Stack),
+%     |             ^
+
+
+09:28:22.317 [debug] Building engine: src/elixir_sense_parser.erl:8164:13: function yeccpars2_475_when_op/1 undefined
+% 8164|  NewStack = yeccpars2_475_when_op(Stack),
+%     |             ^
+
+
+09:28:22.340 [debug] Building engine: src/elixir_sense_parser.erl:8168:13: function yeccpars2_475_xor_op/1 undefined
+% 8168|  NewStack = yeccpars2_475_xor_op(Stack),
+%     |             ^
+
+
+09:28:22.363 [debug] Building engine: src/elixir_sense_parser.erl:8172:13: function 'yeccpars2_475_}'/1 undefined
+% 8172|  NewStack = 'yeccpars2_475_}'(Stack),
+%     |             ^
+
+
+09:28:22.386 [debug] Building engine: src/elixir_sense_parser.erl:8175:13: function yeccpars2_475_/1 undefined
+% 8175|  NewStack = yeccpars2_475_(Stack),
+%     |             ^
+
+
+09:28:22.409 [debug] Building engine: src/elixir_sense_parser.erl:8181:13: function 'yeccpars2_476_$end'/1 undefined
+% 8181|  NewStack = 'yeccpars2_476_$end'(Stack),
+%     |             ^
+
+
+09:28:22.414 [debug] Building engine: src/elixir_sense_parser.erl:8184:13: function 'yeccpars2_476_)'/1 undefined
+% 8184|  NewStack = 'yeccpars2_476_)'(Stack),
+%     |             ^
+
+
+09:28:22.437 [debug] Building engine: src/elixir_sense_parser.erl:8187:13: function 'yeccpars2_476_,'/1 undefined
+% 8187|  NewStack = 'yeccpars2_476_,'(Stack),
+%     |             ^
+
+
+09:28:22.460 [debug] Building engine: src/elixir_sense_parser.erl:8190:13: function 'yeccpars2_476_;'/1 undefined
+% 8190|  NewStack = 'yeccpars2_476_;'(Stack),
+%     |             ^
+
+
+09:28:22.465 [debug] Building engine: src/elixir_sense_parser.erl:8193:13: function 'yeccpars2_476_>>'/1 undefined
+% 8193|  NewStack = 'yeccpars2_476_>>'(Stack),
+%     |             ^
+
+
+09:28:22.488 [debug] Building engine: src/elixir_sense_parser.erl:8196:13: function 'yeccpars2_476_]'/1 undefined
+% 8196|  NewStack = 'yeccpars2_476_]'(Stack),
+%     |             ^
+
+
+09:28:22.494 [debug] Building engine: src/elixir_sense_parser.erl:8199:13: function yeccpars2_476_and_op/1 undefined
+% 8199|  NewStack = yeccpars2_476_and_op(Stack),
+%     |             ^
+
+
+09:28:22.517 [debug] Building engine: src/elixir_sense_parser.erl:8202:13: function yeccpars2_476_arrow_op/1 undefined
+% 8202|  NewStack = yeccpars2_476_arrow_op(Stack),
+%     |             ^
+
+
+09:28:22.540 [debug] Building engine: src/elixir_sense_parser.erl:8205:13: function yeccpars2_476_assoc_op/1 undefined
+% 8205|  NewStack = yeccpars2_476_assoc_op(Stack),
+%     |             ^
+
+
+09:28:22.563 [debug] Building engine: src/elixir_sense_parser.erl:8208:13: function yeccpars2_476_block_identifier/1 undefined
+% 8208|  NewStack = yeccpars2_476_block_identifier(Stack),
+%     |             ^
+
+
+09:28:22.586 [debug] Building engine: src/elixir_sense_parser.erl:8211:13: function yeccpars2_476_comp_op/1 undefined
+% 8211|  NewStack = yeccpars2_476_comp_op(Stack),
+%     |             ^
+
+
+09:28:22.609 [debug] Building engine: src/elixir_sense_parser.erl:8214:13: function yeccpars2_476_concat_op/1 undefined
+% 8214|  NewStack = yeccpars2_476_concat_op(Stack),
+%     |             ^
+
+
+09:28:22.632 [debug] Building engine: src/elixir_sense_parser.erl:8217:13: function yeccpars2_476_dual_op/1 undefined
+% 8217|  NewStack = yeccpars2_476_dual_op(Stack),
+%     |             ^
+
+
+09:28:22.645 [debug] Building engine: src/elixir_sense_parser.erl:8220:13: function yeccpars2_476_end/1 undefined
+% 8220|  NewStack = yeccpars2_476_end(Stack),
+%     |             ^
+
+
+09:28:22.651 [debug] Building engine: src/elixir_sense_parser.erl:8223:13: function yeccpars2_476_eol/1 undefined
+% 8223|  NewStack = yeccpars2_476_eol(Stack),
+%     |             ^
+
+
+09:28:22.674 [debug] Building engine: src/elixir_sense_parser.erl:8226:13: function yeccpars2_476_in_match_op/1 undefined
+% 8226|  NewStack = yeccpars2_476_in_match_op(Stack),
+%     |             ^
+
+
+09:28:22.679 [debug] Building engine: src/elixir_sense_parser.erl:8229:13: function yeccpars2_476_in_op/1 undefined
+% 8229|  NewStack = yeccpars2_476_in_op(Stack),
+%     |             ^
+
+
+09:28:22.702 [debug] Building engine: src/elixir_sense_parser.erl:8232:13: function yeccpars2_476_match_op/1 undefined
+% 8232|  NewStack = yeccpars2_476_match_op(Stack),
+%     |             ^
+
+
+09:28:22.725 [debug] Building engine: src/elixir_sense_parser.erl:8235:13: function yeccpars2_476_mult_op/1 undefined
+% 8235|  NewStack = yeccpars2_476_mult_op(Stack),
+%     |             ^
+
+
+09:28:22.748 [debug] Building engine: src/elixir_sense_parser.erl:8238:13: function yeccpars2_476_or_op/1 undefined
+% 8238|  NewStack = yeccpars2_476_or_op(Stack),
+%     |             ^
+
+
+09:28:22.754 [debug] Building engine: src/elixir_sense_parser.erl:8241:13: function yeccpars2_476_pipe_op/1 undefined
+% 8241|  NewStack = yeccpars2_476_pipe_op(Stack),
+%     |             ^
+
+
+09:28:22.777 [debug] Building engine: src/elixir_sense_parser.erl:8244:13: function yeccpars2_476_power_op/1 undefined
+% 8244|  NewStack = yeccpars2_476_power_op(Stack),
+%     |             ^
+
+
+09:28:22.800 [debug] Building engine: src/elixir_sense_parser.erl:8247:13: function yeccpars2_476_rel_op/1 undefined
+% 8247|  NewStack = yeccpars2_476_rel_op(Stack),
+%     |             ^
+
+
+09:28:22.824 [debug] Building engine: src/elixir_sense_parser.erl:8250:13: function yeccpars2_476_stab_op/1 undefined
+% 8250|  NewStack = yeccpars2_476_stab_op(Stack),
+%     |             ^
+
+
+09:28:22.830 [debug] Building engine: src/elixir_sense_parser.erl:8253:13: function yeccpars2_476_ternary_op/1 undefined
+% 8253|  NewStack = yeccpars2_476_ternary_op(Stack),
+%     |             ^
+
+
+09:28:22.853 [debug] Building engine: src/elixir_sense_parser.erl:8256:13: function yeccpars2_476_type_op/1 undefined
+% 8256|  NewStack = yeccpars2_476_type_op(Stack),
+%     |             ^
+
+
+09:28:22.876 [debug] Building engine: src/elixir_sense_parser.erl:8259:13: function yeccpars2_476_when_op/1 undefined
+% 8259|  NewStack = yeccpars2_476_when_op(Stack),
+%     |             ^
+
+
+09:28:22.900 [debug] Building engine: src/elixir_sense_parser.erl:8262:13: function yeccpars2_476_xor_op/1 undefined
+% 8262|  NewStack = yeccpars2_476_xor_op(Stack),
+%     |             ^
+
+
+09:28:22.923 [debug] Building engine: src/elixir_sense_parser.erl:8265:13: function 'yeccpars2_476_}'/1 undefined
+% 8265|  NewStack = 'yeccpars2_476_}'(Stack),
+%     |             ^
+
+
+09:28:22.946 [debug] Building engine: src/elixir_sense_parser.erl:8268:13: function yeccpars2_476_/1 undefined
+% 8268|  NewStack = yeccpars2_476_(Stack),
+%     |             ^
+
+
+09:28:22.951 [debug] Building engine: src/elixir_sense_parser.erl:8275:13: function 'yeccpars2_477_$end'/1 undefined
+% 8275|  NewStack = 'yeccpars2_477_$end'(Stack),
+%     |             ^
+
+
+09:28:22.975 [debug] Building engine: src/elixir_sense_parser.erl:8279:13: function 'yeccpars2_477_)'/1 undefined
+% 8279|  NewStack = 'yeccpars2_477_)'(Stack),
+%     |             ^
+
+
+09:28:22.998 [debug] Building engine: src/elixir_sense_parser.erl:8283:13: function 'yeccpars2_477_,'/1 undefined
+% 8283|  NewStack = 'yeccpars2_477_,'(Stack),
+%     |             ^
+
+
+09:28:23.022 [debug] Building engine: src/elixir_sense_parser.erl:8287:13: function 'yeccpars2_477_;'/1 undefined
+% 8287|  NewStack = 'yeccpars2_477_;'(Stack),
+%     |             ^
+
+
+09:28:23.045 [debug] Building engine: src/elixir_sense_parser.erl:8291:13: function 'yeccpars2_477_>>'/1 undefined
+% 8291|  NewStack = 'yeccpars2_477_>>'(Stack),
+%     |             ^
+
+
+09:28:23.069 [debug] Building engine: src/elixir_sense_parser.erl:8295:13: function 'yeccpars2_477_]'/1 undefined
+% 8295|  NewStack = 'yeccpars2_477_]'(Stack),
+%     |             ^
+
+
+09:28:23.092 [debug] Building engine: src/elixir_sense_parser.erl:8299:13: function yeccpars2_477_and_op/1 undefined
+% 8299|  NewStack = yeccpars2_477_and_op(Stack),
+%     |             ^
+
+
+09:28:23.115 [debug] Building engine: src/elixir_sense_parser.erl:8303:13: function yeccpars2_477_arrow_op/1 undefined
+% 8303|  NewStack = yeccpars2_477_arrow_op(Stack),
+%     |             ^
+
+
+09:28:23.139 [debug] Building engine: src/elixir_sense_parser.erl:8307:13: function yeccpars2_477_assoc_op/1 undefined
+% 8307|  NewStack = yeccpars2_477_assoc_op(Stack),
+%     |             ^
+
+
+09:28:23.145 [debug] Building engine: src/elixir_sense_parser.erl:8311:13: function yeccpars2_477_block_identifier/1 undefined
+% 8311|  NewStack = yeccpars2_477_block_identifier(Stack),
+%     |             ^
+
+
+09:28:23.168 [debug] Building engine: src/elixir_sense_parser.erl:8315:13: function yeccpars2_477_comp_op/1 undefined
+% 8315|  NewStack = yeccpars2_477_comp_op(Stack),
+%     |             ^
+
+
+09:28:23.192 [debug] Building engine: src/elixir_sense_parser.erl:8319:13: function yeccpars2_477_concat_op/1 undefined
+% 8319|  NewStack = yeccpars2_477_concat_op(Stack),
+%     |             ^
+
+
+09:28:23.197 [debug] Building engine: src/elixir_sense_parser.erl:8323:13: function yeccpars2_477_dual_op/1 undefined
+% 8323|  NewStack = yeccpars2_477_dual_op(Stack),
+%     |             ^
+
+
+09:28:23.221 [debug] Building engine: src/elixir_sense_parser.erl:8327:13: function yeccpars2_477_end/1 undefined
+% 8327|  NewStack = yeccpars2_477_end(Stack),
+%     |             ^
+
+
+09:28:23.226 [debug] Building engine: src/elixir_sense_parser.erl:8331:13: function yeccpars2_477_eol/1 undefined
+% 8331|  NewStack = yeccpars2_477_eol(Stack),
+%     |             ^
+
+
+09:28:23.249 [debug] Building engine: src/elixir_sense_parser.erl:8335:13: function yeccpars2_477_in_match_op/1 undefined
+% 8335|  NewStack = yeccpars2_477_in_match_op(Stack),
+%     |             ^
+
+
+09:28:23.273 [debug] Building engine: src/elixir_sense_parser.erl:8339:13: function yeccpars2_477_in_op/1 undefined
+% 8339|  NewStack = yeccpars2_477_in_op(Stack),
+%     |             ^
+
+
+09:28:23.286 [debug] Building engine: src/elixir_sense_parser.erl:8343:13: function yeccpars2_477_match_op/1 undefined
+% 8343|  NewStack = yeccpars2_477_match_op(Stack),
+%     |             ^
+
+
+09:28:23.299 [debug] Building engine: src/elixir_sense_parser.erl:8347:13: function yeccpars2_477_mult_op/1 undefined
+% 8347|  NewStack = yeccpars2_477_mult_op(Stack),
+%     |             ^
+
+
+09:28:23.305 [debug] Building engine: src/elixir_sense_parser.erl:8351:13: function yeccpars2_477_or_op/1 undefined
+% 8351|  NewStack = yeccpars2_477_or_op(Stack),
+%     |             ^
+
+
+09:28:23.329 [debug] Building engine: src/elixir_sense_parser.erl:8355:13: function yeccpars2_477_pipe_op/1 undefined
+% 8355|  NewStack = yeccpars2_477_pipe_op(Stack),
+%     |             ^
+
+
+09:28:23.334 [debug] Building engine: src/elixir_sense_parser.erl:8359:13: function yeccpars2_477_power_op/1 undefined
+% 8359|  NewStack = yeccpars2_477_power_op(Stack),
+%     |             ^
+
+
+09:28:23.358 [debug] Building engine: src/elixir_sense_parser.erl:8363:13: function yeccpars2_477_rel_op/1 undefined
+% 8363|  NewStack = yeccpars2_477_rel_op(Stack),
+%     |             ^
+
+
+09:28:23.381 [debug] Building engine: src/elixir_sense_parser.erl:8367:13: function yeccpars2_477_stab_op/1 undefined
+% 8367|  NewStack = yeccpars2_477_stab_op(Stack),
+%     |             ^
+
+
+09:28:23.387 [debug] Building engine: src/elixir_sense_parser.erl:8371:13: function yeccpars2_477_ternary_op/1 undefined
+% 8371|  NewStack = yeccpars2_477_ternary_op(Stack),
+%     |             ^
+
+
+09:28:23.410 [debug] Building engine: src/elixir_sense_parser.erl:8375:13: function yeccpars2_477_type_op/1 undefined
+% 8375|  NewStack = yeccpars2_477_type_op(Stack),
+%     |             ^
+
+
+09:28:23.416 [debug] Building engine: src/elixir_sense_parser.erl:8379:13: function yeccpars2_477_when_op/1 undefined
+% 8379|  NewStack = yeccpars2_477_when_op(Stack),
+%     |             ^
+
+
+09:28:23.440 [debug] Building engine: src/elixir_sense_parser.erl:8383:13: function yeccpars2_477_xor_op/1 undefined
+% 8383|  NewStack = yeccpars2_477_xor_op(Stack),
+%     |             ^
+
+
+09:28:23.446 [debug] Building engine: src/elixir_sense_parser.erl:8387:13: function 'yeccpars2_477_}'/1 undefined
+% 8387|  NewStack = 'yeccpars2_477_}'(Stack),
+%     |             ^
+
+
+09:28:23.470 [debug] Building engine: src/elixir_sense_parser.erl:8390:13: function yeccpars2_477_/1 undefined
+% 8390|  NewStack = yeccpars2_477_(Stack),
+%     |             ^
+
+
+09:28:23.475 [debug] Building engine: src/elixir_sense_parser.erl:8404:13: function yeccpars2_479_/1 undefined
+% 8404|  NewStack = yeccpars2_479_(Stack),
+%     |             ^
+
+
+09:28:23.499 [debug] Building engine: src/elixir_sense_parser.erl:8411:13: function 'yeccpars2_480_$end'/1 undefined
+% 8411|  NewStack = 'yeccpars2_480_$end'(Stack),
+%     |             ^
+
+
+09:28:23.523 [debug] Building engine: src/elixir_sense_parser.erl:8415:13: function 'yeccpars2_480_)'/1 undefined
+% 8415|  NewStack = 'yeccpars2_480_)'(Stack),
+%     |             ^
+
+
+09:28:23.547 [debug] Building engine: src/elixir_sense_parser.erl:8419:13: function 'yeccpars2_480_,'/1 undefined
+% 8419|  NewStack = 'yeccpars2_480_,'(Stack),
+%     |             ^
+
+
+09:28:23.553 [debug] Building engine: src/elixir_sense_parser.erl:8423:13: function 'yeccpars2_480_.'/1 undefined
+% 8423|  NewStack = 'yeccpars2_480_.'(Stack),
+%     |             ^
+
+
+09:28:23.577 [debug] Building engine: src/elixir_sense_parser.erl:8427:13: function 'yeccpars2_480_;'/1 undefined
+% 8427|  NewStack = 'yeccpars2_480_;'(Stack),
+%     |             ^
+
+
+09:28:23.601 [debug] Building engine: src/elixir_sense_parser.erl:8431:13: function 'yeccpars2_480_>>'/1 undefined
+% 8431|  NewStack = 'yeccpars2_480_>>'(Stack),
+%     |             ^
+
+
+09:28:23.625 [debug] Building engine: src/elixir_sense_parser.erl:8435:13: function 'yeccpars2_480_]'/1 undefined
+% 8435|  NewStack = 'yeccpars2_480_]'(Stack),
+%     |             ^
+
+
+09:28:23.649 [debug] Building engine: src/elixir_sense_parser.erl:8439:13: function yeccpars2_480_and_op/1 undefined
+% 8439|  NewStack = yeccpars2_480_and_op(Stack),
+%     |             ^
+
+
+09:28:23.673 [debug] Building engine: src/elixir_sense_parser.erl:8443:13: function yeccpars2_480_arrow_op/1 undefined
+% 8443|  NewStack = yeccpars2_480_arrow_op(Stack),
+%     |             ^
+
+
+09:28:23.697 [debug] Building engine: src/elixir_sense_parser.erl:8447:13: function yeccpars2_480_assoc_op/1 undefined
+% 8447|  NewStack = yeccpars2_480_assoc_op(Stack),
+%     |             ^
+
+
+09:28:23.721 [debug] Building engine: src/elixir_sense_parser.erl:8451:13: function yeccpars2_480_block_identifier/1 undefined
+% 8451|  NewStack = yeccpars2_480_block_identifier(Stack),
+%     |             ^
+
+
+09:28:23.745 [debug] Building engine: src/elixir_sense_parser.erl:8455:13: function yeccpars2_480_comp_op/1 undefined
+% 8455|  NewStack = yeccpars2_480_comp_op(Stack),
+%     |             ^
+
+
+09:28:23.769 [debug] Building engine: src/elixir_sense_parser.erl:8459:13: function yeccpars2_480_concat_op/1 undefined
+% 8459|  NewStack = yeccpars2_480_concat_op(Stack),
+%     |             ^
+
+
+09:28:23.793 [debug] Building engine: src/elixir_sense_parser.erl:8463:13: function yeccpars2_480_dot_call_op/1 undefined
+% 8463|  NewStack = yeccpars2_480_dot_call_op(Stack),
+%     |             ^
+
+
+09:28:23.818 [debug] Building engine: src/elixir_sense_parser.erl:8467:13: function yeccpars2_480_dual_op/1 undefined
+% 8467|  NewStack = yeccpars2_480_dual_op(Stack),
+%     |             ^
+
+
+09:28:23.842 [debug] Building engine: src/elixir_sense_parser.erl:8471:13: function yeccpars2_480_end/1 undefined
+% 8471|  NewStack = yeccpars2_480_end(Stack),
+%     |             ^
+
+
+09:28:23.847 [debug] Building engine: src/elixir_sense_parser.erl:8475:13: function yeccpars2_480_eol/1 undefined
+% 8475|  NewStack = yeccpars2_480_eol(Stack),
+%     |             ^
+
+
+09:28:23.861 [debug] Building engine: src/elixir_sense_parser.erl:8479:13: function yeccpars2_480_in_match_op/1 undefined
+% 8479|  NewStack = yeccpars2_480_in_match_op(Stack),
+%     |             ^
+
+
+09:28:23.884 [debug] Building engine: src/elixir_sense_parser.erl:8483:13: function yeccpars2_480_in_op/1 undefined
+% 8483|  NewStack = yeccpars2_480_in_op(Stack),
+%     |             ^
+
+
+09:28:23.890 [debug] Building engine: src/elixir_sense_parser.erl:8487:13: function yeccpars2_480_match_op/1 undefined
+% 8487|  NewStack = yeccpars2_480_match_op(Stack),
+%     |             ^
+
+
+09:28:23.914 [debug] Building engine: src/elixir_sense_parser.erl:8491:13: function yeccpars2_480_mult_op/1 undefined
+% 8491|  NewStack = yeccpars2_480_mult_op(Stack),
+%     |             ^
+
+
+09:28:23.920 [debug] Building engine: src/elixir_sense_parser.erl:8495:13: function yeccpars2_480_or_op/1 undefined
+% 8495|  NewStack = yeccpars2_480_or_op(Stack),
+%     |             ^
+
+
+09:28:23.944 [debug] Building engine: src/elixir_sense_parser.erl:8499:13: function yeccpars2_480_pipe_op/1 undefined
+% 8499|  NewStack = yeccpars2_480_pipe_op(Stack),
+%     |             ^
+
+
+09:28:23.968 [debug] Building engine: src/elixir_sense_parser.erl:8503:13: function yeccpars2_480_power_op/1 undefined
+% 8503|  NewStack = yeccpars2_480_power_op(Stack),
+%     |             ^
+
+
+09:28:23.992 [debug] Building engine: src/elixir_sense_parser.erl:8507:13: function yeccpars2_480_rel_op/1 undefined
+% 8507|  NewStack = yeccpars2_480_rel_op(Stack),
+%     |             ^
+
+
+09:28:23.998 [debug] Building engine: src/elixir_sense_parser.erl:8511:13: function yeccpars2_480_stab_op/1 undefined
+% 8511|  NewStack = yeccpars2_480_stab_op(Stack),
+%     |             ^
+
+
+09:28:24.022 [debug] Building engine: src/elixir_sense_parser.erl:8515:13: function yeccpars2_480_ternary_op/1 undefined
+% 8515|  NewStack = yeccpars2_480_ternary_op(Stack),
+%     |             ^
+
+
+09:28:24.028 [debug] Building engine: src/elixir_sense_parser.erl:8519:13: function yeccpars2_480_type_op/1 undefined
+% 8519|  NewStack = yeccpars2_480_type_op(Stack),
+%     |             ^
+
+
+09:28:24.052 [debug] Building engine: src/elixir_sense_parser.erl:8523:13: function yeccpars2_480_when_op/1 undefined
+% 8523|  NewStack = yeccpars2_480_when_op(Stack),
+%     |             ^
+
+
+09:28:24.077 [debug] Building engine: src/elixir_sense_parser.erl:8527:13: function yeccpars2_480_xor_op/1 undefined
+% 8527|  NewStack = yeccpars2_480_xor_op(Stack),
+%     |             ^
+
+
+09:28:24.082 [debug] Building engine: src/elixir_sense_parser.erl:8531:13: function 'yeccpars2_480_}'/1 undefined
+% 8531|  NewStack = 'yeccpars2_480_}'(Stack),
+%     |             ^
+
+
+09:28:24.107 [debug] Building engine: src/elixir_sense_parser.erl:8534:13: function yeccpars2_480_/1 undefined
+% 8534|  NewStack = yeccpars2_480_(Stack),
+%     |             ^
+
+
+09:28:24.131 [debug] Building engine: src/elixir_sense_parser.erl:8541:13: function 'yeccpars2_481_$end'/1 undefined
+% 8541|  NewStack = 'yeccpars2_481_$end'(Stack),
+%     |             ^
+
+
+09:28:24.155 [debug] Building engine: src/elixir_sense_parser.erl:8545:13: function 'yeccpars2_481_)'/1 undefined
+% 8545|  NewStack = 'yeccpars2_481_)'(Stack),
+%     |             ^
+
+
+09:28:24.161 [debug] Building engine: src/elixir_sense_parser.erl:8549:13: function 'yeccpars2_481_,'/1 undefined
+% 8549|  NewStack = 'yeccpars2_481_,'(Stack),
+%     |             ^
+
+
+09:28:24.185 [debug] Building engine: src/elixir_sense_parser.erl:8553:13: function 'yeccpars2_481_;'/1 undefined
+% 8553|  NewStack = 'yeccpars2_481_;'(Stack),
+%     |             ^
+
+
+09:28:24.210 [debug] Building engine: src/elixir_sense_parser.erl:8557:13: function 'yeccpars2_481_>>'/1 undefined
+% 8557|  NewStack = 'yeccpars2_481_>>'(Stack),
+%     |             ^
+
+
+09:28:24.234 [debug] Building engine: src/elixir_sense_parser.erl:8561:13: function 'yeccpars2_481_]'/1 undefined
+% 8561|  NewStack = 'yeccpars2_481_]'(Stack),
+%     |             ^
+
+
+09:28:24.258 [debug] Building engine: src/elixir_sense_parser.erl:8565:13: function yeccpars2_481_and_op/1 undefined
+% 8565|  NewStack = yeccpars2_481_and_op(Stack),
+%     |             ^
+
+
+09:28:24.283 [debug] Building engine: src/elixir_sense_parser.erl:8569:13: function yeccpars2_481_arrow_op/1 undefined
+% 8569|  NewStack = yeccpars2_481_arrow_op(Stack),
+%     |             ^
+
+
+09:28:24.307 [debug] Building engine: src/elixir_sense_parser.erl:8573:13: function yeccpars2_481_assoc_op/1 undefined
+% 8573|  NewStack = yeccpars2_481_assoc_op(Stack),
+%     |             ^
+
+
+09:28:24.331 [debug] Building engine: src/elixir_sense_parser.erl:8577:13: function yeccpars2_481_block_identifier/1 undefined
+% 8577|  NewStack = yeccpars2_481_block_identifier(Stack),
+%     |             ^
+
+
+09:28:24.355 [debug] Building engine: src/elixir_sense_parser.erl:8581:13: function yeccpars2_481_comp_op/1 undefined
+% 8581|  NewStack = yeccpars2_481_comp_op(Stack),
+%     |             ^
+
+
+09:28:24.361 [debug] Building engine: src/elixir_sense_parser.erl:8585:13: function yeccpars2_481_concat_op/1 undefined
+% 8585|  NewStack = yeccpars2_481_concat_op(Stack),
+%     |             ^
+
+
+09:28:24.385 [debug] Building engine: src/elixir_sense_parser.erl:8589:13: function yeccpars2_481_dual_op/1 undefined
+% 8589|  NewStack = yeccpars2_481_dual_op(Stack),
+%     |             ^
+
+
+09:28:24.391 [debug] Building engine: src/elixir_sense_parser.erl:8593:13: function yeccpars2_481_end/1 undefined
+% 8593|  NewStack = yeccpars2_481_end(Stack),
+%     |             ^
+
+
+09:28:24.416 [debug] Building engine: src/elixir_sense_parser.erl:8597:13: function yeccpars2_481_eol/1 undefined
+% 8597|  NewStack = yeccpars2_481_eol(Stack),
+%     |             ^
+
+
+09:28:24.441 [debug] Building engine: src/elixir_sense_parser.erl:8601:13: function yeccpars2_481_in_match_op/1 undefined
+% 8601|  NewStack = yeccpars2_481_in_match_op(Stack),
+%     |             ^
+
+
+09:28:24.466 [debug] Building engine: src/elixir_sense_parser.erl:8605:13: function yeccpars2_481_in_op/1 undefined
+% 8605|  NewStack = yeccpars2_481_in_op(Stack),
+%     |             ^
+
+
+09:28:24.491 [debug] Building engine: src/elixir_sense_parser.erl:8609:13: function yeccpars2_481_match_op/1 undefined
+% 8609|  NewStack = yeccpars2_481_match_op(Stack),
+%     |             ^
+
+
+09:28:24.497 [debug] Building engine: src/elixir_sense_parser.erl:8613:13: function yeccpars2_481_mult_op/1 undefined
+% 8613|  NewStack = yeccpars2_481_mult_op(Stack),
+%     |             ^
+
+
+09:28:24.521 [debug] Building engine: src/elixir_sense_parser.erl:8617:13: function yeccpars2_481_or_op/1 undefined
+% 8617|  NewStack = yeccpars2_481_or_op(Stack),
+%     |             ^
+
+
+09:28:24.545 [debug] Building engine: src/elixir_sense_parser.erl:8621:13: function yeccpars2_481_pipe_op/1 undefined
+% 8621|  NewStack = yeccpars2_481_pipe_op(Stack),
+%     |             ^
+
+
+09:28:24.570 [debug] Building engine: src/elixir_sense_parser.erl:8625:13: function yeccpars2_481_power_op/1 undefined
+% 8625|  NewStack = yeccpars2_481_power_op(Stack),
+%     |             ^
+
+
+09:28:24.595 [debug] Building engine: src/elixir_sense_parser.erl:8629:13: function yeccpars2_481_rel_op/1 undefined
+% 8629|  NewStack = yeccpars2_481_rel_op(Stack),
+%     |             ^
+
+
+09:28:24.620 [debug] Building engine: src/elixir_sense_parser.erl:8633:13: function yeccpars2_481_stab_op/1 undefined
+% 8633|  NewStack = yeccpars2_481_stab_op(Stack),
+%     |             ^
+
+
+09:28:24.645 [debug] Building engine: src/elixir_sense_parser.erl:8637:13: function yeccpars2_481_ternary_op/1 undefined
+% 8637|  NewStack = yeccpars2_481_ternary_op(Stack),
+%     |             ^
+
+
+09:28:24.670 [debug] Building engine: src/elixir_sense_parser.erl:8641:13: function yeccpars2_481_type_op/1 undefined
+% 8641|  NewStack = yeccpars2_481_type_op(Stack),
+%     |             ^
+
+
+09:28:24.695 [debug] Building engine: src/elixir_sense_parser.erl:8645:13: function yeccpars2_481_when_op/1 undefined
+% 8645|  NewStack = yeccpars2_481_when_op(Stack),
+%     |             ^
+
+
+09:28:24.701 [debug] Building engine: src/elixir_sense_parser.erl:8649:13: function yeccpars2_481_xor_op/1 undefined
+% 8649|  NewStack = yeccpars2_481_xor_op(Stack),
+%     |             ^
+
+
+09:28:24.726 [debug] Building engine: src/elixir_sense_parser.erl:8653:13: function 'yeccpars2_481_}'/1 undefined
+% 8653|  NewStack = 'yeccpars2_481_}'(Stack),
+%     |             ^
+
+
+09:28:24.751 [debug] Building engine: src/elixir_sense_parser.erl:8656:13: function yeccpars2_481_/1 undefined
+% 8656|  NewStack = yeccpars2_481_(Stack),
+%     |             ^
+
+
+09:28:24.775 [debug] Building engine: src/elixir_sense_parser.erl:8665:13: function yeccpars2_483_/1 undefined
+% 8665|  NewStack = yeccpars2_483_(Stack),
+%     |             ^
+
+
+09:28:24.800 [debug] Building engine: src/elixir_sense_parser.erl:8676:13: function yeccpars2_484_/1 undefined
+% 8676|  NewStack = yeccpars2_484_(Stack),
+%     |             ^
+
+
+09:28:24.825 [debug] Building engine: src/elixir_sense_parser.erl:8749:13: function yeccpars2_485_/1 undefined
+% 8749|  NewStack = yeccpars2_485_(Stack),
+%     |             ^
+
+
+09:28:24.831 [debug] Building engine: src/elixir_sense_parser.erl:8756:13: function yeccpars2_486_/1 undefined
+% 8756|  NewStack = yeccpars2_486_(Stack),
+%     |             ^
+
+
+09:28:24.856 [debug] Building engine: src/elixir_sense_parser.erl:8829:13: function yeccpars2_487_/1 undefined
+% 8829|  NewStack = yeccpars2_487_(Stack),
+%     |             ^
+
+
+09:28:24.862 [debug] Building engine: src/elixir_sense_parser.erl:8872:13: function yeccpars2_490_/1 undefined
+% 8872|  NewStack = yeccpars2_490_(Stack),
+%     |             ^
+
+
+09:28:24.888 [debug] Building engine: src/elixir_sense_parser.erl:8902:13: function yeccpars2_492_/1 undefined
+% 8902|  NewStack = yeccpars2_492_(Stack),
+%     |             ^
+
+
+09:28:24.914 [debug] Building engine: src/elixir_sense_parser.erl:8954:13: function 'yeccpars2_495_,'/1 undefined
+% 8954|  NewStack = 'yeccpars2_495_,'(Stack),
+%     |             ^
+
+
+09:28:24.940 [debug] Building engine: src/elixir_sense_parser.erl:8957:13: function yeccpars2_495_eol/1 undefined
+% 8957|  NewStack = yeccpars2_495_eol(Stack),
+%     |             ^
+
+
+09:28:24.946 [debug] Building engine: src/elixir_sense_parser.erl:8960:13: function 'yeccpars2_495_}'/1 undefined
+% 8960|  NewStack = 'yeccpars2_495_}'(Stack),
+%     |             ^
+
+
+09:28:24.972 [debug] Building engine: src/elixir_sense_parser.erl:8963:13: function yeccpars2_495_/1 undefined
+% 8963|  NewStack = yeccpars2_495_(Stack),
+%     |             ^
+
+
+09:28:24.997 [debug] Building engine: src/elixir_sense_parser.erl:8969:13: function 'yeccpars2_496_,'/1 undefined
+% 8969|  NewStack = 'yeccpars2_496_,'(Stack),
+%     |             ^
+
+
+09:28:25.023 [debug] Building engine: src/elixir_sense_parser.erl:8972:13: function yeccpars2_496_eol/1 undefined
+% 8972|  NewStack = yeccpars2_496_eol(Stack),
+%     |             ^
+
+
+09:28:25.048 [debug] Building engine: src/elixir_sense_parser.erl:8975:13: function 'yeccpars2_496_}'/1 undefined
+% 8975|  NewStack = 'yeccpars2_496_}'(Stack),
+%     |             ^
+
+
+09:28:25.074 [debug] Building engine: src/elixir_sense_parser.erl:8978:13: function yeccpars2_496_/1 undefined
+% 8978|  NewStack = yeccpars2_496_(Stack),
+%     |             ^
+
+
+09:28:25.099 [debug] Building engine: src/elixir_sense_parser.erl:8994:13: function yeccpars2_498_/1 undefined
+% 8994|  NewStack = yeccpars2_498_(Stack),
+%     |             ^
+
+
+09:28:25.105 [debug] Building engine: src/elixir_sense_parser.erl:9072:13: function 'yeccpars2_501_,'/1 undefined
+% 9072|  NewStack = 'yeccpars2_501_,'(Stack),
+%     |             ^
+
+
+09:28:25.131 [debug] Building engine: src/elixir_sense_parser.erl:9075:13: function yeccpars2_501_eol/1 undefined
+% 9075|  NewStack = yeccpars2_501_eol(Stack),
+%     |             ^
+
+
+09:28:25.137 [debug] Building engine: src/elixir_sense_parser.erl:9078:13: function 'yeccpars2_501_}'/1 undefined
+% 9078|  NewStack = 'yeccpars2_501_}'(Stack),
+%     |             ^
+
+
+09:28:25.164 [debug] Building engine: src/elixir_sense_parser.erl:9081:13: function yeccpars2_501_/1 undefined
+% 9081|  NewStack = yeccpars2_501_(Stack),
+%     |             ^
+
+
+09:28:25.190 [debug] Building engine: src/elixir_sense_parser.erl:9098:13: function yeccpars2_506_/1 undefined
+% 9098|  NewStack = yeccpars2_506_(Stack),
+%     |             ^
+
+
+09:28:25.196 [debug] Building engine: src/elixir_sense_parser.erl:9106:13: function yeccpars2_507_/1 undefined
+% 9106|  NewStack = yeccpars2_507_(Stack),
+%     |             ^
+
+
+09:28:25.223 [debug] Building engine: src/elixir_sense_parser.erl:9115:13: function yeccpars2_509_/1 undefined
+% 9115|  NewStack = yeccpars2_509_(Stack),
+%     |             ^
+
+
+09:28:25.249 [debug] Building engine: src/elixir_sense_parser.erl:9122:13: function yeccpars2_510_/1 undefined
+% 9122|  NewStack = yeccpars2_510_(Stack),
+%     |             ^
+
+
+09:28:25.275 [debug] Building engine: src/elixir_sense_parser.erl:9201:13: function yeccpars2_511_/1 undefined
+% 9201|  NewStack = yeccpars2_511_(Stack),
+%     |             ^
+
+
+09:28:25.281 [debug] Building engine: src/elixir_sense_parser.erl:9214:13: function yeccpars2_515_/1 undefined
+% 9214|  NewStack = yeccpars2_515_(Stack),
+%     |             ^
+
+
+09:28:25.308 [debug] Building engine: src/elixir_sense_parser.erl:9221:13: function yeccpars2_516_/1 undefined
+% 9221|  NewStack = yeccpars2_516_(Stack),
+%     |             ^
+
+
+09:28:25.314 [debug] Building engine: src/elixir_sense_parser.erl:9265:13: function yeccpars2_535_/1 undefined
+% 9265|  NewStack = yeccpars2_535_(Stack),
+%     |             ^
+
+
+09:28:25.340 [debug] Building engine: src/elixir_sense_parser.erl:9272:13: function yeccpars2_536_/1 undefined
+% 9272|  NewStack = yeccpars2_536_(Stack),
+%     |             ^
+
+
+09:28:25.367 [debug] Building engine: src/elixir_sense_parser.erl:9303:13: function yeccpars2_537_/1 undefined
+% 9303|  NewStack = yeccpars2_537_(Stack),
+%     |             ^
+
+
+09:28:25.393 [debug] Building engine: src/elixir_sense_parser.erl:9377:13: function yeccpars2_538_/1 undefined
+% 9377|  NewStack = yeccpars2_538_(Stack),
+%     |             ^
+
+
+09:28:25.421 [debug] Building engine: src/elixir_sense_parser.erl:9402:13: function yeccpars2_539_/1 undefined
+% 9402|  NewStack = yeccpars2_539_(Stack),
+%     |             ^
+
+
+09:28:25.447 [debug] Building engine: src/elixir_sense_parser.erl:9443:13: function yeccpars2_540_/1 undefined
+% 9443|  NewStack = yeccpars2_540_(Stack),
+%     |             ^
+
+
+09:28:25.474 [debug] Building engine: src/elixir_sense_parser.erl:9488:13: function yeccpars2_541_/1 undefined
+% 9488|  NewStack = yeccpars2_541_(Stack),
+%     |             ^
+
+
+09:28:25.501 [debug] Building engine: src/elixir_sense_parser.erl:9517:13: function yeccpars2_542_/1 undefined
+% 9517|  NewStack = yeccpars2_542_(Stack),
+%     |             ^
+
+
+09:28:25.528 [debug] Building engine: src/elixir_sense_parser.erl:9536:13: function yeccpars2_543_/1 undefined
+% 9536|  NewStack = yeccpars2_543_(Stack),
+%     |             ^
+
+
+09:28:25.555 [debug] Building engine: src/elixir_sense_parser.erl:9551:13: function yeccpars2_544_/1 undefined
+% 9551|  NewStack = yeccpars2_544_(Stack),
+%     |             ^
+
+
+09:28:25.582 [debug] Building engine: src/elixir_sense_parser.erl:9594:13: function yeccpars2_545_/1 undefined
+% 9594|  NewStack = yeccpars2_545_(Stack),
+%     |             ^
+
+
+09:28:25.610 [debug] Building engine: src/elixir_sense_parser.erl:9617:13: function yeccpars2_546_/1 undefined
+% 9617|  NewStack = yeccpars2_546_(Stack),
+%     |             ^
+
+
+09:28:25.617 [debug] Building engine: src/elixir_sense_parser.erl:9654:13: function yeccpars2_547_/1 undefined
+% 9654|  NewStack = yeccpars2_547_(Stack),
+%     |             ^
+
+
+09:28:25.645 [debug] Building engine: src/elixir_sense_parser.erl:9667:13: function yeccpars2_548_/1 undefined
+% 9667|  NewStack = yeccpars2_548_(Stack),
+%     |             ^
+
+
+09:28:25.673 [debug] Building engine: src/elixir_sense_parser.erl:9700:13: function yeccpars2_549_/1 undefined
+% 9700|  NewStack = yeccpars2_549_(Stack),
+%     |             ^
+
+
+09:28:25.701 [debug] Building engine: src/elixir_sense_parser.erl:9739:13: function yeccpars2_550_/1 undefined
+% 9739|  NewStack = yeccpars2_550_(Stack),
+%     |             ^
+
+
+09:28:25.729 [debug] Building engine: src/elixir_sense_parser.erl:9750:13: function yeccpars2_551_/1 undefined
+% 9750|  NewStack = yeccpars2_551_(Stack),
+%     |             ^
+
+
+09:28:25.735 [debug] Building engine: src/elixir_sense_parser.erl:9777:13: function yeccpars2_552_/1 undefined
+% 9777|  NewStack = yeccpars2_552_(Stack),
+%     |             ^
+
+
+09:28:25.763 [debug] Building engine: src/elixir_sense_parser.erl:9798:13: function yeccpars2_553_/1 undefined
+% 9798|  NewStack = yeccpars2_553_(Stack),
+%     |             ^
+
+
+09:28:25.769 [debug] Building engine: src/elixir_sense_parser.erl:9839:13: function yeccpars2_554_/1 undefined
+% 9839|  NewStack = yeccpars2_554_(Stack),
+%     |             ^
+
+
+09:28:25.798 [debug] Building engine: src/elixir_sense_parser.erl:9882:13: function yeccpars2_555_/1 undefined
+% 9882|  NewStack = yeccpars2_555_(Stack),
+%     |             ^
+
+
+09:28:25.804 [debug] Building engine: src/elixir_sense_parser.erl:9903:13: function yeccpars2_556_/1 undefined
+% 9903|  NewStack = yeccpars2_556_(Stack),
+%     |             ^
+
+
+09:28:25.833 [debug] Building engine: src/elixir_sense_parser.erl:9946:13: function yeccpars2_558_/1 undefined
+% 9946|  NewStack = yeccpars2_558_(Stack),
+%     |             ^
+
+
+09:28:25.861 [debug] Building engine: src/elixir_sense_parser.erl:9991:13: function yeccpars2_559_/1 undefined
+% 9991|  NewStack = yeccpars2_559_(Stack),
+%     |             ^
+
+
+09:28:25.868 [debug] Building engine: src/elixir_sense_parser.erl:9998:13: function yeccpars2_560_/1 undefined
+% 9998|  NewStack = yeccpars2_560_(Stack),
+%     |             ^
+
+
+09:28:25.896 [debug] Building engine: src/elixir_sense_parser.erl:10030:13: function yeccpars2_562_/1 undefined
+% 10030|  NewStack = yeccpars2_562_(Stack),
+%      |             ^
+
+
+09:28:25.925 [debug] Building engine: src/elixir_sense_parser.erl:10037:13: function yeccpars2_563_/1 undefined
+% 10037|  NewStack = yeccpars2_563_(Stack),
+%      |             ^
+
+
+09:28:25.953 [debug] Building engine: src/elixir_sense_parser.erl:10044:13: function yeccpars2_564_/1 undefined
+% 10044|  NewStack = yeccpars2_564_(Stack),
+%      |             ^
+
+
+09:28:25.982 [debug] Building engine: src/elixir_sense_parser.erl:10051:13: function yeccpars2_565_/1 undefined
+% 10051|  NewStack = yeccpars2_565_(Stack),
+%      |             ^
+
+
+09:28:26.011 [debug] Building engine: src/elixir_sense_parser.erl:10090:13: function yeccpars2_567_/1 undefined
+% 10090|  NewStack = yeccpars2_567_(Stack),
+%      |             ^
+
+
+09:28:26.040 [debug] Building engine: src/elixir_sense_parser.erl:10131:13: function yeccpars2_568_/1 undefined
+% 10131|  NewStack = yeccpars2_568_(Stack),
+%      |             ^
+
+
+09:28:26.069 [debug] Building engine: src/elixir_sense_parser.erl:10138:13: function yeccpars2_569_/1 undefined
+% 10138|  NewStack = yeccpars2_569_(Stack),
+%      |             ^
+
+
+09:28:26.076 [debug] Building engine: src/elixir_sense_parser.erl:10145:13: function yeccpars2_570_/1 undefined
+% 10145|  NewStack = yeccpars2_570_(Stack),
+%      |             ^
+
+
+09:28:26.105 [debug] Building engine: src/elixir_sense_parser.erl:10156:13: function yeccpars2_571_/1 undefined
+% 10156|  NewStack = yeccpars2_571_(Stack),
+%      |             ^
+
+
+09:28:26.134 [debug] Building engine: src/elixir_sense_parser.erl:10163:13: function yeccpars2_572_/1 undefined
+% 10163|  NewStack = yeccpars2_572_(Stack),
+%      |             ^
+
+
+09:28:26.164 [debug] Building engine: src/elixir_sense_parser.erl:10206:13: function yeccpars2_574_/1 undefined
+% 10206|  NewStack = yeccpars2_574_(Stack),
+%      |             ^
+
+
+09:28:26.170 [debug] Building engine: src/elixir_sense_parser.erl:10213:13: function yeccpars2_575_/1 undefined
+% 10213|  NewStack = yeccpars2_575_(Stack),
+%      |             ^
+
+
+09:28:26.200 [debug] Building engine: src/elixir_sense_parser.erl:10287:13: function 'yeccpars2_576_,'/1 undefined
+% 10287|  NewStack = 'yeccpars2_576_,'(Stack),
+%      |             ^
+
+
+09:28:26.230 [debug] Building engine: src/elixir_sense_parser.erl:10290:13: function yeccpars2_576_eol/1 undefined
+% 10290|  NewStack = yeccpars2_576_eol(Stack),
+%      |             ^
+
+
+09:28:26.260 [debug] Building engine: src/elixir_sense_parser.erl:10293:13: function 'yeccpars2_576_}'/1 undefined
+% 10293|  NewStack = 'yeccpars2_576_}'(Stack),
+%      |             ^
+
+
+09:28:26.289 [debug] Building engine: src/elixir_sense_parser.erl:10296:13: function yeccpars2_576_/1 undefined
+% 10296|  NewStack = yeccpars2_576_(Stack),
+%      |             ^
+
+
+09:28:26.319 [debug] Building engine: src/elixir_sense_parser.erl:10303:13: function yeccpars2_577_/1 undefined
+% 10303|  NewStack = yeccpars2_577_(Stack),
+%      |             ^
+
+
+09:28:26.348 [debug] Building engine: src/elixir_sense_parser.erl:10319:13: function yeccpars2_579_/1 undefined
+% 10319|  NewStack = yeccpars2_579_(Stack),
+%      |             ^
+
+
+09:28:26.377 [debug] Building engine: src/elixir_sense_parser.erl:10326:13: function yeccpars2_580_/1 undefined
+% 10326|  NewStack = yeccpars2_580_(Stack),
+%      |             ^
+
+
+09:28:26.406 [debug] Building engine: src/elixir_sense_parser.erl:10332:13: function yeccpars2_581_/1 undefined
+% 10332|  NewStack = yeccpars2_581_(Stack),
+%      |             ^
+
+
+09:28:26.436 [debug] Building engine: src/elixir_sense_parser.erl:10346:13: function yeccpars2_583_/1 undefined
+% 10346|  NewStack = yeccpars2_583_(Stack),
+%      |             ^
+
+
+09:28:26.465 [debug] Building engine: src/elixir_sense_parser.erl:10354:13: function yeccpars2_585_/1 undefined
+% 10354|  NewStack = yeccpars2_585_(Stack),
+%      |             ^
+
+
+09:28:26.472 [debug] Building engine: src/elixir_sense_parser.erl:10362:13: function yeccpars2_586_/1 undefined
+% 10362|  NewStack = yeccpars2_586_(Stack),
+%      |             ^
+
+
+09:28:26.502 [debug] Building engine: src/elixir_sense_parser.erl:10369:13: function yeccpars2_587_/1 undefined
+% 10369|  NewStack = yeccpars2_587_(Stack),
+%      |             ^
+
+
+09:28:26.509 [debug] Building engine: src/elixir_sense_parser.erl:10448:13: function yeccpars2_588_/1 undefined
+% 10448|  NewStack = yeccpars2_588_(Stack),
+%      |             ^
+
+
+09:28:26.538 [debug] Building engine: src/elixir_sense_parser.erl:10455:13: function yeccpars2_589_/1 undefined
+% 10455|  NewStack = yeccpars2_589_(Stack),
+%      |             ^
+
+
+09:28:26.568 [debug] Building engine: src/elixir_sense_parser.erl:10462:13: function yeccpars2_590_/1 undefined
+% 10462|  NewStack = yeccpars2_590_(Stack),
+%      |             ^
+
+
+09:28:26.598 [debug] Building engine: src/elixir_sense_parser.erl:10471:13: function yeccpars2_592_/1 undefined
+% 10471|  NewStack = yeccpars2_592_(Stack),
+%      |             ^
+
+
+09:28:26.714 [debug] Building engine: src/elixir_sense_parser.erl:10478:13: function yeccpars2_593_/1 undefined
+% 10478|  NewStack = yeccpars2_593_(Stack),
+%      |             ^
+
+
+09:28:26.753 [debug] Building engine: src/elixir_sense_parser.erl:10495:13: function 'yeccpars2_596_.'/1 undefined
+% 10495|  NewStack = 'yeccpars2_596_.'(Stack),
+%      |             ^
+
+
+09:28:26.783 [debug] Building engine: src/elixir_sense_parser.erl:10498:13: function 'yeccpars2_596_['/1 undefined
+% 10498|  NewStack = 'yeccpars2_596_['(Stack),
+%      |             ^
+
+
+09:28:26.813 [debug] Building engine: src/elixir_sense_parser.erl:10501:13: function yeccpars2_596_and_op/1 undefined
+% 10501|  NewStack = yeccpars2_596_and_op(Stack),
+%      |             ^
+
+
+09:28:26.842 [debug] Building engine: src/elixir_sense_parser.erl:10504:13: function yeccpars2_596_arrow_op/1 undefined
+% 10504|  NewStack = yeccpars2_596_arrow_op(Stack),
+%      |             ^
+
+
+09:28:26.849 [debug] Building engine: src/elixir_sense_parser.erl:10507:13: function yeccpars2_596_comp_op/1 undefined
+% 10507|  NewStack = yeccpars2_596_comp_op(Stack),
+%      |             ^
+
+
+09:28:26.879 [debug] Building engine: src/elixir_sense_parser.erl:10510:13: function yeccpars2_596_concat_op/1 undefined
+% 10510|  NewStack = yeccpars2_596_concat_op(Stack),
+%      |             ^
+
+
+09:28:26.886 [debug] Building engine: src/elixir_sense_parser.erl:10513:13: function yeccpars2_596_dot_call_op/1 undefined
+% 10513|  NewStack = yeccpars2_596_dot_call_op(Stack),
+%      |             ^
+
+
+09:28:26.917 [debug] Building engine: src/elixir_sense_parser.erl:10516:13: function yeccpars2_596_dual_op/1 undefined
+% 10516|  NewStack = yeccpars2_596_dual_op(Stack),
+%      |             ^
+
+
+09:28:26.946 [debug] Building engine: src/elixir_sense_parser.erl:10519:13: function yeccpars2_596_in_match_op/1 undefined
+% 10519|  NewStack = yeccpars2_596_in_match_op(Stack),
+%      |             ^
+
+
+09:28:26.977 [debug] Building engine: src/elixir_sense_parser.erl:10522:13: function yeccpars2_596_in_op/1 undefined
+% 10522|  NewStack = yeccpars2_596_in_op(Stack),
+%      |             ^
+
+
+09:28:27.007 [debug] Building engine: src/elixir_sense_parser.erl:10525:13: function yeccpars2_596_kw_identifier/1 undefined
+% 10525|  NewStack = yeccpars2_596_kw_identifier(Stack),
+%      |             ^
+
+
+09:28:27.037 [debug] Building engine: src/elixir_sense_parser.erl:10528:13: function yeccpars2_596_match_op/1 undefined
+% 10528|  NewStack = yeccpars2_596_match_op(Stack),
+%      |             ^
+
+
+09:28:27.068 [debug] Building engine: src/elixir_sense_parser.erl:10531:13: function yeccpars2_596_mult_op/1 undefined
+% 10531|  NewStack = yeccpars2_596_mult_op(Stack),
+%      |             ^
+
+
+09:28:27.098 [debug] Building engine: src/elixir_sense_parser.erl:10534:13: function yeccpars2_596_or_op/1 undefined
+% 10534|  NewStack = yeccpars2_596_or_op(Stack),
+%      |             ^
+
+
+09:28:27.105 [debug] Building engine: src/elixir_sense_parser.erl:10537:13: function yeccpars2_596_pipe_op/1 undefined
+% 10537|  NewStack = yeccpars2_596_pipe_op(Stack),
+%      |             ^
+
+
+09:28:27.136 [debug] Building engine: src/elixir_sense_parser.erl:10540:13: function yeccpars2_596_power_op/1 undefined
+% 10540|  NewStack = yeccpars2_596_power_op(Stack),
+%      |             ^
+
+
+09:28:27.143 [debug] Building engine: src/elixir_sense_parser.erl:10543:13: function yeccpars2_596_rel_op/1 undefined
+% 10543|  NewStack = yeccpars2_596_rel_op(Stack),
+%      |             ^
+
+
+09:28:27.173 [debug] Building engine: src/elixir_sense_parser.erl:10546:13: function yeccpars2_596_ternary_op/1 undefined
+% 10546|  NewStack = yeccpars2_596_ternary_op(Stack),
+%      |             ^
+
+
+09:28:27.203 [debug] Building engine: src/elixir_sense_parser.erl:10549:13: function yeccpars2_596_type_op/1 undefined
+% 10549|  NewStack = yeccpars2_596_type_op(Stack),
+%      |             ^
+
+
+09:28:27.233 [debug] Building engine: src/elixir_sense_parser.erl:10552:13: function yeccpars2_596_when_op/1 undefined
+% 10552|  NewStack = yeccpars2_596_when_op(Stack),
+%      |             ^
+
+
+09:28:27.263 [debug] Building engine: src/elixir_sense_parser.erl:10555:13: function yeccpars2_596_xor_op/1 undefined
+% 10555|  NewStack = yeccpars2_596_xor_op(Stack),
+%      |             ^
+
+
+09:28:27.293 [debug] Building engine: src/elixir_sense_parser.erl:10558:13: function yeccpars2_596_/1 undefined
+% 10558|  NewStack = yeccpars2_596_(Stack),
+%      |             ^
+
+
+09:28:27.323 [debug] Building engine: src/elixir_sense_parser.erl:10637:13: function 'yeccpars2_598_.'/1 undefined
+% 10637|  NewStack = 'yeccpars2_598_.'(Stack),
+%      |             ^
+
+
+09:28:27.354 [debug] Building engine: src/elixir_sense_parser.erl:10640:13: function yeccpars2_598_and_op/1 undefined
+% 10640|  NewStack = yeccpars2_598_and_op(Stack),
+%      |             ^
+
+
+09:28:27.361 [debug] Building engine: src/elixir_sense_parser.erl:10643:13: function yeccpars2_598_arrow_op/1 undefined
+% 10643|  NewStack = yeccpars2_598_arrow_op(Stack),
+%      |             ^
+
+
+09:28:27.392 [debug] Building engine: src/elixir_sense_parser.erl:10646:13: function yeccpars2_598_comp_op/1 undefined
+% 10646|  NewStack = yeccpars2_598_comp_op(Stack),
+%      |             ^
+
+
+09:28:27.422 [debug] Building engine: src/elixir_sense_parser.erl:10649:13: function yeccpars2_598_concat_op/1 undefined
+% 10649|  NewStack = yeccpars2_598_concat_op(Stack),
+%      |             ^
+
+
+09:28:27.452 [debug] Building engine: src/elixir_sense_parser.erl:10652:13: function yeccpars2_598_dot_call_op/1 undefined
+% 10652|  NewStack = yeccpars2_598_dot_call_op(Stack),
+%      |             ^
+
+
+09:28:27.483 [debug] Building engine: src/elixir_sense_parser.erl:10655:13: function yeccpars2_598_dual_op/1 undefined
+% 10655|  NewStack = yeccpars2_598_dual_op(Stack),
+%      |             ^
+
+
+09:28:27.513 [debug] Building engine: src/elixir_sense_parser.erl:10658:13: function yeccpars2_598_in_match_op/1 undefined
+% 10658|  NewStack = yeccpars2_598_in_match_op(Stack),
+%      |             ^
+
+
+09:28:27.543 [debug] Building engine: src/elixir_sense_parser.erl:10661:13: function yeccpars2_598_in_op/1 undefined
+% 10661|  NewStack = yeccpars2_598_in_op(Stack),
+%      |             ^
+
+
+09:28:27.573 [debug] Building engine: src/elixir_sense_parser.erl:10664:13: function yeccpars2_598_match_op/1 undefined
+% 10664|  NewStack = yeccpars2_598_match_op(Stack),
+%      |             ^
+
+
+09:28:27.604 [debug] Building engine: src/elixir_sense_parser.erl:10667:13: function yeccpars2_598_mult_op/1 undefined
+% 10667|  NewStack = yeccpars2_598_mult_op(Stack),
+%      |             ^
+
+
+09:28:27.611 [debug] Building engine: src/elixir_sense_parser.erl:10670:13: function yeccpars2_598_or_op/1 undefined
+% 10670|  NewStack = yeccpars2_598_or_op(Stack),
+%      |             ^
+
+
+09:28:27.642 [debug] Building engine: src/elixir_sense_parser.erl:10673:13: function yeccpars2_598_pipe_op/1 undefined
+% 10673|  NewStack = yeccpars2_598_pipe_op(Stack),
+%      |             ^
+
+
+09:28:27.672 [debug] Building engine: src/elixir_sense_parser.erl:10676:13: function yeccpars2_598_power_op/1 undefined
+% 10676|  NewStack = yeccpars2_598_power_op(Stack),
+%      |             ^
+
+
+09:28:27.703 [debug] Building engine: src/elixir_sense_parser.erl:10679:13: function yeccpars2_598_rel_op/1 undefined
+% 10679|  NewStack = yeccpars2_598_rel_op(Stack),
+%      |             ^
+
+
+09:28:27.733 [debug] Building engine: src/elixir_sense_parser.erl:10682:13: function yeccpars2_598_ternary_op/1 undefined
+% 10682|  NewStack = yeccpars2_598_ternary_op(Stack),
+%      |             ^
+
+
+09:28:27.740 [debug] Building engine: src/elixir_sense_parser.erl:10685:13: function yeccpars2_598_type_op/1 undefined
+% 10685|  NewStack = yeccpars2_598_type_op(Stack),
+%      |             ^
+
+
+09:28:27.771 [debug] Building engine: src/elixir_sense_parser.erl:10688:13: function yeccpars2_598_when_op/1 undefined
+% 10688|  NewStack = yeccpars2_598_when_op(Stack),
+%      |             ^
+
+
+09:28:27.778 [debug] Building engine: src/elixir_sense_parser.erl:10691:13: function yeccpars2_598_xor_op/1 undefined
+% 10691|  NewStack = yeccpars2_598_xor_op(Stack),
+%      |             ^
+
+
+09:28:27.809 [debug] Building engine: src/elixir_sense_parser.erl:10694:13: function yeccpars2_598_/1 undefined
+% 10694|  NewStack = yeccpars2_598_(Stack),
+%      |             ^
+
+
+09:28:27.839 [debug] Building engine: src/elixir_sense_parser.erl:10700:13: function 'yeccpars2_599_.'/1 undefined
+% 10700|  NewStack = 'yeccpars2_599_.'(Stack),
+%      |             ^
+
+
+09:28:27.870 [debug] Building engine: src/elixir_sense_parser.erl:10703:13: function 'yeccpars2_599_['/1 undefined
+% 10703|  NewStack = 'yeccpars2_599_['(Stack),
+%      |             ^
+
+
+09:28:27.877 [debug] Building engine: src/elixir_sense_parser.erl:10706:13: function yeccpars2_599_and_op/1 undefined
+% 10706|  NewStack = yeccpars2_599_and_op(Stack),
+%      |             ^
+
+
+09:28:27.908 [debug] Building engine: src/elixir_sense_parser.erl:10709:13: function yeccpars2_599_arrow_op/1 undefined
+% 10709|  NewStack = yeccpars2_599_arrow_op(Stack),
+%      |             ^
+
+
+09:28:27.939 [debug] Building engine: src/elixir_sense_parser.erl:10712:13: function yeccpars2_599_comp_op/1 undefined
+% 10712|  NewStack = yeccpars2_599_comp_op(Stack),
+%      |             ^
+
+
+09:28:27.969 [debug] Building engine: src/elixir_sense_parser.erl:10715:13: function yeccpars2_599_concat_op/1 undefined
+% 10715|  NewStack = yeccpars2_599_concat_op(Stack),
+%      |             ^
+
+
+09:28:28.000 [debug] Building engine: src/elixir_sense_parser.erl:10718:13: function yeccpars2_599_dot_call_op/1 undefined
+% 10718|  NewStack = yeccpars2_599_dot_call_op(Stack),
+%      |             ^
+
+
+09:28:28.007 [debug] Building engine: src/elixir_sense_parser.erl:10721:13: function yeccpars2_599_dual_op/1 undefined
+% 10721|  NewStack = yeccpars2_599_dual_op(Stack),
+%      |             ^
+
+
+09:28:28.039 [debug] Building engine: src/elixir_sense_parser.erl:10724:13: function yeccpars2_599_in_match_op/1 undefined
+% 10724|  NewStack = yeccpars2_599_in_match_op(Stack),
+%      |             ^
+
+
+09:28:28.070 [debug] Building engine: src/elixir_sense_parser.erl:10727:13: function yeccpars2_599_in_op/1 undefined
+% 10727|  NewStack = yeccpars2_599_in_op(Stack),
+%      |             ^
+
+
+09:28:28.100 [debug] Building engine: src/elixir_sense_parser.erl:10730:13: function yeccpars2_599_kw_identifier/1 undefined
+% 10730|  NewStack = yeccpars2_599_kw_identifier(Stack),
+%      |             ^
+
+
+09:28:28.130 [debug] Building engine: src/elixir_sense_parser.erl:10733:13: function yeccpars2_599_match_op/1 undefined
+% 10733|  NewStack = yeccpars2_599_match_op(Stack),
+%      |             ^
+
+
+09:28:28.161 [debug] Building engine: src/elixir_sense_parser.erl:10736:13: function yeccpars2_599_mult_op/1 undefined
+% 10736|  NewStack = yeccpars2_599_mult_op(Stack),
+%      |             ^
+
+
+09:28:28.168 [debug] Building engine: src/elixir_sense_parser.erl:10739:13: function yeccpars2_599_or_op/1 undefined
+% 10739|  NewStack = yeccpars2_599_or_op(Stack),
+%      |             ^
+
+
+09:28:28.199 [debug] Building engine: src/elixir_sense_parser.erl:10742:13: function yeccpars2_599_pipe_op/1 undefined
+% 10742|  NewStack = yeccpars2_599_pipe_op(Stack),
+%      |             ^
+
+
+09:28:28.230 [debug] Building engine: src/elixir_sense_parser.erl:10745:13: function yeccpars2_599_power_op/1 undefined
+% 10745|  NewStack = yeccpars2_599_power_op(Stack),
+%      |             ^
+
+
+09:28:28.237 [debug] Building engine: src/elixir_sense_parser.erl:10748:13: function yeccpars2_599_rel_op/1 undefined
+% 10748|  NewStack = yeccpars2_599_rel_op(Stack),
+%      |             ^
+
+
+09:28:28.268 [debug] Building engine: src/elixir_sense_parser.erl:10751:13: function yeccpars2_599_ternary_op/1 undefined
+% 10751|  NewStack = yeccpars2_599_ternary_op(Stack),
+%      |             ^
+
+
+09:28:28.298 [debug] Building engine: src/elixir_sense_parser.erl:10754:13: function yeccpars2_599_type_op/1 undefined
+% 10754|  NewStack = yeccpars2_599_type_op(Stack),
+%      |             ^
+
+
+09:28:28.328 [debug] Building engine: src/elixir_sense_parser.erl:10757:13: function yeccpars2_599_when_op/1 undefined
+% 10757|  NewStack = yeccpars2_599_when_op(Stack),
+%      |             ^
+
+
+09:28:28.335 [debug] Building engine: src/elixir_sense_parser.erl:10760:13: function yeccpars2_599_xor_op/1 undefined
+% 10760|  NewStack = yeccpars2_599_xor_op(Stack),
+%      |             ^
+
+
+09:28:28.366 [debug] Building engine: src/elixir_sense_parser.erl:10763:13: function yeccpars2_599_/1 undefined
+% 10763|  NewStack = yeccpars2_599_(Stack),
+%      |             ^
+
+
+09:28:28.373 [debug] Building engine: src/elixir_sense_parser.erl:10771:13: function 'yeccpars2_601_.'/1 undefined
+% 10771|  NewStack = 'yeccpars2_601_.'(Stack),
+%      |             ^
+
+
+09:28:28.403 [debug] Building engine: src/elixir_sense_parser.erl:10774:13: function 'yeccpars2_601_['/1 undefined
+% 10774|  NewStack = 'yeccpars2_601_['(Stack),
+%      |             ^
+
+
+09:28:28.434 [debug] Building engine: src/elixir_sense_parser.erl:10777:13: function yeccpars2_601_and_op/1 undefined
+% 10777|  NewStack = yeccpars2_601_and_op(Stack),
+%      |             ^
+
+
+09:28:28.464 [debug] Building engine: src/elixir_sense_parser.erl:10780:13: function yeccpars2_601_arrow_op/1 undefined
+% 10780|  NewStack = yeccpars2_601_arrow_op(Stack),
+%      |             ^
+
+
+09:28:28.494 [debug] Building engine: src/elixir_sense_parser.erl:10783:13: function yeccpars2_601_comp_op/1 undefined
+% 10783|  NewStack = yeccpars2_601_comp_op(Stack),
+%      |             ^
+
+
+09:28:28.525 [debug] Building engine: src/elixir_sense_parser.erl:10786:13: function yeccpars2_601_concat_op/1 undefined
+% 10786|  NewStack = yeccpars2_601_concat_op(Stack),
+%      |             ^
+
+
+09:28:28.556 [debug] Building engine: src/elixir_sense_parser.erl:10789:13: function yeccpars2_601_dot_call_op/1 undefined
+% 10789|  NewStack = yeccpars2_601_dot_call_op(Stack),
+%      |             ^
+
+
+09:28:28.587 [debug] Building engine: src/elixir_sense_parser.erl:10792:13: function yeccpars2_601_dual_op/1 undefined
+% 10792|  NewStack = yeccpars2_601_dual_op(Stack),
+%      |             ^
+
+
+09:28:28.617 [debug] Building engine: src/elixir_sense_parser.erl:10795:13: function yeccpars2_601_in_match_op/1 undefined
+% 10795|  NewStack = yeccpars2_601_in_match_op(Stack),
+%      |             ^
+
+
+09:28:28.648 [debug] Building engine: src/elixir_sense_parser.erl:10798:13: function yeccpars2_601_in_op/1 undefined
+% 10798|  NewStack = yeccpars2_601_in_op(Stack),
+%      |             ^
+
+
+09:28:28.678 [debug] Building engine: src/elixir_sense_parser.erl:10801:13: function yeccpars2_601_kw_identifier/1 undefined
+% 10801|  NewStack = yeccpars2_601_kw_identifier(Stack),
+%      |             ^
+
+
+09:28:28.709 [debug] Building engine: src/elixir_sense_parser.erl:10804:13: function yeccpars2_601_match_op/1 undefined
+% 10804|  NewStack = yeccpars2_601_match_op(Stack),
+%      |             ^
+
+
+09:28:28.740 [debug] Building engine: src/elixir_sense_parser.erl:10807:13: function yeccpars2_601_mult_op/1 undefined
+% 10807|  NewStack = yeccpars2_601_mult_op(Stack),
+%      |             ^
+
+
+09:28:28.770 [debug] Building engine: src/elixir_sense_parser.erl:10810:13: function yeccpars2_601_or_op/1 undefined
+% 10810|  NewStack = yeccpars2_601_or_op(Stack),
+%      |             ^
+
+
+09:28:28.800 [debug] Building engine: src/elixir_sense_parser.erl:10813:13: function yeccpars2_601_pipe_op/1 undefined
+% 10813|  NewStack = yeccpars2_601_pipe_op(Stack),
+%      |             ^
+
+
+09:28:28.831 [debug] Building engine: src/elixir_sense_parser.erl:10816:13: function yeccpars2_601_power_op/1 undefined
+% 10816|  NewStack = yeccpars2_601_power_op(Stack),
+%      |             ^
+
+
+09:28:28.861 [debug] Building engine: src/elixir_sense_parser.erl:10819:13: function yeccpars2_601_rel_op/1 undefined
+% 10819|  NewStack = yeccpars2_601_rel_op(Stack),
+%      |             ^
+
+
+09:28:28.892 [debug] Building engine: src/elixir_sense_parser.erl:10822:13: function yeccpars2_601_ternary_op/1 undefined
+% 10822|  NewStack = yeccpars2_601_ternary_op(Stack),
+%      |             ^
+
+
+09:28:28.923 [debug] Building engine: src/elixir_sense_parser.erl:10825:13: function yeccpars2_601_type_op/1 undefined
+% 10825|  NewStack = yeccpars2_601_type_op(Stack),
+%      |             ^
+
+
+09:28:28.954 [debug] Building engine: src/elixir_sense_parser.erl:10828:13: function yeccpars2_601_when_op/1 undefined
+% 10828|  NewStack = yeccpars2_601_when_op(Stack),
+%      |             ^
+
+
+09:28:28.986 [debug] Building engine: src/elixir_sense_parser.erl:10831:13: function yeccpars2_601_xor_op/1 undefined
+% 10831|  NewStack = yeccpars2_601_xor_op(Stack),
+%      |             ^
+
+
+09:28:29.016 [debug] Building engine: src/elixir_sense_parser.erl:10834:13: function yeccpars2_601_/1 undefined
+% 10834|  NewStack = yeccpars2_601_(Stack),
+%      |             ^
+
+
+09:28:29.047 [debug] Building engine: src/elixir_sense_parser.erl:10840:13: function 'yeccpars2_602_.'/1 undefined
+% 10840|  NewStack = 'yeccpars2_602_.'(Stack),
+%      |             ^
+
+
+09:28:29.078 [debug] Building engine: src/elixir_sense_parser.erl:10843:13: function 'yeccpars2_602_['/1 undefined
+% 10843|  NewStack = 'yeccpars2_602_['(Stack),
+%      |             ^
+
+
+09:28:29.109 [debug] Building engine: src/elixir_sense_parser.erl:10846:13: function yeccpars2_602_and_op/1 undefined
+% 10846|  NewStack = yeccpars2_602_and_op(Stack),
+%      |             ^
+
+
+09:28:29.139 [debug] Building engine: src/elixir_sense_parser.erl:10849:13: function yeccpars2_602_arrow_op/1 undefined
+% 10849|  NewStack = yeccpars2_602_arrow_op(Stack),
+%      |             ^
+
+
+09:28:29.170 [debug] Building engine: src/elixir_sense_parser.erl:10852:13: function yeccpars2_602_comp_op/1 undefined
+% 10852|  NewStack = yeccpars2_602_comp_op(Stack),
+%      |             ^
+
+
+09:28:29.201 [debug] Building engine: src/elixir_sense_parser.erl:10855:13: function yeccpars2_602_concat_op/1 undefined
+% 10855|  NewStack = yeccpars2_602_concat_op(Stack),
+%      |             ^
+
+
+09:28:29.232 [debug] Building engine: src/elixir_sense_parser.erl:10858:13: function yeccpars2_602_dot_call_op/1 undefined
+% 10858|  NewStack = yeccpars2_602_dot_call_op(Stack),
+%      |             ^
+
+
+09:28:29.262 [debug] Building engine: src/elixir_sense_parser.erl:10861:13: function yeccpars2_602_dual_op/1 undefined
+% 10861|  NewStack = yeccpars2_602_dual_op(Stack),
+%      |             ^
+
+
+09:28:29.293 [debug] Building engine: src/elixir_sense_parser.erl:10864:13: function yeccpars2_602_in_match_op/1 undefined
+% 10864|  NewStack = yeccpars2_602_in_match_op(Stack),
+%      |             ^
+
+
+09:28:29.324 [debug] Building engine: src/elixir_sense_parser.erl:10867:13: function yeccpars2_602_in_op/1 undefined
+% 10867|  NewStack = yeccpars2_602_in_op(Stack),
+%      |             ^
+
+
+09:28:29.355 [debug] Building engine: src/elixir_sense_parser.erl:10870:13: function yeccpars2_602_kw_identifier/1 undefined
+% 10870|  NewStack = yeccpars2_602_kw_identifier(Stack),
+%      |             ^
+
+
+09:28:29.385 [debug] Building engine: src/elixir_sense_parser.erl:10873:13: function yeccpars2_602_match_op/1 undefined
+% 10873|  NewStack = yeccpars2_602_match_op(Stack),
+%      |             ^
+
+
+09:28:29.416 [debug] Building engine: src/elixir_sense_parser.erl:10876:13: function yeccpars2_602_mult_op/1 undefined
+% 10876|  NewStack = yeccpars2_602_mult_op(Stack),
+%      |             ^
+
+
+09:28:29.447 [debug] Building engine: src/elixir_sense_parser.erl:10879:13: function yeccpars2_602_or_op/1 undefined
+% 10879|  NewStack = yeccpars2_602_or_op(Stack),
+%      |             ^
+
+
+09:28:29.454 [debug] Building engine: src/elixir_sense_parser.erl:10882:13: function yeccpars2_602_pipe_op/1 undefined
+% 10882|  NewStack = yeccpars2_602_pipe_op(Stack),
+%      |             ^
+
+
+09:28:29.485 [debug] Building engine: src/elixir_sense_parser.erl:10885:13: function yeccpars2_602_power_op/1 undefined
+% 10885|  NewStack = yeccpars2_602_power_op(Stack),
+%      |             ^
+
+
+09:28:29.516 [debug] Building engine: src/elixir_sense_parser.erl:10888:13: function yeccpars2_602_rel_op/1 undefined
+% 10888|  NewStack = yeccpars2_602_rel_op(Stack),
+%      |             ^
+
+
+09:28:29.547 [debug] Building engine: src/elixir_sense_parser.erl:10891:13: function yeccpars2_602_ternary_op/1 undefined
+% 10891|  NewStack = yeccpars2_602_ternary_op(Stack),
+%      |             ^
+
+
+09:28:29.577 [debug] Building engine: src/elixir_sense_parser.erl:10894:13: function yeccpars2_602_type_op/1 undefined
+% 10894|  NewStack = yeccpars2_602_type_op(Stack),
+%      |             ^
+
+
+09:28:29.608 [debug] Building engine: src/elixir_sense_parser.erl:10897:13: function yeccpars2_602_when_op/1 undefined
+% 10897|  NewStack = yeccpars2_602_when_op(Stack),
+%      |             ^
+
+
+09:28:29.639 [debug] Building engine: src/elixir_sense_parser.erl:10900:13: function yeccpars2_602_xor_op/1 undefined
+% 10900|  NewStack = yeccpars2_602_xor_op(Stack),
+%      |             ^
+
+
+09:28:29.670 [debug] Building engine: src/elixir_sense_parser.erl:10903:13: function yeccpars2_602_/1 undefined
+% 10903|  NewStack = yeccpars2_602_(Stack),
+%      |             ^
+
+
+09:28:29.701 [debug] Building engine: src/elixir_sense_parser.erl:10910:13: function yeccpars2_603_/1 undefined
+% 10910|  NewStack = yeccpars2_603_(Stack),
+%      |             ^
+
+
+09:28:29.732 [debug] Building engine: src/elixir_sense_parser.erl:10917:13: function yeccpars2_604_/1 undefined
+% 10917|  NewStack = yeccpars2_604_(Stack),
+%      |             ^
+
+
+09:28:29.763 [debug] Building engine: src/elixir_sense_parser.erl:10926:13: function yeccpars2_606_/1 undefined
+% 10926|  NewStack = yeccpars2_606_(Stack),
+%      |             ^
+
+
+09:28:29.794 [debug] Building engine: src/elixir_sense_parser.erl:10933:13: function yeccpars2_607_/1 undefined
+% 10933|  NewStack = yeccpars2_607_(Stack),
+%      |             ^
+
+
+09:28:29.825 [debug] Building engine: src/elixir_sense_parser.erl:10940:13: function yeccpars2_608_/1 undefined
+% 10940|  NewStack = yeccpars2_608_(Stack),
+%      |             ^
+
+
+09:28:29.827 [debug] Building engine: src/elixir_sense_parser.yrl:186:2: inlined function yeccpars2_447_/1 undefined
+%  186| no_parens_expr -> matched_expr no_parens_op_expr : build_op('$1', '$2').
+%     |  ^
+
+
+09:28:29.827 [debug] Building engine: src/elixir_sense_parser.yrl:187:2: function yeccpars2_447_/1 undefined
+%  187| no_parens_expr -> unary_op_eol no_parens_expr : build_unary_op('$1', '$2').
+%     |  ^
+
+
+09:28:29.827 [debug] Building engine: src/elixir_sense_parser.yrl:188:2: function yeccpars2_447_/1 undefined
+%  188| no_parens_expr -> at_op_eol no_parens_expr : build_unary_op('$1', '$2').
+%     |  ^
+
+
+09:28:29.831 [debug] Building engine: src/elixir_sense_parser.yrl:690:1: Warning: function do_end_meta/2 is unused
+%  690| do_end_meta(Do, End) ->
+%     | ^
+
+
+09:28:29.831 [debug] Building engine: src/elixir_sense_parser.yrl:781:1: Warning: function build_list/3 is unused
+%  781| build_list(Left, Args, Right) ->
+%     | ^
+
+src/elixir_sense_parser.yrl:784:1: Warning: function build_tuple/3 is unused
+%  784| build_tuple(Left, [Arg1, Arg2], Right) ->
+%     | ^
+
+
+09:28:29.831 [debug] Building engine: src/elixir_sense_parser.yrl:789:1: Warning: function build_bit/3 is unused
+%  789| build_bit(Left, Args, Right) ->
+%     | ^
+
+
+09:28:29.831 [debug] Building engine: src/elixir_sense_parser.yrl:792:1: Warning: function build_map/3 is unused
+%  792| build_map(Left, Args, Right) ->
+%     | ^
+
+
+09:28:29.831 [debug] Building engine: src/elixir_sense_parser.yrl:795:1: Warning: function build_map_update/4 is unused
+%  795| build_map_update(Left, {Pipe, Struct, Map}, Right, Extra) ->
+%     | ^
+
+
+09:28:29.832 [debug] Building engine: src/elixir_sense_parser.yrl:911:1: Warning: function build_no_parens_do_block/3 is unused
+%  911| build_no_parens_do_block(Expr, Args, {BlockMeta, Block}) ->
+%     | ^
+
+src/elixir_sense_parser.yrl:938:1: Warning: function build_fn/3 is unused
+%  938| build_fn(Fn, Stab, End) ->
+%     | ^
+
+
+09:28:29.837 [debug] Building engine: could not compile dependency :elixir_sense, "mix compile" failed. Errors may have been logged above. You can recompile this dependency with "mix deps.compile elixir_sense --force", update it with "mix deps.update elixir_sense" or clean it with "mix deps.clean elixir_sense"
+
+09:28:29.842 [error] Engine build script exited with reason: :normal could not compile dependency :elixir_sense, "mix compile" failed. Errors may have been logged above. You can recompile this dependency with "mix deps.compile elixir_sense --force", update it with "mix deps.update elixir_sense" or clean it with "mix deps.clean elixir_sense"
+
+09:28:29.842 [debug] sent notification server -> client $/progress
+09:28:29.842 [error] Process #PID<0.173.0> terminating
+** (exit) {:error, :normal, ~c"could not compile dependency :elixir_sense, \"mix compile\" failed. Errors may have been logged above. You can recompile this dependency with \"mix deps.compile elixir_sense --force\", update it with \"mix deps.update elixir_sense\" or clean it with \"mix deps.clean elixir_sense\"\n"}
+    (stdlib 6.2.2.1) gen_server.erl:2210: :gen_server.init_it/6
+    (stdlib 6.2.2.1) proc_lib.erl:329: :proc_lib.init_p_do_apply/3
+Initial Call: XPExpert.Project.Node.init/1
+Ancestors: [:"aurum::supervisor", XPExpert.ProjectSupervisor, XPExpert.Supervisor, #PID<0.157.0>]
+Message Queue Length: 0
+Messages: []
+Links: [#PID<0.170.0>]
+Dictionary: []
+Trapping Exits: false
+Status: :running
+Heap Size: 6772
+Stack Size: 29
+Reductions: 20256
+09:28:29.842 [error] Child {XPExpert.Project.Node, "aurum"} of Supervisor :"aurum::supervisor" failed to start
+** (exit) {:error, :normal, ~c"could not compile dependency :elixir_sense, \"mix compile\" failed. Errors may have been logged above. You can recompile this dependency with \"mix deps.compile elixir_sense --force\", update it with \"mix deps.update elixir_sense\" or clean it with \"mix deps.clean elixir_sense\"\n"}
+Start Call: XPExpert.Project.Node.start_link(%XPForge.Project{root_uri: "file:///Users/riza/code/aurum", mix_exs_uri: "file:///Users/riza/code/aurum/mix.exs", mix_project?: true, mix_env: nil, mix_target: nil, env_variables: %{}, project_module: nil, entropy: 23402})
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:28:29.842 [error] Task #PID<0.169.0> started from #PID<0.168.0> terminating
+** (MatchError) no match of right hand side value: {:error, {:shutdown, {:failed_to_start_child, {XPExpert.Project.Node, "aurum"}, {:error, :normal, ~c"could not compile dependency :elixir_sense, \"mix compile\" failed. Errors may have been logged above. You can recompile this dependency with \"mix deps.compile elixir_sense --force\", update it with \"mix deps.update elixir_sense\" or clean it with \"mix deps.clean elixir_sense\"\n"}}}}
+    (xp_expert 0.1.0-b237fd5) lib/expert/state.ex:59: anonymous fn/1 in XPExpert.State.initialize/2
+    (elixir 1.17.3) lib/task/supervised.ex:101: Task.Supervised.invoke_mfa/2
+Function: #Function<3.104070401/0 in XPExpert.State.initialize/2>
+    Args: []
+09:28:29.844 [error] Child :undefined of Supervisor :expert_task_queue terminated
+** (exit) an exception was raised:
+    ** (MatchError) no match of right hand side value: {:error, {:shutdown, {:failed_to_start_child, {XPExpert.Project.Node, "aurum"}, {:error, :normal, ~c"could not compile dependency :elixir_sense, \"mix compile\" failed. Errors may have been logged above. You can recompile this dependency with \"mix deps.compile elixir_sense --force\", update it with \"mix deps.update elixir_sense\" or clean it with \"mix deps.clean elixir_sense\"\n"}}}}
+        (xp_expert 0.1.0-b237fd5) lib/expert/state.ex:59: anonymous fn/1 in XPExpert.State.initialize/2
+        (elixir 1.17.3) lib/task/supervised.ex:101: Task.Supervised.invoke_mfa/2
+Pid: #PID<0.169.0>
+Start Call: Task.Supervised.start_link/?
+Restart: :temporary
+Shutdown: 5000
+Type: :worker
+09:29:22.040 [debug] sent notification server -> client window/logMessage
+09:29:22.040 [debug] handled request client -> server textDocument/hover in 317µs
+09:29:22.071 [debug] handled notification client -> server $/cancelRequest in 113µs
+09:29:40.483 [debug] handled notification client -> server $/cancelRequest in 122µs
+09:29:41.014 [debug] handled notification client -> server $/cancelRequest in 165µs
+09:29:41.015 [debug] sent notification server -> client window/logMessage
+09:29:41.015 [debug] handled request client -> server textDocument/codeAction in 678µs
+09:29:41.053 [debug] sent notification server -> client window/logMessage
+09:29:41.053 [debug] handled request client -> server textDocument/codeLens in 244µs
+09:29:50.243 [debug] sent notification server -> client window/logMessage
+09:29:50.243 [info] Shutting down
+09:30:58.536 [debug] Child {XPLoggerFileBackend, :general_log} of Supervisor Logger.Backends.Supervisor started
+Pid: #PID<0.102.0>
+Start Call: Logger.Backends.Watcher.start_link({{XPLoggerFileBackend, :general_log}, {XPLoggerFileBackend, :general_log}})
+Restart: :transient
+Shutdown: 5000
+Type: :worker
+09:30:58.536 [info] Child Logger.Backends.Supervisor of Supervisor Logger.Backends.Internal started
+Pid: #PID<0.101.0>
+Start Call: Logger.Backends.Supervisor.start_link([{XPLoggerFileBackend, :general_log}])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:30:58.536 [info] Child Logger.Backends.Internal of Supervisor Logger.Supervisor started
+Pid: #PID<0.97.0>
+Start Call: Logger.Backends.Internal.start_link([])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:30:58.536 [info] Application logger started at :nonode@nohost
+09:30:58.536 [info] Application xp_mime started at :nonode@nohost
+09:30:58.536 [info] Application xp_hpax started at :nonode@nohost
+09:30:58.536 [info] Application crypto started at :nonode@nohost
+09:30:58.536 [info] Application asn1 started at :nonode@nohost
+09:30:58.536 [info] Application public_key started at :nonode@nohost
+09:30:58.538 [debug] Child :ssl_handler of Supervisor :logger_sup started
+Pid: #PID<0.107.0>
+Start Call: :logger_olp.start_link(:logger_std_h_ssl_handler, :logger_h_common, %{id: :ssl_handler, module: :logger_std_h, config: %{type: :standard_io, filesync_repeat_interval: :no_repeat}, level: :debug, filters: [], filter_default: :stop, formatter: {:ssl_logger, %{}}}, %{})
+Restart: :temporary
+Shutdown: 2000
+Type: :worker
+09:30:58.541 [info] Child :ssl_pem_cache of Supervisor :ssl_admin_sup started
+Pid: #PID<0.111.0>
+Start Call: :ssl_pem_cache.start_link([])
+Restart: :permanent
+Shutdown: 4000
+Type: :worker
+09:30:58.543 [info] Child :ssl_manager of Supervisor :ssl_admin_sup started
+Pid: #PID<0.112.0>
+Start Call: :ssl_manager.start_link([])
+Restart: :permanent
+Shutdown: 4000
+Type: :worker
+09:30:58.544 [info] Child :tls_client_ticket_store of Supervisor :ssl_admin_sup started
+Pid: #PID<0.113.0>
+Start Call: :tls_client_ticket_store.start_link(1000, 7200)
+Restart: :permanent
+Shutdown: 4000
+Type: :worker
+09:30:58.544 [info] Child :ssl_admin_sup of Supervisor :ssl_sup started
+Pid: #PID<0.110.0>
+Start Call: :ssl_admin_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:30:58.545 [info] Child :tls_connection_sup of Supervisor :tls_sup started
+Pid: #PID<0.116.0>
+Start Call: :tls_connection_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:30:58.546 [info] Child :ssl_listen_tracker_sup of Supervisor :tls_server_sup started
+Pid: #PID<0.118.0>
+Start Call: :ssl_listen_tracker_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:30:58.546 [info] Child :tls_server_session_ticket of Supervisor :tls_server_sup started
+Pid: #PID<0.119.0>
+Start Call: :tls_server_session_ticket_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:30:58.547 [info] Child :ssl_server_session_cache_sup of Supervisor :tls_server_sup started
+Pid: #PID<0.120.0>
+Start Call: :ssl_server_session_cache_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:30:58.547 [info] Child :ssl_upgrade_server_session_cache_sup of Supervisor :tls_server_sup started
+Pid: #PID<0.121.0>
+Start Call: :ssl_upgrade_server_session_cache_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:30:58.547 [info] Child :tls_server_sup of Supervisor :tls_sup started
+Pid: #PID<0.117.0>
+Start Call: :tls_server_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:30:58.547 [info] Child :tls_sup of Supervisor :ssl_connection_sup started
+Pid: #PID<0.115.0>
+Start Call: :tls_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:30:58.548 [info] Child :dtls_connection_sup of Supervisor :dtls_sup started
+Pid: #PID<0.123.0>
+Start Call: :dtls_connection_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:30:58.549 [info] Child :dtls_listener_sup of Supervisor :dtls_server_sup started
+Pid: #PID<0.125.0>
+Start Call: :dtls_listener_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:30:58.549 [info] Child :dtls_server_session_cache_sup of Supervisor :dtls_server_sup started
+Pid: #PID<0.126.0>
+Start Call: :dtls_server_session_cache_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:30:58.549 [info] Child :dtls_server_sup of Supervisor :dtls_sup started
+Pid: #PID<0.124.0>
+Start Call: :dtls_server_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:30:58.549 [info] Child :dtls_sup of Supervisor :ssl_connection_sup started
+Pid: #PID<0.122.0>
+Start Call: :dtls_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:30:58.549 [info] Child :ssl_connection_sup of Supervisor :ssl_sup started
+Pid: #PID<0.114.0>
+Start Call: :ssl_connection_sup.start_link()
+Restart: :permanent
+Shutdown: 4000
+Type: :supervisor
+09:30:58.549 [info] Application ssl started at :nonode@nohost
+09:30:58.550 [info] Application xp_mint started at :nonode@nohost
+09:30:58.550 [info] Application xp_nimble_options started at :nonode@nohost
+09:30:58.552 [info] Child XPNimblePool.TaskSupervisor of Supervisor #PID<0.132.0> (Supervisor.Default) started
+Pid: #PID<0.133.0>
+Start Call: Task.Supervisor.start_link([name: XPNimblePool.TaskSupervisor])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:30:58.552 [info] Application xp_nimble_pool started at :nonode@nohost
+09:30:58.553 [info] Child :telemetry_handler_table of Supervisor :telemetry_sup started
+Pid: #PID<0.137.0>
+Start Call: :telemetry_handler_table.start_link()
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:30:58.553 [info] Application xp_telemetry started at :nonode@nohost
+09:30:58.553 [info] Application xp_finch started at :nonode@nohost
+09:30:58.569 [info] Child XPReq.Finch.PIDPartition0 of Supervisor XPReq.Finch started
+Pid: #PID<0.143.0>
+Start Call: Registry.Partition.start_link(XPReq.Finch.PIDPartition0, {:duplicate, XPReq.Finch, 0, 1, XPReq.Finch.KeyPartition0, XPReq.Finch.PIDPartition0, [], false})
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:30:58.569 [info] Child XPReq.Finch of Supervisor XPReq.Finch.Supervisor started
+Pid: #PID<0.142.0>
+Start Call: Registry.start_link([keys: :duplicate, name: XPReq.Finch, meta: [config: %{pools: %{}, registry_name: XPReq.Finch, supervisor_name: XPReq.Finch.PoolSupervisor, manager_name: XPReq.Finch.PoolManager, default_pool_config: %{count: 1, size: 50, mod: XPFinch.HTTP1.Pool, conn_opts: [protocols: [:http1], transport_opts: [keepalive: true, nodelay: true, timeout: 5000], ssl_key_log_file_device: nil], pool_max_idle_time: :infinity, conn_max_idle_time: :infinity, start_pool_metrics?: false}}]])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:30:58.569 [info] Child XPReq.Finch.PoolSupervisor of Supervisor XPReq.Finch.Supervisor started
+Pid: #PID<0.144.0>
+Start Call: DynamicSupervisor.start_link([name: XPReq.Finch.PoolSupervisor, strategy: :one_for_one])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:30:58.569 [info] Child XPFinch.PoolManager of Supervisor XPReq.Finch.Supervisor started
+Pid: #PID<0.145.0>
+Start Call: XPFinch.PoolManager.start_link(%{pools: %{}, registry_name: XPReq.Finch, supervisor_name: XPReq.Finch.PoolSupervisor, manager_name: XPReq.Finch.PoolManager, default_pool_config: %{count: 1, size: 50, mod: XPFinch.HTTP1.Pool, conn_opts: [protocols: [:http1], transport_opts: [keepalive: true, nodelay: true, timeout: 5000], ssl_key_log_file_device: nil], pool_max_idle_time: :infinity, conn_max_idle_time: :infinity, start_pool_metrics?: false}})
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:30:58.569 [info] Child XPReq.Finch of Supervisor #PID<0.140.0> (Supervisor.Default) started
+Pid: #PID<0.141.0>
+Start Call: XPFinch.start_link([name: XPReq.Finch, pools: %{default: [protocols: [:http1]]}])
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:30:58.569 [info] Child XPReq.FinchSupervisor of Supervisor #PID<0.140.0> (Supervisor.Default) started
+Pid: #PID<0.146.0>
+Start Call: DynamicSupervisor.start_link([strategy: :one_for_one, name: XPReq.FinchSupervisor])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:30:58.569 [info] Child XPReq.Test.Ownership of Supervisor #PID<0.140.0> (Supervisor.Default) started
+Pid: #PID<0.147.0>
+Start Call: XPReq.Test.Ownership.start_link([name: XPReq.Test.Ownership])
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:30:58.569 [info] Application xp_req started at :nonode@nohost
+09:30:58.569 [info] Application burrito started at :nonode@nohost
+09:30:58.569 [info] Application xp_schematic started at :nonode@nohost
+09:30:58.569 [info] Application xp_typed_struct started at :nonode@nohost
+09:30:58.569 [info] Application xp_gen_lsp started at :nonode@nohost
+09:30:58.575 [info] Child XPSnowflake.Generator of Supervisor #PID<0.150.0> (Supervisor.Default) started
+Pid: #PID<0.151.0>
+Start Call: XPSnowflake.Generator.start_link(0, 1023)
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:30:58.575 [info] Application xp_snowflake started at :nonode@nohost
+09:30:58.575 [info] Application xp_sourceror started at :nonode@nohost
+09:30:58.575 [info] Application xp_forge started at :nonode@nohost
+09:30:58.575 [info] Application xp_logger_file_backend started at :nonode@nohost
+09:30:58.578 [info] Child :ttb_autostart of Supervisor :runtime_tools_sup started
+Pid: #PID<0.155.0>
+Start Call: :ttb_autostart.start_link()
+Restart: :temporary
+Shutdown: 3000
+Type: :worker
+09:30:58.578 [info] Application runtime_tools started at :nonode@nohost
+09:30:58.578 [info] Application et started at :nonode@nohost
+09:30:58.578 [info] Application observer started at :nonode@nohost
+09:30:58.578 [info] Application xp_path_glob started at :nonode@nohost
+09:30:58.589 [info] Starting NodePortMapper on nonode@nohost
+09:30:58.589 [info] Child XPForge.NodePortMapper of Supervisor XPExpert.Supervisor started
+Pid: #PID<0.159.0>
+Start Call: XPForge.NodePortMapper.start_link([])
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:30:58.590 [info] Child XPForge.Document.Store of Supervisor XPExpert.Supervisor started
+Pid: #PID<0.160.0>
+Start Call: XPForge.Document.Store.start_link([derive: [analysis: &XPForge.Ast.analyze/1]])
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:30:58.591 [info] Child XPExpert.ProjectSupervisor of Supervisor XPExpert.Supervisor started
+Pid: #PID<0.161.0>
+Start Call: DynamicSupervisor.start_link([name: XPExpert.ProjectSupervisor, strategy: :one_for_one])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:30:58.591 [info] Child XPExpert.DynamicSupervisor of Supervisor XPExpert.Supervisor started
+Pid: #PID<0.162.0>
+Start Call: DynamicSupervisor.start_link([name: XPExpert.DynamicSupervisor])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:30:58.592 [info] Child XPGenLSP.Assigns of Supervisor XPExpert.Supervisor started
+Pid: #PID<0.163.0>
+Start Call: XPGenLSP.Assigns.start_link([name: XPExpert.Assigns])
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:30:58.593 [info] Child :expert_task_queue of Supervisor XPExpert.Supervisor started
+Pid: #PID<0.164.0>
+Start Call: Task.Supervisor.start_link([name: :expert_task_queue])
+Restart: :permanent
+Shutdown: :infinity
+Type: :supervisor
+09:30:58.593 [info] Child XPGenLSP.Buffer of Supervisor XPExpert.Supervisor started
+Pid: #PID<0.165.0>
+Start Call: XPGenLSP.Buffer.start_link([name: XPExpert.Buffer])
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:30:58.593 [debug] [name: XPExpert, buffer: XPExpert.Buffer, task_supervisor: :expert_task_queue, dynamic_supervisor: XPExpert.DynamicSupervisor, assigns: XPExpert.Assigns]
+09:30:58.597 [info] Child XPExpert of Supervisor XPExpert.Supervisor started
+Pid: #PID<0.166.0>
+Start Call: XPExpert.start_link([name: XPExpert, buffer: XPExpert.Buffer, task_supervisor: :expert_task_queue, dynamic_supervisor: XPExpert.DynamicSupervisor, assigns: XPExpert.Assigns])
+Restart: :permanent
+Shutdown: 500
+Type: :worker
+09:30:58.597 [info] Application xp_expert started at :nonode@nohost
+09:30:58.658 [info] Starting project at uri file:///Users/riza/code/aurum
+09:30:58.668 [info] Child {XPExpert.Project.Progress, "aurum"} of Supervisor :"aurum::supervisor" started
+Pid: #PID<0.171.0>
+Start Call: XPExpert.Project.Progress.start_link(%XPForge.Project{root_uri: "file:///Users/riza/code/aurum", mix_exs_uri: "file:///Users/riza/code/aurum/mix.exs", mix_project?: true, mix_env: nil, mix_target: nil, env_variables: %{}, project_module: nil, entropy: 22349})
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:30:58.669 [info] Child {XPExpert.EngineSupervisor, "aurum"} of Supervisor :"aurum::supervisor" started
+Pid: #PID<0.172.0>
+Start Call: XPExpert.EngineSupervisor.start_link(%XPForge.Project{root_uri: "file:///Users/riza/code/aurum", mix_exs_uri: "file:///Users/riza/code/aurum/mix.exs", mix_project?: true, mix_env: nil, mix_target: nil, env_variables: %{}, project_module: nil, entropy: 22349})
+Restart: :permanent
+Shutdown: 5000
+Type: :worker
+09:30:58.672 [debug] sent request server -> client window/workDoneProgress/create
+09:30:58.675 [info] Child XPForge.EPMD of Supervisor :net_sup started
+Pid: #PID<0.175.0>
+Start Call: XPForge.EPMD.start_link()
+Restart: :permanent
+Shutdown: 2000
+Type: :worker
+09:30:58.677 [info] Child :auth of Supervisor :net_sup started
+Pid: #PID<0.176.0>
+Start Call: :auth.start_link()
+Restart: :permanent
+Shutdown: 2000
+Type: :worker
+09:30:58.680 [info] Child :net_kernel of Supervisor :net_sup started
+Pid: #PID<0.177.0>
+Start Call: :net_kernel.start_link(%{name: :"expert-manager-aurum-22349@127.0.0.1", supervisor: :net_sup_dynamic, net_tickintensity: 4, net_ticktime: 60, name_domain: :longnames, clean_halt: false})
+Restart: :permanent
+Shutdown: 2000
+Type: :worker
+09:30:58.680 [debug] Child :net_sup_dynamic of Supervisor :kernel_sup started
+Pid: #PID<0.174.0>
+Start Call: :erl_distribution.start_link(%{name: :"expert-manager-aurum-22349@127.0.0.1", supervisor: :net_sup_dynamic, net_tickintensity: 4, net_ticktime: 60, name_domain: :longnames, clean_halt: false})
+Restart: :permanent
+Shutdown: 1000
+Type: :supervisor
+09:30:58.680 [debug] sent notification server -> client $/progress
+09:30:58.713 [debug] handled request client -> server initialize in 108ms
+09:30:58.716 [debug] sent request server -> client client/registerCapability
+09:30:58.721 [debug] handled notification client -> server workspace/didChangeConfiguration in 7ms
+09:30:58.723 [info] Opened file:///Users/riza/code/aurum/mix.exs
+09:30:58.723 [debug] handled notification client -> server textDocument/didOpen in 8ms
+09:30:58.726 [debug] handled notification client -> server initialized in 12ms
+09:30:58.775 [debug] sent notification server -> client window/logMessage
+09:30:58.777 [debug] sent notification server -> client window/logMessage
+09:30:58.777 [debug] sent request server -> client window/workDoneProgress/create
+09:30:58.777 [debug] sent notification server -> client $/progress
+09:30:58.988 [debug] sent notification server -> client window/logMessage
+09:30:58.988 [debug] handled request client -> server textDocument/codeAction in 8ms
+09:30:59.015 [debug] sent notification server -> client window/logMessage
+09:30:59.015 [debug] handled request client -> server textDocument/codeLens in 1ms
+09:31:00.590 [debug] handled notification client -> server $/cancelRequest in 1ms
+09:31:00.626 [debug] Building engine: * creating /Users/riza/.mix/archives/hex-2.3.1-otp-27
+
+09:31:00.655 [debug] handled notification client -> server workspace/didChangeConfiguration in 145µs
+09:31:00.655 [debug] handled notification client -> server workspace/didChangeConfiguration in 55µs
+09:31:00.916 [debug] sent notification server -> client window/logMessage
+09:31:00.916 [debug] handled request client -> server textDocument/codeAction in 341µs
+09:31:00.916 [debug] handled notification client -> server $/cancelRequest in 151µs
+09:31:00.948 [debug] sent notification server -> client window/logMessage
+09:31:00.948 [debug] handled request client -> server textDocument/codeLens in 196µs
+09:31:01.774 [debug] Building engine: * creating /Users/riza/.mix/elixir/1-18-otp-27/rebar3
+
+09:31:02.106 [debug] Building engine: ==> elixir_sense
+
+09:31:02.106 [debug] Building engine: Compiling 5 files (.erl)
+
+09:31:02.336 [debug] Building engine: src/elixir_sense_parser.erl:7593:13: function yeccpars2_447_/1 undefined
+% 7593|  NewStack = yeccpars2_447_(Stack),
+%     |             ^
+
+
+09:31:02.348 [debug] Building engine: src/elixir_sense_parser.erl:7604:13: function yeccpars2_448_/1 undefined
+% 7604|  NewStack = yeccpars2_448_(Stack),
+%     |             ^
+
+
+09:31:02.369 [debug] Building engine: src/elixir_sense_parser.erl:7638:13: function yeccpars2_450_/1 undefined
+% 7638|  NewStack = yeccpars2_450_(Stack),
+%     |             ^
+
+
+09:31:02.375 [debug] Building engine: src/elixir_sense_parser.erl:7647:13: function yeccpars2_451_/1 undefined
+% 7647|  NewStack = yeccpars2_451_(Stack),
+%     |             ^
+
+
+09:31:02.396 [debug] Building engine: src/elixir_sense_parser.erl:7657:13: function yeccpars2_452_/1 undefined
+% 7657|  NewStack = yeccpars2_452_(Stack),
+%     |             ^
+
+
+09:31:02.417 [debug] Building engine: src/elixir_sense_parser.erl:7664:13: function yeccpars2_453_/1 undefined
+% 7664|  NewStack = yeccpars2_453_(Stack),
+%     |             ^
+
+
+09:31:02.440 [debug] Building engine: src/elixir_sense_parser.erl:7671:13: function yeccpars2_454_/1 undefined
+% 7671|  NewStack = yeccpars2_454_(Stack),
+%     |             ^
+
+
+09:31:02.462 [debug] Building engine: src/elixir_sense_parser.erl:7690:13: function yeccpars2_456_/1 undefined
+% 7690|  NewStack = yeccpars2_456_(Stack),
+%     |             ^
+
+
+09:31:02.480 [debug] sent notification server -> client window/logMessage
