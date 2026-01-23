@@ -2,7 +2,7 @@
   "id": "US-105",
   "title": "Optional Recovery Email",
   "description": "As a user, I want to optionally add a recovery email so that I can regain access if I lose my browser data.",
-  "status": "tests_ready",
+  "status": "done",
   "priority": 5,
   "acceptance_criteria": [
     "Prompt appears after adding first item (dismissible)",
