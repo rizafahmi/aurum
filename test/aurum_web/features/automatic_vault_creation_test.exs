@@ -45,6 +45,7 @@ defmodule AurumWeb.AutomaticVaultCreationTest do
 
       max_age = vault_cookie[:max_age]
       one_year_seconds = 365 * 24 * 60 * 60
+
       assert max_age >= one_year_seconds - 86_400,
              "Expected cookie TTL of approximately 1 year"
     end
@@ -79,6 +80,7 @@ defmodule AurumWeb.AutomaticVaultCreationTest do
       assert vault != nil, "Expected vault record to exist"
 
       assert vault.token_hash != nil, "Expected token_hash to be set"
+
       refute String.length(vault.token_hash) == 64,
              "Token hash should not be raw 32-byte token (64 hex chars)"
     end

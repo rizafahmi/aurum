@@ -117,7 +117,8 @@ defmodule Aurum.Gold.PriceCacheTest do
       mock_client = fn -> {:ok, mock_price_data()} end
       fifteen_minutes_ms = 15 * 60 * 1000
 
-      {_pid, name} = start_cache(price_client: mock_client, stale_threshold_ms: fifteen_minutes_ms)
+      {_pid, name} =
+        start_cache(price_client: mock_client, stale_threshold_ms: fifteen_minutes_ms)
 
       {:ok, _} = PriceCache.get_price(name)
 

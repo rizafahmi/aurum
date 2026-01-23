@@ -9,6 +9,7 @@ defmodule Aurum.Application do
   def start(_type, _args) do
     children = [
       AurumWeb.Telemetry,
+      {Registry, keys: :unique, name: Aurum.VaultDatabase.Registry},
       Aurum.Repo,
       Aurum.Accounts.Repo,
       {Ecto.Migrator,

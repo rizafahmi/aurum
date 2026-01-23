@@ -24,13 +24,22 @@ defmodule AurumWeb.Layouts do
           <span class="text-gold font-bold tracking-wider">AURUM VAULT</span>
         </.link>
         <nav class="flex items-center gap-6">
-          <.link navigate={~p"/"} class="text-gold-muted hover:text-gold text-sm uppercase tracking-wide">
+          <.link
+            navigate={~p"/"}
+            class="text-gold-muted hover:text-gold text-sm uppercase tracking-wide"
+          >
             Dashboard
           </.link>
-          <.link navigate={~p"/items"} class="text-gold-muted hover:text-gold text-sm uppercase tracking-wide">
+          <.link
+            navigate={~p"/items"}
+            class="text-gold-muted hover:text-gold text-sm uppercase tracking-wide"
+          >
             Portfolio
           </.link>
-          <.link navigate={~p"/items/new"} class="btn-terminal-primary text-xs uppercase tracking-wide">
+          <.link
+            navigate={~p"/items/new"}
+            class="btn-terminal-primary text-xs uppercase tracking-wide"
+          >
             + Add Item
           </.link>
         </nav>

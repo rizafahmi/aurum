@@ -54,6 +54,39 @@ defmodule AurumWeb.Format do
     Decimal.to_string(value, :normal) <> " " <> Aurum.Units.unit_label(unit)
   end
 
+  @doc """
+  Returns a CSS class for gain/loss styling based on the sign of the value.
+
+  ## Examples
+
+      iex> Format.sign_class(Decimal.new("10.00"))
+      "text-success"
+
+      iex> Format.sign_class(Decimal.new("-5.00"))
+      "text-danger"
+
+      iex> Format.sign_class(nil)
+      nil
+  """
+  @spec sign_class(Decimal.t() | number() | nil) :: String.t() | nil
+  def sign_class(nil), do: nil
+
+  def sign_class(%Decimal{} = d) do
+    case Decimal.compare(d, 0) do
+      :gt -> "text-success"
+      :lt -> "text-danger"
+      :eq -> nil
+    end
+  end
+
+  def sign_class(n) when is_number(n) do
+    cond do
+      n > 0 -> "text-success"
+      n < 0 -> "text-danger"
+      true -> nil
+    end
+  end
+
   defp add_commas(str) do
     {sign, rest} =
       case str do

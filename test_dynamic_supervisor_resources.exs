@@ -26,12 +26,16 @@ defmodule VaultSupervisor do
 
     child_spec = %{
       id: {:vault, vault_id},
-      start: {VaultRepo, :start_link, [[
-        database: db_path,
-        name: :"vault_#{vault_id}",
-        pool_size: 1,
-        journal_mode: :wal
-      ]]},
+      start:
+        {VaultRepo, :start_link,
+         [
+           [
+             database: db_path,
+             name: :"vault_#{vault_id}",
+             pool_size: 1,
+             journal_mode: :wal
+           ]
+         ]},
       restart: :temporary
     }
 
@@ -47,7 +51,8 @@ defmodule VaultSupervisor do
 end
 
 defmodule ResourceTest do
-  @vault_count 200  # Reduced from 500 for faster test; scale up for prod validation
+  # Reduced from 500 for faster test; scale up for prod validation
+  @vault_count 200
 
   def run do
     File.rm_rf!("test_vaults")
@@ -72,6 +77,7 @@ defmodule ResourceTest do
 
     # Phase 2: Hit each vault with a query
     IO.puts("\n[2] Querying all vaults...")
+
     for i <- 1..@vault_count do
       repo = :"vault_#{i}"
       Ecto.Adapters.SQL.query!(repo, "SELECT 1")
@@ -80,7 +86,8 @@ defmodule ResourceTest do
     # Phase 3: Stop all vaults
     IO.puts("\n[3] Stopping all vault repos...")
     for i <- 1..@vault_count, do: VaultSupervisor.stop_vault(i)
-    Process.sleep(1000)  # Let cleanup complete
+    # Let cleanup complete
+    Process.sleep(1000)
 
     {fd_after_stop, mem_after_stop} = measure_resources()
     IO.puts("After stop: #{fd_after_stop} FDs, #{mem_after_stop} MB")
@@ -115,13 +122,15 @@ defmodule ResourceTest do
   defp measure_resources do
     # FD count via lsof for this BEAM process (macOS/Linux)
     pid = System.pid()
-    fd_count = case System.cmd("sh", ["-c", "lsof -p #{pid} 2>/dev/null | wc -l"]) do
-      {out, 0} -> String.trim(out) |> String.to_integer()
-      _ -> -1
-    end
+
+    fd_count =
+      case System.cmd("sh", ["-c", "lsof -p #{pid} 2>/dev/null | wc -l"]) do
+        {out, 0} -> String.trim(out) |> String.to_integer()
+        _ -> -1
+      end
 
     # Memory in MB
-    mem_mb = :erlang.memory(:total) / 1_000_000 |> Float.round(1)
+    mem_mb = (:erlang.memory(:total) / 1_000_000) |> Float.round(1)
     {fd_count, mem_mb}
   end
 end

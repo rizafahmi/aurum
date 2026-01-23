@@ -1,6 +1,7 @@
 defmodule AurumWeb.ItemLive.Index do
   use AurumWeb, :live_view
 
+  alias Aurum.Accounts
   alias Aurum.Portfolio
   alias Aurum.Portfolio.Item
   alias AurumWeb.Format
@@ -8,13 +9,37 @@ defmodule AurumWeb.ItemLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: send(self(), :load_data)
-    {:ok, assign(socket, items: [])}
+
+    {:ok,
+     socket
+     |> assign(items: [], show_recovery_email_prompt: false)
+     |> assign_email_form(%{})}
+  end
+
+  defp assign_email_form(socket, params) do
+    assign(socket, :email_form, to_form(params, as: :recovery_email))
   end
 
   @impl true
   def handle_info(:load_data, socket) do
     items = Portfolio.list_items_with_current_values()
-    {:noreply, assign(socket, items: items)}
+    show_prompt = should_show_recovery_email_prompt?(socket.assigns.vault_id, items)
+    {:noreply, assign(socket, items: items, show_recovery_email_prompt: show_prompt)}
+  end
+
+  defp should_show_recovery_email_prompt?(nil, _items), do: false
+
+  defp should_show_recovery_email_prompt?(vault_id, items) do
+    length(items) == 1 and not recovery_email_prompt_dismissed?(vault_id)
+  end
+
+  defp recovery_email_prompt_dismissed?(vault_id) do
+    case Accounts.get_vault(vault_id) do
+      nil -> false
+      vault -> vault.recovery_email_prompt_dismissed || vault.recovery_email != nil
+    end
+  rescue
+    DBConnection.ConnectionError -> false
   end
 
   @impl true
@@ -23,7 +48,10 @@ defmodule AurumWeb.ItemLive.Index do
     <Layouts.app flash={@flash}>
       <.page_header title="PORTFOLIO" subtitle="Gold Assets Inventory">
         <:actions>
-          <.link navigate={~p"/items/new"} class="btn-terminal-primary text-xs uppercase tracking-wide">
+          <.link
+            navigate={~p"/items/new"}
+            class="btn-terminal-primary text-xs uppercase tracking-wide"
+          >
             + Add Item
           </.link>
         </:actions>
@@ -63,12 +91,67 @@ defmodule AurumWeb.ItemLive.Index do
               <td>{Item.purity_label(item.purity)}</td>
               <td>{item.quantity}</td>
               <td class="text-right">{Format.currency(item.purchase_price)}</td>
-              <td class="text-right" data-test="current-value">{Format.currency(item.current_value)}</td>
+              <td class="text-right" data-test="current-value">
+                {Format.currency(item.current_value)}
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
+
+      <div
+        :if={@show_recovery_email_prompt}
+        id="recovery-email-prompt"
+        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+      >
+        <div class="vault-card p-6 max-w-md w-full mx-4">
+          <h3 class="text-gold text-lg font-bold mb-2">Protect Your Vault</h3>
+          <p class="text-gold-muted mb-4">Add email to protect your vault?</p>
+
+          <.form for={@email_form} id="recovery-email-form" phx-submit="save_recovery_email">
+            <.input
+              field={@email_form[:recovery_email]}
+              type="email"
+              label="Email"
+              placeholder="you@example.com"
+            />
+            <div class="flex gap-3 mt-4">
+              <.button type="submit" variant="primary">Add recovery email</.button>
+              <button
+                type="button"
+                phx-click="dismiss_recovery_email_prompt"
+                class="btn-terminal text-xs uppercase tracking-wide"
+              >
+                Not now
+              </button>
+            </div>
+          </.form>
+        </div>
+      </div>
     </Layouts.app>
     """
+  end
+
+  @impl true
+  def handle_event("dismiss_recovery_email_prompt", _params, socket) do
+    Accounts.dismiss_recovery_email_prompt(socket.assigns.vault_id)
+    {:noreply, assign(socket, show_recovery_email_prompt: false)}
+  end
+
+  @impl true
+  def handle_event("save_recovery_email", %{"recovery_email" => params}, socket) do
+    case Accounts.set_recovery_email(socket.assigns.vault_id, params["recovery_email"]) do
+      {:ok, _vault} ->
+        {:noreply,
+         socket
+         |> assign(show_recovery_email_prompt: false)
+         |> put_flash(:info, "Recovery email added")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, :email_form, to_form(changeset, as: :recovery_email))}
+
+      {:error, _} ->
+        {:noreply, socket}
+    end
   end
 end

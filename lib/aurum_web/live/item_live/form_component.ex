@@ -37,7 +37,7 @@ defmodule AurumWeb.ItemLive.FormComponent do
 
         <div class="mt-6 flex gap-4 border-t border-gold-dim pt-6">
           <.button type="submit" variant="primary">
-            <%= if @action == :new, do: "Add Asset", else: "Save Asset" %>
+            {if @action == :new, do: "Add Asset", else: "Save Asset"}
           </.button>
           <.link
             :if={@action == :edit}
@@ -55,10 +55,22 @@ defmodule AurumWeb.ItemLive.FormComponent do
   defp quick_add_fields(assigns) do
     ~H"""
     <div class="space-y-4">
-      <.input field={@form[:name]} type="text" label="Name" id="item-name" placeholder="e.g. 1oz Gold Bar" />
+      <.input
+        field={@form[:name]}
+        type="text"
+        label="Name"
+        id="item-name"
+        placeholder="e.g. 1oz Gold Bar"
+      />
 
       <div class="grid grid-cols-2 gap-4">
-        <.input field={@form[:weight]} type="number" label="Weight (grams)" id="item-weight" step="any" />
+        <.input
+          field={@form[:weight]}
+          type="number"
+          label="Weight (grams)"
+          id="item-weight"
+          step="any"
+        />
 
         <.input
           field={@form[:purity]}

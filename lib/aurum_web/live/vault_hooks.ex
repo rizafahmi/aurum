@@ -7,7 +7,8 @@ defmodule AurumWeb.VaultHooks do
 
   import Phoenix.Component, only: [assign: 3]
 
-  alias Aurum.VaultRepo
+  alias Aurum.Env
+  alias Aurum.VaultDatabase.DynamicRepo
 
   @doc """
   on_mount callback that binds the vault's database repo.
@@ -19,10 +20,9 @@ defmodule AurumWeb.VaultHooks do
     vault_id = session["vault_id"]
 
     if vault_id do
-      {:ok, _pid} = VaultRepo.ensure_repo_started(vault_id)
-
-      unless Application.get_env(:aurum, :env) == :test do
-        Aurum.Repo.put_dynamic_repo(VaultRepo.repo_name(vault_id))
+      unless Env.test?() do
+        {:ok, repo_pid} = DynamicRepo.get_repo_pid(vault_id)
+        Aurum.Repo.put_dynamic_repo(repo_pid)
       end
 
       {:cont, assign(socket, :vault_id, vault_id)}

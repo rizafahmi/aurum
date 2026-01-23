@@ -183,7 +183,7 @@ defmodule AurumWeb.DashboardLive do
   attr :gain_loss, :any, default: nil
 
   defp stat_card(assigns) do
-    assigns = assign(assigns, :sign_class, decimal_sign_class(assigns.gain_loss))
+    assigns = assign(assigns, :sign_class, Format.sign_class(assigns.gain_loss))
 
     ~H"""
     <div class="vault-card p-4">
@@ -194,28 +194,14 @@ defmodule AurumWeb.DashboardLive do
       <div id={@id} class={["stat-value", @sign_class]}>
         {@value}
       </div>
-      <div :if={@subtitle} id={@subtitle_id} class={["text-sm mt-1", @sign_class || "text-gold-muted"]}>
+      <div
+        :if={@subtitle}
+        id={@subtitle_id}
+        class={["text-sm mt-1", @sign_class || "text-gold-muted"]}
+      >
         {@subtitle}
       </div>
     </div>
     """
-  end
-
-  defp decimal_sign_class(nil), do: nil
-
-  defp decimal_sign_class(%Decimal{} = d) do
-    case Decimal.compare(d, 0) do
-      :gt -> "text-success"
-      :lt -> "text-danger"
-      :eq -> nil
-    end
-  end
-
-  defp decimal_sign_class(n) when is_number(n) do
-    cond do
-      n > 0 -> "text-success"
-      n < 0 -> "text-danger"
-      true -> nil
-    end
   end
 end

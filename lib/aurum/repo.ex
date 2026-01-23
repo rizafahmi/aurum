@@ -3,8 +3,8 @@ defmodule Aurum.Repo do
   Dynamic Ecto repository for per-vault SQLite databases.
 
   In multi-vault mode, each user has their own SQLite database.
-  The correct repo is bound at request/LiveView mount time using
-  `Aurum.VaultRepo.with_vault/2` or via the on_mount hook.
+  The correct repo is bound at request/LiveView mount time via
+  `Aurum.VaultDatabase.DynamicRepo` and `AurumWeb.VaultHooks`.
   """
 
   use Ecto.Repo,

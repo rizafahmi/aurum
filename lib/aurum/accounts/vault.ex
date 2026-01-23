@@ -18,6 +18,7 @@ defmodule Aurum.Accounts.Vault do
     field :email_verified_at, :utc_datetime
     field :last_accessed_at, :utc_datetime
     field :deleted_at, :utc_datetime
+    field :recovery_email_prompt_dismissed, :boolean, default: false
 
     timestamps(type: :utc_datetime)
   end
@@ -25,7 +26,22 @@ defmodule Aurum.Accounts.Vault do
   @doc false
   def changeset(vault, attrs) do
     vault
-    |> cast(attrs, [:token_hash, :recovery_email, :email_verified_at, :last_accessed_at, :deleted_at])
+    |> cast(attrs, [
+      :token_hash,
+      :recovery_email,
+      :email_verified_at,
+      :last_accessed_at,
+      :deleted_at,
+      :recovery_email_prompt_dismissed
+    ])
     |> validate_required([:token_hash])
+    |> validate_email()
+  end
+
+  defp validate_email(changeset) do
+    changeset
+    |> validate_format(:recovery_email, ~r/^[^\s]+@[^\s]+\.[^\s]+$/,
+      message: "has invalid format"
+    )
   end
 end

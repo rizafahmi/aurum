@@ -285,7 +285,9 @@ defmodule Aurum.Portfolio.ValuationTest do
             ) do
         result = Valuation.valuate_item(weight, :grams, purity, quantity, purchase, spot)
 
-        expected_gl = Decimal.sub(result.current_value, Decimal.round(Decimal.new(to_string(purchase)), 2))
+        expected_gl =
+          Decimal.sub(result.current_value, Decimal.round(Decimal.new(to_string(purchase)), 2))
+
         diff = Decimal.abs(Decimal.sub(result.gain_loss, Decimal.round(expected_gl, 2)))
 
         assert Decimal.lte?(diff, Decimal.new("0.01"))

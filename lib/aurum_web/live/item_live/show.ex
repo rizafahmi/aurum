@@ -55,16 +55,23 @@ defmodule AurumWeb.ItemLive.Show do
   end
 
   def render(assigns) do
-    assigns = assign(assigns, :gain_loss_class, decimal_sign_class(assigns.valuation.gain_loss))
+    assigns = assign(assigns, :gain_loss_class, Format.sign_class(assigns.valuation.gain_loss))
 
     ~H"""
     <Layouts.app flash={@flash}>
       <.page_header title={@item.name} subtitle="Asset Details" title_test_id="item-name">
         <:actions>
-          <.link navigate={~p"/items/#{@item.id}/edit"} class="btn-terminal text-xs uppercase tracking-wide">
+          <.link
+            navigate={~p"/items/#{@item.id}/edit"}
+            class="btn-terminal text-xs uppercase tracking-wide"
+          >
             Edit
           </.link>
-          <button id="delete-item" phx-click="show_confirm" class="btn-terminal text-xs uppercase tracking-wide text-danger border-[#f87171]">
+          <button
+            id="delete-item"
+            phx-click="show_confirm"
+            class="btn-terminal text-xs uppercase tracking-wide text-danger border-[#f87171]"
+          >
             Delete
           </button>
         </:actions>
@@ -72,7 +79,9 @@ defmodule AurumWeb.ItemLive.Show do
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="vault-card p-6">
-          <h2 class="text-gold-muted text-xs uppercase tracking-wide mb-4">{">_"} Physical Properties</h2>
+          <h2 class="text-gold-muted text-xs uppercase tracking-wide mb-4">
+            {">_"} Physical Properties
+          </h2>
           <dl class="space-y-4">
             <div class="flex justify-between border-b border-gold-dim pb-2">
               <dt class="text-gold-muted text-sm">Category</dt>
@@ -80,7 +89,9 @@ defmodule AurumWeb.ItemLive.Show do
             </div>
             <div class="flex justify-between border-b border-gold-dim pb-2">
               <dt class="text-gold-muted text-sm">Weight</dt>
-              <dd data-test="weight" class="text-gold">{@item.weight} {Item.weight_unit_short(@item.weight_unit)}</dd>
+              <dd data-test="weight" class="text-gold">
+                {@item.weight} {Item.weight_unit_short(@item.weight_unit)}
+              </dd>
             </div>
             <div class="flex justify-between border-b border-gold-dim pb-2">
               <dt class="text-gold-muted text-sm">Purity</dt>
@@ -92,7 +103,9 @@ defmodule AurumWeb.ItemLive.Show do
             </div>
             <div class="flex justify-between">
               <dt class="text-gold-muted text-sm">Pure Gold</dt>
-              <dd data-test="pure-gold-weight" class="text-gold font-bold">{@valuation.pure_gold_grams} g</dd>
+              <dd data-test="pure-gold-weight" class="text-gold font-bold">
+                {@valuation.pure_gold_grams} g
+              </dd>
             </div>
           </dl>
         </div>
@@ -102,7 +115,9 @@ defmodule AurumWeb.ItemLive.Show do
           <dl class="space-y-4">
             <div class="flex justify-between border-b border-gold-dim pb-2">
               <dt class="text-gold-muted text-sm">Purchase Price</dt>
-              <dd data-test="purchase-price" class="text-gold">{Format.currency(@item.purchase_price)}</dd>
+              <dd data-test="purchase-price" class="text-gold">
+                {Format.currency(@item.purchase_price)}
+              </dd>
             </div>
             <div class="flex justify-between border-b border-gold-dim pb-2">
               <dt class="text-gold-muted text-sm">Purchase Date</dt>
@@ -110,7 +125,9 @@ defmodule AurumWeb.ItemLive.Show do
             </div>
             <div class="flex justify-between border-b border-gold-dim pb-2">
               <dt class="text-gold-muted text-sm">Current Value</dt>
-              <dd data-test="current-value" class="text-gold font-bold">{Format.currency(@valuation.current_value)}</dd>
+              <dd data-test="current-value" class="text-gold font-bold">
+                {Format.currency(@valuation.current_value)}
+              </dd>
             </div>
             <div class="flex justify-between">
               <dt class="text-gold-muted text-sm">Gain/Loss</dt>
@@ -190,16 +207,6 @@ defmodule AurumWeb.ItemLive.Show do
          socket
          |> put_flash(:error, "Could not delete item")
          |> assign(show_confirm_dialog: false)}
-    end
-  end
-
-  defp decimal_sign_class(nil), do: nil
-
-  defp decimal_sign_class(%Decimal{} = d) do
-    case Decimal.compare(d, 0) do
-      :gt -> "text-success"
-      :lt -> "text-danger"
-      :eq -> nil
     end
   end
 end

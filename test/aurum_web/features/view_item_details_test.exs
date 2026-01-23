@@ -3,17 +3,19 @@ defmodule AurumWeb.ViewItemDetailsTest do
 
   describe "US-011: View Item Details" do
     setup do
-      {:ok, item} = Aurum.Portfolio.create_item(%{
-        name: "Detailed Gold Bar",
-        category: :bar,
-        weight: Decimal.new("100.0"),
-        weight_unit: :grams,
-        purity: 24,
-        quantity: 2,
-        purchase_price: Decimal.new("10000.00"),
-        purchase_date: ~D[2024-01-15],
-        notes: "Special edition"
-      })
+      {:ok, item} =
+        Aurum.Portfolio.create_item(%{
+          name: "Detailed Gold Bar",
+          category: :bar,
+          weight: Decimal.new("100.0"),
+          weight_unit: :grams,
+          purity: 24,
+          quantity: 2,
+          purchase_price: Decimal.new("10000.00"),
+          purchase_date: ~D[2024-01-15],
+          notes: "Special edition"
+        })
+
       %{item: item}
     end
 

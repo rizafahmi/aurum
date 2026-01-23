@@ -55,6 +55,41 @@ defmodule Aurum.Accounts do
     |> Repo.update()
   end
 
+  @doc """
+  Gets a vault by ID.
+  """
+  def get_vault(vault_id), do: Repo.get(Vault, vault_id)
+
+  @doc """
+  Marks the recovery email prompt as dismissed for a vault.
+  """
+  def dismiss_recovery_email_prompt(vault_id) do
+    case get_vault(vault_id) do
+      nil ->
+        {:error, :not_found}
+
+      vault ->
+        vault
+        |> Vault.changeset(%{recovery_email_prompt_dismissed: true})
+        |> Repo.update()
+    end
+  end
+
+  @doc """
+  Sets the recovery email for a vault.
+  """
+  def set_recovery_email(vault_id, email) do
+    case get_vault(vault_id) do
+      nil ->
+        {:error, :not_found}
+
+      vault ->
+        vault
+        |> Vault.changeset(%{recovery_email: email})
+        |> Repo.update()
+    end
+  end
+
   defp generate_token do
     :crypto.strong_rand_bytes(32) |> Base.url_encode64(padding: false)
   end

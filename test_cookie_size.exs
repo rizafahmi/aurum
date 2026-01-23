@@ -10,15 +10,19 @@
 alias Plug.Crypto
 
 # Simulate what we'd store in a session cookie
-vault_id = Ecto.UUID.generate()                        # 36 bytes
-vault_token = :crypto.strong_rand_bytes(32) |> Base.encode64()  # 44 bytes base64
-user_scope_id = Ecto.UUID.generate()                   # 36 bytes
+# 36 bytes
+vault_id = Ecto.UUID.generate()
+# 44 bytes base64
+vault_token = :crypto.strong_rand_bytes(32) |> Base.encode64()
+# 36 bytes
+user_scope_id = Ecto.UUID.generate()
 
 session_data = %{
   "vault_id" => vault_id,
   "vault_token" => vault_token,
   "current_scope_id" => user_scope_id,
-  "_csrf_token" => Base.encode64(:crypto.strong_rand_bytes(16))  # 24 bytes
+  # 24 bytes
+  "_csrf_token" => Base.encode64(:crypto.strong_rand_bytes(16))
 }
 
 IO.puts("=== Risk #5: Encrypted Cookie Size Test ===\n")
@@ -39,12 +43,14 @@ secret = Plug.Crypto.KeyGenerator.generate(secret_key_base, encryption_salt, ite
 sign_secret = Plug.Crypto.KeyGenerator.generate(secret_key_base, signing_salt, iterations: 1000)
 
 # Encrypt the session (MessageEncryptor with AES-256-GCM)
-encrypted = Plug.Crypto.MessageEncryptor.encrypt(
-  Jason.encode!(session_data),
-  <<>>,  # no associated data
-  secret,
-  sign_secret
-)
+encrypted =
+  Plug.Crypto.MessageEncryptor.encrypt(
+    Jason.encode!(session_data),
+    # no associated data
+    <<>>,
+    secret,
+    sign_secret
+  )
 
 # Base64 encode for cookie transport
 cookie_value = Base.url_encode64(encrypted, padding: false)

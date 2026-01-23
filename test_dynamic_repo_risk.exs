@@ -20,10 +20,10 @@ defmodule RiskTest.VaultSimulator do
       File.rm(db_path)
       File.rm(db_path <> "-shm")
       File.rm(db_path <> "-wal")
-      
+
       {:ok, pid} = VaultRepo.start_link(name: nil, database: db_path)
       VaultRepo.put_dynamic_repo(pid)
-      
+
       VaultRepo.query!("""
         CREATE TABLE IF NOT EXISTS writes (
           id INTEGER PRIMARY KEY,
@@ -31,7 +31,7 @@ defmodule RiskTest.VaultSimulator do
           process_id TEXT
         )
       """)
-      
+
       {i, pid, db_path}
     end
   end
@@ -40,28 +40,31 @@ defmodule RiskTest.VaultSimulator do
   def simulate_liveview_broken(vault_id, repo_pid, iterations) do
     VaultRepo.put_dynamic_repo(repo_pid)
     process_id = inspect(self())
-    
-    results = for _ <- 1..iterations do
-      task = Task.async(fn ->
-        # BUG: No put_dynamic_repo here! Task loses parent's process dictionary
+
+    results =
+      for _ <- 1..iterations do
+        task =
+          Task.async(fn ->
+            # BUG: No put_dynamic_repo here! Task loses parent's process dictionary
+            try do
+              VaultRepo.query!(
+                "INSERT INTO writes (vault_id, process_id) VALUES (?, ?)",
+                [vault_id, process_id]
+              )
+
+              :ok
+            rescue
+              e -> {:error, Exception.message(e)}
+            end
+          end)
+
         try do
-          VaultRepo.query!(
-            "INSERT INTO writes (vault_id, process_id) VALUES (?, ?)",
-            [vault_id, process_id]
-          )
-          :ok
-        rescue
-          e -> {:error, Exception.message(e)}
+          Task.await(task, 5000)
+        catch
+          :exit, _reason -> {:error, "Task crashed"}
         end
-      end)
-      
-      try do
-        Task.await(task, 5000)
-      catch
-        :exit, _reason -> {:error, "Task crashed"}
       end
-    end
-    
+
     results
   end
 
@@ -69,29 +72,33 @@ defmodule RiskTest.VaultSimulator do
   def simulate_liveview_fixed(vault_id, repo_pid, iterations) do
     VaultRepo.put_dynamic_repo(repo_pid)
     process_id = inspect(self())
-    
-    results = for _ <- 1..iterations do
-      task = Task.async(fn ->
-        # FIX: Explicitly set dynamic repo in spawned task
-        VaultRepo.put_dynamic_repo(repo_pid)
+
+    results =
+      for _ <- 1..iterations do
+        task =
+          Task.async(fn ->
+            # FIX: Explicitly set dynamic repo in spawned task
+            VaultRepo.put_dynamic_repo(repo_pid)
+
+            try do
+              VaultRepo.query!(
+                "INSERT INTO writes (vault_id, process_id) VALUES (?, ?)",
+                [vault_id, process_id]
+              )
+
+              :ok
+            rescue
+              e -> {:error, Exception.message(e)}
+            end
+          end)
+
         try do
-          VaultRepo.query!(
-            "INSERT INTO writes (vault_id, process_id) VALUES (?, ?)",
-            [vault_id, process_id]
-          )
-          :ok
-        rescue
-          e -> {:error, Exception.message(e)}
+          Task.await(task, 5000)
+        catch
+          :exit, _reason -> {:error, "Task crashed"}
         end
-      end)
-      
-      try do
-        Task.await(task, 5000)
-      catch
-        :exit, _reason -> {:error, "Task crashed"}
       end
-    end
-    
+
     results
   end
 
@@ -99,10 +106,10 @@ defmodule RiskTest.VaultSimulator do
     for {vault_id, repo_pid, _path} <- vaults do
       VaultRepo.put_dynamic_repo(repo_pid)
       %{rows: rows} = VaultRepo.query!("SELECT DISTINCT vault_id FROM writes")
-      
+
       vault_ids_found = List.flatten(rows)
       leaked = Enum.reject(vault_ids_found, &(&1 == vault_id))
-      
+
       status = if leaked == [], do: "✓ OK", else: "✗ LEAKED: #{inspect(leaked)}"
       IO.puts("  Vault #{vault_id}: found vault_ids #{inspect(vault_ids_found)} #{status}")
     end
@@ -115,6 +122,7 @@ defmodule RiskTest.VaultSimulator do
       catch
         _, _ -> :ok
       end
+
       File.rm(path)
       File.rm(path <> "-shm")
       File.rm(path <> "-wal")
@@ -134,7 +142,7 @@ IO.puts(String.duplicate("=", 60))
 
 vaults = VaultSimulator.setup_vaults(3)
 
-all_results = 
+all_results =
   for {vault_id, repo_pid, _} <- vaults do
     VaultSimulator.simulate_liveview_broken(vault_id, repo_pid, 2)
   end
@@ -161,7 +169,7 @@ IO.puts(String.duplicate("=", 60))
 
 vaults = VaultSimulator.setup_vaults(3)
 
-all_results = 
+all_results =
   for {vault_id, repo_pid, _} <- vaults do
     VaultSimulator.simulate_liveview_fixed(vault_id, repo_pid, 2)
   end
@@ -186,6 +194,7 @@ VaultSimulator.cleanup(vaults)
 IO.puts("\n" <> String.duplicate("=", 60))
 IO.puts("CONCLUSION")
 IO.puts(String.duplicate("=", 60))
+
 IO.puts("""
 
 Risk #1 is CONFIRMED: Task.async (and any spawned process) does NOT 

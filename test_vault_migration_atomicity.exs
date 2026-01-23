@@ -69,17 +69,19 @@ defmodule RiskTest.MigrationTester do
     VaultRepo.put_dynamic_repo(pid)
     fail_on = Keyword.get(opts, :fail_on_migration, nil)
 
-    migrations = if fail_on do
-      # Inject failure: pre-create the index so migration 2 fails
-      if fail_on == 2 do
-        # Run migration 1 first, then create conflicting index
-        Ecto.Migrator.run(VaultRepo, [{1, RiskTest.Migrations.V1_CreateItems}], :up, all: true)
-        VaultRepo.query!("CREATE UNIQUE INDEX items_name_unique_idx ON items (name)")
+    migrations =
+      if fail_on do
+        # Inject failure: pre-create the index so migration 2 fails
+        if fail_on == 2 do
+          # Run migration 1 first, then create conflicting index
+          Ecto.Migrator.run(VaultRepo, [{1, RiskTest.Migrations.V1_CreateItems}], :up, all: true)
+          VaultRepo.query!("CREATE UNIQUE INDEX items_name_unique_idx ON items (name)")
+        end
+
+        @migrations
+      else
+        @migrations
       end
-      @migrations
-    else
-      @migrations
-    end
 
     try do
       Ecto.Migrator.run(VaultRepo, migrations, :up, all: true)
@@ -91,23 +93,26 @@ defmodule RiskTest.MigrationTester do
 
   def check_schema({id, pid, _path}) do
     VaultRepo.put_dynamic_repo(pid)
-    
+
     # Check what tables exist
     %{rows: tables} = VaultRepo.query!("SELECT name FROM sqlite_master WHERE type='table'")
     tables = List.flatten(tables) |> Enum.reject(&(&1 == "schema_migrations"))
-    
+
     # Check columns on items table if it exists
-    columns = if "items" in tables do
-      %{rows: cols} = VaultRepo.query!("PRAGMA table_info(items)")
-      Enum.map(cols, fn [_, name | _] -> name end)
-    else
-      []
-    end
-    
+    columns =
+      if "items" in tables do
+        %{rows: cols} = VaultRepo.query!("PRAGMA table_info(items)")
+        Enum.map(cols, fn [_, name | _] -> name end)
+      else
+        []
+      end
+
     # Check indexes
-    %{rows: indexes} = VaultRepo.query!("SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='items'")
+    %{rows: indexes} =
+      VaultRepo.query!("SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='items'")
+
     indexes = List.flatten(indexes)
-    
+
     {id, %{tables: tables, columns: columns, indexes: indexes}}
   end
 
@@ -143,9 +148,11 @@ IO.puts("Results: #{length(successes)}/#{length(vaults)} succeeded")
 
 # Verify schema on each
 schemas = for v <- vaults, do: MigrationTester.check_schema(v)
-all_complete = Enum.all?(schemas, fn {_id, s} -> 
-  "items" in s.tables and "category" in s.columns
-end)
+
+all_complete =
+  Enum.all?(schemas, fn {_id, s} ->
+    "items" in s.tables and "category" in s.columns
+  end)
 
 if all_complete do
   IO.puts("✓ All vaults have complete schema (items table + category column)")
@@ -164,13 +171,14 @@ IO.puts(String.duplicate("=", 60))
 
 vaults = for i <- 1..10, do: MigrationTester.create_vault(i)
 
-results = for {id, _, _} = v <- vaults do
-  if id == 5 do
-    MigrationTester.migrate_vault(v, fail_on_migration: 2)
-  else
-    MigrationTester.migrate_vault(v)
+results =
+  for {id, _, _} = v <- vaults do
+    if id == 5 do
+      MigrationTester.migrate_vault(v, fail_on_migration: 2)
+    else
+      MigrationTester.migrate_vault(v)
+    end
   end
-end
 
 successes = Enum.filter(results, &match?({:ok, _}, &1))
 failures = Enum.filter(results, &match?({:error, _, _}, &1))
@@ -188,22 +196,28 @@ IO.puts("\nSchema verification:")
 schemas = for v <- vaults, do: MigrationTester.check_schema(v)
 
 for {id, s} <- schemas do
-  status = cond do
-    "items" in s.tables and "category" in s.columns ->
-      "✓ COMPLETE (has items + category)"
-    "items" in s.tables ->
-      "⚠ PARTIAL (has items, missing category)"
-    true ->
-      "✗ BROKEN (missing items table)"
-  end
+  status =
+    cond do
+      "items" in s.tables and "category" in s.columns ->
+        "✓ COMPLETE (has items + category)"
+
+      "items" in s.tables ->
+        "⚠ PARTIAL (has items, missing category)"
+
+      true ->
+        "✗ BROKEN (missing items table)"
+    end
+
   IO.puts("  Vault #{id}: #{status}")
 end
 
 # Check that failure on vault 5 didn't affect others
 other_vaults = Enum.reject(schemas, fn {id, _} -> id == 5 end)
-others_ok = Enum.all?(other_vaults, fn {_id, s} -> 
-  "items" in s.tables and "category" in s.columns
-end)
+
+others_ok =
+  Enum.all?(other_vaults, fn {_id, s} ->
+    "items" in s.tables and "category" in s.columns
+  end)
 
 if others_ok do
   IO.puts("\n✓ VALIDATED: Failed vault did NOT corrupt other vaults")
@@ -222,6 +236,7 @@ for {_, _, path} <- vaults, do: MigrationTester.cleanup_files(path)
 IO.puts("\n" <> String.duplicate("=", 60))
 IO.puts("CONCLUSION")
 IO.puts(String.duplicate("=", 60))
+
 IO.puts("""
 
 Key findings for Risk #4 (Per-Vault Migration Atomicity):

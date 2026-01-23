@@ -235,10 +235,16 @@ defmodule Aurum.Gold.PriceCache do
 
     case fetch_fn.() do
       {:ok, price_data} ->
+        fetched_at = DateTime.utc_now()
+
+        if state.persist do
+          persist_to_database(price_data, fetched_at)
+        end
+
         new_cache = %{
           state.cache
           | price_data: price_data,
-            fetched_at: DateTime.utc_now(),
+            fetched_at: fetched_at,
             last_error: nil,
             fetch_count: state.cache.fetch_count + 1
         }

@@ -55,7 +55,15 @@ defmodule Aurum.Portfolio.Item do
     |> update_change(:notes, &maybe_trim/1)
     |> validate_custom_purity()
     |> apply_custom_purity()
-    |> validate_required([:name, :category, :weight, :weight_unit, :purity, :quantity, :purchase_price])
+    |> validate_required([
+      :name,
+      :category,
+      :weight,
+      :weight_unit,
+      :purity,
+      :quantity,
+      :purchase_price
+    ])
     |> validate_length(:name, min: 1, max: 100)
     |> validate_number(:weight, greater_than: 0)
     |> validate_number(:quantity, greater_than: 0)
@@ -87,8 +95,11 @@ defmodule Aurum.Portfolio.Item do
 
   defp validate_custom_purity(changeset) do
     case get_field(changeset, :custom_purity) do
-      %Decimal{} -> validate_number(changeset, :custom_purity, greater_than: 0, less_than_or_equal_to: 100)
-      _ -> changeset
+      %Decimal{} ->
+        validate_number(changeset, :custom_purity, greater_than: 0, less_than_or_equal_to: 100)
+
+      _ ->
+        changeset
     end
   end
 
@@ -113,7 +124,9 @@ defmodule Aurum.Portfolio.Item do
     unit = get_change(changeset, :weight_unit) || get_field(changeset, :weight_unit)
 
     case {weight, unit} do
-      {nil, _} -> changeset
+      {nil, _} ->
+        changeset
+
       {_, :troy_oz} ->
         normalized = Aurum.Units.troy_oz_to_grams(weight)
 
@@ -121,7 +134,8 @@ defmodule Aurum.Portfolio.Item do
         |> put_change(:weight, normalized)
         |> put_change(:weight_unit, :grams)
 
-      _ -> changeset
+      _ ->
+        changeset
     end
   end
 

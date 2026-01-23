@@ -189,7 +189,9 @@ defmodule AurumWeb.CoreComponents do
           name={@name}
           value="true"
           checked={@checked}
-          class={@class || "w-4 h-4 accent-[#d4af37] bg-transparent border border-[rgba(212,175,55,0.3)]"}
+          class={
+            @class || "w-4 h-4 accent-[#d4af37] bg-transparent border border-[rgba(212,175,55,0.3)]"
+          }
           {@rest}
         />
         <span class="text-gold-muted text-sm">{@label}</span>
@@ -283,7 +285,10 @@ defmodule AurumWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6", "pb-6 border-b border-gold-dim mb-6"]}>
+    <header class={[
+      @actions != [] && "flex items-center justify-between gap-6",
+      "pb-6 border-b border-gold-dim mb-6"
+    ]}>
       <div>
         <h1 class="text-xl font-bold text-gold tracking-wide">
           {render_slot(@inner_block)}

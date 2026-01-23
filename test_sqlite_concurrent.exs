@@ -30,12 +30,13 @@ defmodule ConcurrentTest do
     File.rm(db_path <> "-wal")
     File.rm(db_path <> "-shm")
 
-    {:ok, _pid} = TestRepo.start_link(
-      database: db_path,
-      pool_size: 1,
-      journal_mode: :wal,
-      busy_timeout: 5000
-    )
+    {:ok, _pid} =
+      TestRepo.start_link(
+        database: db_path,
+        pool_size: 1,
+        journal_mode: :wal,
+        busy_timeout: 5000
+      )
 
     TestRepo.query!("""
       CREATE TABLE writes (
@@ -52,9 +53,10 @@ defmodule ConcurrentTest do
     duration_ms = 60_000
     start_time = System.monotonic_time(:millisecond)
 
-    tasks = for proc_id <- 1..5 do
-      Task.async(fn -> write_loop(proc_id, start_time, duration_ms, 0, 0) end)
-    end
+    tasks =
+      for proc_id <- 1..5 do
+        Task.async(fn -> write_loop(proc_id, start_time, duration_ms, 0, 0) end)
+      end
 
     results = Task.await_many(tasks, :infinity)
 
@@ -63,6 +65,7 @@ defmodule ConcurrentTest do
     total_errors = Enum.sum(for {_, _, e} <- results, do: e)
 
     IO.puts("\n=== RESULTS ===")
+
     for {proc_id, count, errs} <- results do
       IO.puts("Process #{proc_id}: #{count} writes, #{errs} errors")
     end
@@ -81,22 +84,27 @@ defmodule ConcurrentTest do
 
   defp write_loop(proc_id, start_time, duration_ms, counter, errors) do
     elapsed = System.monotonic_time(:millisecond) - start_time
+
     if elapsed >= duration_ms do
       {proc_id, counter, errors}
     else
-      result = try do
-        TestRepo.insert!(%TestSchema{
-          process_id: proc_id,
-          counter: counter,
-          timestamp: DateTime.utc_now()
-        })
-        :ok
-      rescue
-        e -> {:error, Exception.message(e)}
-      end
+      result =
+        try do
+          TestRepo.insert!(%TestSchema{
+            process_id: proc_id,
+            counter: counter,
+            timestamp: DateTime.utc_now()
+          })
+
+          :ok
+        rescue
+          e -> {:error, Exception.message(e)}
+        end
 
       case result do
-        :ok -> write_loop(proc_id, start_time, duration_ms, counter + 1, errors)
+        :ok ->
+          write_loop(proc_id, start_time, duration_ms, counter + 1, errors)
+
         {:error, msg} ->
           IO.puts("  [P#{proc_id}] Error: #{msg}")
           write_loop(proc_id, start_time, duration_ms, counter, errors + 1)

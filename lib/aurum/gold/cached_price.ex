@@ -71,9 +71,5 @@ defmodule Aurum.Gold.CachedPrice do
 
   defp source_to_atom(_source), do: :unknown
 
-  defp to_decimal(nil), do: nil
-  defp to_decimal(%Decimal{} = d), do: d
-  defp to_decimal(value) when is_float(value), do: Decimal.from_float(value)
-  defp to_decimal(value) when is_integer(value), do: Decimal.new(value)
-  defp to_decimal(value) when is_binary(value), do: Decimal.new(value)
+  defp to_decimal(value), do: Aurum.DecimalUtils.to_decimal(value)
 end

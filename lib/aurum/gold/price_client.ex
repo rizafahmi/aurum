@@ -179,7 +179,11 @@ defmodule Aurum.Gold.PriceClient do
 
   defp validate_goldapi_response(_), do: {:error, :invalid_response}
 
-  defp validate_metalpriceapi_response(%{"success" => true, "rates" => %{"XAU" => rate}, "timestamp" => timestamp})
+  defp validate_metalpriceapi_response(%{
+         "success" => true,
+         "rates" => %{"XAU" => rate},
+         "timestamp" => timestamp
+       })
        when is_number(rate) and rate > 0 and is_integer(timestamp) do
     with {:ok, dt} <- DateTime.from_unix(timestamp) do
       price_per_oz = Decimal.div(Decimal.new("1"), Decimal.new(to_string(rate)))
