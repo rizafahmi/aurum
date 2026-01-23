@@ -2,7 +2,7 @@
   "id": "US-103",
   "title": "Multi-User Isolation",
   "description": "As a user, I want my data isolated from other users so that my portfolio is private.",
-  "status": "pending",
+  "status": "complete",
   "priority": 3,
   "acceptance_criteria": [
     "Two users in different browsers see different data",
