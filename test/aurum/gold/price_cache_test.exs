@@ -312,4 +312,45 @@ defmodule Aurum.Gold.PriceCacheTest do
       assert PriceCache.stale?(name) == false
     end
   end
+
+  describe "API rate limiting configuration" do
+    @one_hour_ms 60 * 60 * 1000
+
+    test "auto-refresh interval is at least 1 hour to prevent API quota exhaustion" do
+      refresh_interval = get_module_attribute(:refresh_interval_ms)
+      assert refresh_interval >= @one_hour_ms,
+        "Refresh interval #{refresh_interval}ms is too aggressive. " <>
+        "Must be at least 1 hour (#{@one_hour_ms}ms) to avoid exceeding API quotas."
+    end
+
+    test "stale threshold is at least 1 hour" do
+      stale_threshold = get_module_attribute(:stale_threshold_ms)
+      assert stale_threshold >= @one_hour_ms,
+        "Stale threshold #{stale_threshold}ms is too short. " <>
+        "Must be at least 1 hour (#{@one_hour_ms}ms) to reduce unnecessary API calls."
+    end
+
+    test "monthly API requests stay under 1000 with current refresh interval" do
+      refresh_interval_ms = get_module_attribute(:refresh_interval_ms)
+      requests_per_day = div(24 * 60 * 60 * 1000, refresh_interval_ms)
+      requests_per_month = requests_per_day * 30
+
+      assert requests_per_month < 1000,
+        "Current refresh interval would cause ~#{requests_per_month} API requests/month. " <>
+        "Most free API tiers allow only 100-500 requests/month."
+    end
+
+    defp get_module_attribute(attr) do
+      {:ok, tokens} = File.read!("lib/aurum/gold/price_cache.ex")
+                      |> Code.string_to_quoted()
+
+      {_ast, value} = Macro.prewalk(tokens, nil, fn
+        {:@, _, [{^attr, _, [value]}]} = node, _acc -> {node, value}
+        node, acc -> {node, acc}
+      end)
+
+      {result, _} = Code.eval_quoted(value)
+      result
+    end
+  end
 end
