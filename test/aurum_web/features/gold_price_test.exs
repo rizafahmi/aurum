@@ -75,7 +75,8 @@ defmodule AurumWeb.GoldPriceTest do
     end
 
     test "shows stale indicator when price is old", %{conn: conn} do
-      stale_fetched_at = DateTime.add(DateTime.utc_now(), -20, :minute)
+      # Price older than 2 hour stale threshold
+      stale_fetched_at = DateTime.add(DateTime.utc_now(), -3, :hour)
 
       stale_price_data = %{
         price_per_oz: Decimal.new("2650.00"),
