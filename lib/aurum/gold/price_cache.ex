@@ -27,8 +27,8 @@ defmodule Aurum.Gold.PriceCache do
   alias Aurum.Gold.CachedPrice
   alias Aurum.Gold.PriceClient
 
-  @stale_threshold_ms 15 * 60 * 1000
-  @refresh_interval_ms 5 * 60 * 1000
+  @stale_threshold_ms 2 * 60 * 60 * 1000
+  @refresh_interval_ms 1 * 60 * 60 * 1000
 
   defstruct [:price_data, :fetched_at, :last_error, :fetch_count, :error_count]
 

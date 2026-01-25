@@ -1,5 +1,5 @@
 defmodule AurumWeb.ViewItemDetailsTest do
-  use AurumWeb.ConnCase, async: true
+  use AurumWeb.ConnCase, async: false
 
   describe "US-011: View Item Details" do
     setup do

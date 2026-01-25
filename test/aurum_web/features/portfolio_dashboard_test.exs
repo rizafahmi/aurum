@@ -1,5 +1,5 @@
 defmodule AurumWeb.PortfolioDashboardTest do
-  use AurumWeb.ConnCase, async: true
+  use AurumWeb.ConnCase, async: false
 
   describe "US-002: View Portfolio Dashboard - empty state" do
     test "shows empty state when no items exist", %{conn: conn} do

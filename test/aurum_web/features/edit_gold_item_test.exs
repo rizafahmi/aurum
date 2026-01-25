@@ -1,5 +1,5 @@
 defmodule AurumWeb.EditGoldItemTest do
-  use AurumWeb.ConnCase, async: true
+  use AurumWeb.ConnCase, async: false
 
   alias Aurum.Portfolio
 

@@ -1,5 +1,5 @@
 defmodule AurumWeb.VaultDatabaseExportTest do
-  use AurumWeb.ConnCase, async: true
+  use AurumWeb.ConnCase, async: false
 
   describe "US-104: Vault Database Export" do
     test "export button available in settings", %{conn: conn} do

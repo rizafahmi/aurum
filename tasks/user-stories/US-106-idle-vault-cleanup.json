@@ -2,7 +2,7 @@
   "id": "US-106",
   "title": "Idle Vault Cleanup",
   "description": "As the system, I want to stop idle vault repo processes so that server resources are conserved.",
-  "status": "pending",
+  "status": "done",
   "priority": 6,
   "acceptance_criteria": [
     "Repo process stops after 30 minutes of inactivity",

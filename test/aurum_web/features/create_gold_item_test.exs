@@ -1,5 +1,5 @@
 defmodule AurumWeb.CreateGoldItemTest do
-  use AurumWeb.ConnCase, async: true
+  use AurumWeb.ConnCase, async: false
 
   describe "US-001: Create Gold Item" do
     test "displays quick-add form with required fields", %{conn: conn} do

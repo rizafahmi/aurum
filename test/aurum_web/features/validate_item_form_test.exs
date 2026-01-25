@@ -1,5 +1,5 @@
 defmodule AurumWeb.ValidateItemFormTest do
-  use AurumWeb.ConnCase, async: true
+  use AurumWeb.ConnCase, async: false
 
   describe "US-012: Validate Item Form Inputs" do
     test "empty name shows required error", %{conn: conn} do

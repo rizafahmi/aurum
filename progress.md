@@ -1,5 +1,99 @@
 # Progress Log
 
+## 2026-01-25
+
+### US-106: Idle Vault Cleanup — Feature Test Added
+
+**Created feature test file for US-106** ✅
+
+**Implementation:**
+- Created `test/aurum_web/features/idle_vault_cleanup_test.exs` with 4 integration tests
+- Tests use `:integration` tag (excluded by default, run with `--include integration`)
+- Tests directly use `DynamicRepo` API rather than conn-based PhoenixTest since VaultPlug skips DynamicRepo in test mode
+
+**Files created:**
+- `test/aurum_web/features/idle_vault_cleanup_test.exs` - Feature tests for idle cleanup
+
+**Test cases:**
+1. ✅ `repo process stops after idle timeout` - Verifies process terminates after inactivity
+2. ✅ `next request restarts repo transparently` - Confirms new process spawns on subsequent access
+3. ✅ `no data loss on repo restart` - Creates item, lets repo stop, verifies data persists
+4. ✅ `activity resets idle timer` - Tests that operations extend the timeout window
+
+**Test status:** ✅ PASSED (4 tests, 0 failures) - run with `mix test test/aurum_web/features/idle_vault_cleanup_test.exs --include integration`
+
+**Key learnings:**
+- VaultPlug uses `unless Env.test?()` to skip DynamicRepo in tests (uses Ecto sandbox instead)
+- Feature tests for infrastructure behavior should use `:integration` tag and test DynamicRepo directly
+- Existing unit tests at `test/aurum/vault_database/idle_cleanup_test.exs` cover same scenarios
+
+---
+
+### Code Review & Refactoring (Oracle-guided)
+
+**Performed comprehensive code review focusing on idiomatic Elixir patterns.**
+
+**Refactorings applied:**
+
+1. **accounts.ex** - DRYed up repeated "get vault then update" flows
+   - Extracted `update_vault/2` helper for `dismiss_recovery_email_prompt/1` and `set_recovery_email/2`
+   - Replaced `case`/`if` with `with` in `verify_vault/2`
+   - Added guards (`when is_binary(...)`) to `verify_vault/2`, `set_recovery_email/2`, `hash_token/1`
+   - Added fallback clause `verify_vault(_, _)` returning `{:error, :invalid_params}`
+
+2. **vault_database/dynamic_repo.ex** - Fixed race condition
+   - `ensure_started/2` now handles `{:error, {:already_started, pid}}` from concurrent starts
+
+3. **vault_plug.ex** - Improved error handling and validation
+   - Added token validation in `get_vault_from_cookie/1`: `is_binary(token) and token != ""`
+   - Extracted `setup_dynamic_repo/1` to handle repo start errors gracefully
+   - Now returns 500 with logging instead of crashing on repo start failure
+
+4. **item_live/index.ex** - Replaced O(n) with O(1) pattern matching
+   - Changed `length(items) == 1` to pattern matching: `[_single_item]`, `[]`, `[_, _ | _]`
+   - Removed `rescue DBConnection.ConnectionError` anti-pattern
+
+5. **dashboard_live.ex** - Simplified nested `case` chains
+   - Replaced nested `case`/`case` with single `with` statement in `handle_event("refresh_price", ...)`
+
+6. **format.ex** - Consistency improvement
+   - `percent/1` now rounds to 2 decimal places using shared `decimal_to_2dp/1`
+
+**Test status:** ✅ PASSED (192 tests, 0 failures)
+
+**Key improvements:**
+- Better error handling in VaultPlug (no crashes on repo failures)
+- Race-safe vault repo startup
+- More idiomatic pattern matching over `length()` checks
+- Consistent use of `with` for multi-step operations
+- Added guards to prevent crashes on invalid input
+
+---
+
+### Test Suite Fix: SQLite Concurrency Issue
+
+**Problem:** `mix test` failing with 29+ `DBConnection.ConnectionError` failures - "connection not available and request was dropped from queue"
+
+**Root cause:** SQLite has limited concurrency support. Feature tests using `async: true` caused sandbox connection pool exhaustion when many tests ran in parallel.
+
+**Solution:**
+1. Changed all feature tests from `async: true` to `async: false`
+2. Increased pool_size from 1 to 10 for both repos
+3. Added `queue_target: 5000` and `queue_interval: 10_000` for longer wait times
+
+**Files modified:**
+- `config/test.exs` - Increased pool_size to 10, added queue settings
+- `test/aurum_web/features/*.exs` (11 files) - Changed to `async: false`
+
+**Test status:** ✅ PASSED (192 tests, 0 failures, 7 excluded)
+
+**Key learnings:**
+- SQLite sandbox mode doesn't handle concurrent ownership as well as PostgreSQL
+- Feature tests with database access should use `async: false` with SQLite
+- `--max-cases 1` is a quick diagnostic to confirm concurrency issues
+
+---
+
 ## 2026-01-24
 
 ### US-106: Idle Vault Cleanup — Test 1

@@ -10,17 +10,21 @@ config :aurum, :env, :test
 # Run `mix help test` for more information.
 config :aurum, Aurum.Repo,
   database: Path.expand("../aurum_test.db", __DIR__),
-  pool_size: 1,
+  pool_size: 10,
   pool: Ecto.Adapters.SQL.Sandbox,
   journal_mode: :wal,
-  busy_timeout: 10_000
+  busy_timeout: 15_000,
+  queue_target: 5000,
+  queue_interval: 10_000
 
 config :aurum, Aurum.Accounts.Repo,
   database: Path.expand("../aurum_accounts_test.db", __DIR__),
-  pool_size: 1,
+  pool_size: 10,
   pool: Ecto.Adapters.SQL.Sandbox,
   journal_mode: :wal,
-  busy_timeout: 10_000
+  busy_timeout: 15_000,
+  queue_target: 5000,
+  queue_interval: 10_000
 
 config :aurum, :vault_databases_path, Path.expand("../tmp/test_vaults", __DIR__)
 

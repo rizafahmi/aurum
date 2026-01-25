@@ -37,11 +37,19 @@ defmodule Aurum.VaultDatabase.DynamicRepo do
   @doc """
   Ensures a DynamicRepo process is started for the vault.
   Returns the pid of the running process.
+  Handles race conditions where multiple processes try to start the same repo.
   """
   def ensure_started(vault_id, opts \\ []) do
     case lookup(vault_id) do
-      {:ok, pid} -> {:ok, pid}
-      :error -> start_repo(vault_id, opts)
+      {:ok, pid} ->
+        {:ok, pid}
+
+      :error ->
+        case start_repo(vault_id, opts) do
+          {:ok, pid} -> {:ok, pid}
+          {:error, {:already_started, pid}} -> {:ok, pid}
+          other -> other
+        end
     end
   end
 

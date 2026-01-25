@@ -29,22 +29,19 @@ defmodule Aurum.Accounts do
   @doc """
   Verifies a vault token and returns the vault if valid.
   """
-  def verify_vault(vault_id, raw_token) do
-    case Repo.get(Vault, vault_id) do
-      nil ->
-        {:error, :not_found}
-
-      %Vault{deleted_at: deleted_at} when not is_nil(deleted_at) ->
-        {:error, :deleted}
-
-      %Vault{token_hash: stored_hash} = vault ->
-        if Plug.Crypto.secure_compare(stored_hash, hash_token(raw_token)) do
-          {:ok, vault}
-        else
-          {:error, :invalid_token}
-        end
+  def verify_vault(vault_id, raw_token)
+      when is_binary(vault_id) and is_binary(raw_token) do
+    with %Vault{deleted_at: nil, token_hash: stored_hash} = vault <- Repo.get(Vault, vault_id),
+         true <- Plug.Crypto.secure_compare(stored_hash, hash_token(raw_token)) do
+      {:ok, vault}
+    else
+      nil -> {:error, :not_found}
+      %Vault{deleted_at: _} -> {:error, :deleted}
+      false -> {:error, :invalid_token}
     end
   end
+
+  def verify_vault(_, _), do: {:error, :invalid_params}
 
   @doc """
   Updates the last_accessed_at timestamp for a vault.
@@ -64,29 +61,20 @@ defmodule Aurum.Accounts do
   Marks the recovery email prompt as dismissed for a vault.
   """
   def dismiss_recovery_email_prompt(vault_id) do
-    case get_vault(vault_id) do
-      nil ->
-        {:error, :not_found}
-
-      vault ->
-        vault
-        |> Vault.changeset(%{recovery_email_prompt_dismissed: true})
-        |> Repo.update()
-    end
+    update_vault(vault_id, %{recovery_email_prompt_dismissed: true})
   end
 
   @doc """
   Sets the recovery email for a vault.
   """
-  def set_recovery_email(vault_id, email) do
-    case get_vault(vault_id) do
-      nil ->
-        {:error, :not_found}
+  def set_recovery_email(vault_id, email) when is_binary(email) do
+    update_vault(vault_id, %{recovery_email: email})
+  end
 
-      vault ->
-        vault
-        |> Vault.changeset(%{recovery_email: email})
-        |> Repo.update()
+  defp update_vault(vault_id, attrs) when is_binary(vault_id) and is_map(attrs) do
+    case get_vault(vault_id) do
+      nil -> {:error, :not_found}
+      vault -> vault |> Vault.changeset(attrs) |> Repo.update()
     end
   end
 
@@ -94,7 +82,7 @@ defmodule Aurum.Accounts do
     :crypto.strong_rand_bytes(32) |> Base.url_encode64(padding: false)
   end
 
-  defp hash_token(raw_token) do
+  defp hash_token(raw_token) when is_binary(raw_token) do
     :crypto.mac(:hmac, :sha256, @token_pepper, raw_token)
     |> Base.encode64()
   end

@@ -1,5 +1,5 @@
 defmodule AurumWeb.DeleteGoldItemTest do
-  use AurumWeb.ConnCase, async: true
+  use AurumWeb.ConnCase, async: false
 
   describe "US-005: Delete Gold Item" do
     setup do

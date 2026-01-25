@@ -1,5 +1,5 @@
 defmodule AurumWeb.HomepageTest do
-  use AurumWeb.ConnCase, async: true
+  use AurumWeb.ConnCase, async: false
 
   test "GET / has branding", %{conn: conn} do
     conn

@@ -31,11 +31,11 @@ defmodule AurumWeb.Format do
   end
 
   @doc """
-  Formats a percentage value, returning nil for nil input.
+  Formats a percentage value rounded to 2 decimal places, returning nil for nil input.
   """
   @spec percent(Decimal.t() | nil) :: String.t() | nil
   def percent(nil), do: nil
-  def percent(%Decimal{} = decimal), do: "#{Decimal.to_string(decimal)}%"
+  def percent(%Decimal{} = decimal), do: decimal_to_2dp(decimal) <> "%"
 
   @doc """
   Formats a DateTime in UTC format.

@@ -28,9 +28,11 @@ defmodule AurumWeb.ItemLive.Index do
   end
 
   defp should_show_recovery_email_prompt?(nil, _items), do: false
+  defp should_show_recovery_email_prompt?(_vault_id, []), do: false
+  defp should_show_recovery_email_prompt?(_vault_id, [_, _ | _]), do: false
 
-  defp should_show_recovery_email_prompt?(vault_id, items) do
-    length(items) == 1 and not recovery_email_prompt_dismissed?(vault_id)
+  defp should_show_recovery_email_prompt?(vault_id, [_single_item]) do
+    not recovery_email_prompt_dismissed?(vault_id)
   end
 
   defp recovery_email_prompt_dismissed?(vault_id) do
@@ -38,8 +40,6 @@ defmodule AurumWeb.ItemLive.Index do
       nil -> false
       vault -> vault.recovery_email_prompt_dismissed || vault.recovery_email != nil
     end
-  rescue
-    DBConnection.ConnectionError -> false
   end
 
   @impl true

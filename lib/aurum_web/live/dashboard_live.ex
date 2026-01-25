@@ -8,51 +8,65 @@ defmodule AurumWeb.DashboardLive do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: send(self(), :load_data)
-    {:ok, assign(socket, items: [], summary: nil, price_info: nil, refresh_error: false)}
+
+    {:ok,
+     assign(socket,
+       items: [],
+       summary: nil,
+       price_info: nil,
+       refresh_error: false,
+       api_unavailable: false
+     )}
   end
 
   @impl true
   def handle_info(:load_data, socket) do
-    price_info = fetch_price_info()
+    {price_info, api_unavailable} = fetch_price_info_with_status()
     spot_price = price_info && price_info.price_per_gram
     {items, summary} = Portfolio.dashboard_summary(spot_price)
-    {:noreply, assign(socket, items: items, summary: summary, price_info: price_info)}
+
+    {:noreply,
+     assign(socket,
+       items: items,
+       summary: summary,
+       price_info: price_info,
+       api_unavailable: api_unavailable
+     )}
   end
 
   @impl true
   def handle_event("refresh_price", _params, socket) do
-    case PriceCache.refresh() do
-      {:ok, resp} ->
-        refresh_failed = Map.get(resp, :refresh_failed, false)
+    with {:ok, resp} <- PriceCache.refresh(),
+         {:ok, info} <- to_price_info(resp) do
+      refresh_failed = Map.get(resp, :refresh_failed, false)
+      {items, summary} = Portfolio.dashboard_summary(info.price_per_gram)
 
-        case to_price_info(resp) do
-          {:ok, info} ->
-            spot_price = info.price_per_gram
-            {items, summary} = Portfolio.dashboard_summary(spot_price)
-
-            {:noreply,
-             assign(socket,
-               price_info: info,
-               refresh_error: refresh_failed,
-               items: items,
-               summary: summary
-             )}
-
-          :error ->
-            {:noreply, assign(socket, refresh_error: true)}
-        end
-
-      {:error, _} ->
-        {:noreply, assign(socket, refresh_error: true)}
+      {:noreply,
+       assign(socket,
+         price_info: info,
+         refresh_error: refresh_failed,
+         items: items,
+         summary: summary
+       )}
+    else
+      _ -> {:noreply, assign(socket, refresh_error: true)}
     end
   end
 
-  defp fetch_price_info do
-    with {:ok, resp} <- PriceCache.get_price(),
-         {:ok, info} <- to_price_info(resp) do
-      info
-    else
-      _ -> nil
+  defp fetch_price_info_with_status do
+    case PriceCache.get_price() do
+      {:ok, resp} ->
+        case to_price_info(resp) do
+          {:ok, info} ->
+            api_unavailable = Map.get(resp, :refresh_failed, false)
+            {info, api_unavailable}
+
+          :error ->
+            {nil, true}
+        end
+
+      {:error, _reason} ->
+        {nil, true}
     end
   end
 
@@ -80,7 +94,11 @@ defmodule AurumWeb.DashboardLive do
       <div id="dashboard-content">
         <.page_header title="VAULT STATUS" subtitle="Portfolio Overview & Market Data" />
 
-        <.price_display price_info={@price_info} refresh_error={@refresh_error} />
+        <.price_display
+          price_info={@price_info}
+          refresh_error={@refresh_error}
+          api_unavailable={@api_unavailable}
+        />
 
         <.empty_state
           :if={Enum.empty?(@items)}
@@ -127,6 +145,7 @@ defmodule AurumWeb.DashboardLive do
 
   attr :price_info, :map, default: nil
   attr :refresh_error, :boolean, default: false
+  attr :api_unavailable, :boolean, default: false
 
   defp price_display(assigns) do
     ~H"""
@@ -141,7 +160,7 @@ defmodule AurumWeb.DashboardLive do
               {Format.currency(@price_info.price_per_gram)}
               <span class="text-gold-muted text-sm">/gram</span>
             <% else %>
-              -- AWAITING DATA --
+              -- NO CACHED DATA --
             <% end %>
           </div>
         </div>
@@ -166,6 +185,13 @@ defmodule AurumWeb.DashboardLive do
             </div>
             <div :if={@refresh_error} id="refresh-error" class="text-xs text-danger font-medium">
               [ERR] REFRESH FAILED
+            </div>
+            <div
+              :if={!@price_info && @api_unavailable}
+              id="api-unavailable"
+              class="text-xs text-warning font-medium"
+            >
+              [!] API UNAVAILABLE
             </div>
           </div>
         </div>

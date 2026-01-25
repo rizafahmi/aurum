@@ -32,6 +32,7 @@ defmodule AurumWeb.VaultPlug do
 
     with cookie_value when is_binary(cookie_value) <- conn.cookies[@cookie_name],
          {:ok, %{"vault_id" => vault_id, "token" => token}} <- Jason.decode(cookie_value),
+         true <- is_binary(token) and token != "",
          {:ok, _uuid} <- Ecto.UUID.cast(vault_id) do
       {:ok, vault_id, token}
     else
@@ -62,15 +63,38 @@ defmodule AurumWeb.VaultPlug do
   end
 
   defp put_vault_private(conn, vault_id) do
-    unless Env.test?() do
-      {:ok, repo_pid} = DynamicRepo.get_repo_pid(vault_id)
-      Aurum.Repo.put_dynamic_repo(repo_pid)
-    end
+    case setup_dynamic_repo(vault_id) do
+      :ok ->
+        conn
+        |> put_private(:vault_id, vault_id)
+        |> put_private(:vault_credentials, %{vault_id: vault_id})
+        |> put_session(:vault_id, vault_id)
 
-    conn
-    |> put_private(:vault_id, vault_id)
-    |> put_private(:vault_credentials, %{vault_id: vault_id})
-    |> put_session(:vault_id, vault_id)
+      {:error, reason} ->
+        require Logger
+        Logger.error("Failed to start vault repo: #{inspect(reason)}")
+
+        conn
+        |> put_status(500)
+        |> Phoenix.Controller.put_view(AurumWeb.ErrorHTML)
+        |> Phoenix.Controller.render("500.html")
+        |> halt()
+    end
+  end
+
+  defp setup_dynamic_repo(vault_id) do
+    if Env.test?() do
+      :ok
+    else
+      case DynamicRepo.get_repo_pid(vault_id) do
+        {:ok, repo_pid} ->
+          Aurum.Repo.put_dynamic_repo(repo_pid)
+          :ok
+
+        {:error, reason} ->
+          {:error, reason}
+      end
+    end
   end
 
   defp cookie_opts do

@@ -1,5 +1,5 @@
 defmodule AurumWeb.ListGoldItemsTest do
-  use AurumWeb.ConnCase, async: true
+  use AurumWeb.ConnCase, async: false
 
   describe "US-003: List All Gold Items - empty state" do
     test "displays empty message when no items exist", %{conn: conn} do
