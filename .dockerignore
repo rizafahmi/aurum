@@ -1,0 +1,46 @@
+# Git
+.git
+.gitignore
+
+# Elixir/Mix
+_build/
+deps/
+*.ez
+.elixir_ls/
+.lexical/
+
+# Node
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+
+# Dev/Test databases
+*.db
+*.db-shm
+*.db-wal
+
+# Test
+/test/
+cover/
+
+# Dev data
+/data/
+/tmp/
+
+# Misc
+.DS_Store
+*.swp
+*.swo
+erl_crash.dump
+
+# Local env files
+.env
+.env.local
+.env.*.local
+
+# Agent files
+.agent-shell/
+.agents/
+.expert/

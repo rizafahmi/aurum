@@ -25,12 +25,32 @@ if config_env() == :prod do
     System.get_env("DATABASE_PATH") ||
       raise """
       environment variable DATABASE_PATH is missing.
-      For example: /etc/aurum/aurum.db
+      For example: /app/data/aurum.db
+      """
+
+  accounts_database_path =
+    System.get_env("ACCOUNTS_DATABASE_PATH") ||
+      raise """
+      environment variable ACCOUNTS_DATABASE_PATH is missing.
+      For example: /app/data/aurum_accounts.db
+      """
+
+  vault_databases_path =
+    System.get_env("VAULT_DATABASES_PATH") ||
+      raise """
+      environment variable VAULT_DATABASES_PATH is missing.
+      For example: /app/data/vaults
       """
 
   config :aurum, Aurum.Repo,
     database: database_path,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
+
+  config :aurum, Aurum.Accounts.Repo,
+    database: accounts_database_path,
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
+
+  config :aurum, :vault_databases_path, vault_databases_path
 
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you
@@ -47,10 +67,15 @@ if config_env() == :prod do
   host = System.get_env("PHX_HOST") || "example.com"
   port = String.to_integer(System.get_env("PORT") || "4000")
 
+  # Set to "true" when behind HTTPS reverse proxy (Caddy with domain)
+  use_ssl = System.get_env("USE_SSL", "false") == "true"
+  url_port = if use_ssl, do: 443, else: port
+  url_scheme = if use_ssl, do: "https", else: "http"
+
   config :aurum, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
   config :aurum, AurumWeb.Endpoint,
-    url: [host: host, port: 443, scheme: "https"],
+    url: [host: host, port: url_port, scheme: url_scheme],
     http: [
       # Enable IPv6 and bind on all interfaces.
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.

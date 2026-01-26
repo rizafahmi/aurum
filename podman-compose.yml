@@ -1,0 +1,29 @@
+services:
+  aurum:
+    build: .
+    container_name: aurum
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      - PHX_SERVER=true
+      - PHX_HOST=${PHX_HOST:-localhost}
+      - PORT=4000
+      - USE_SSL=${USE_SSL:-false}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - DATABASE_PATH=/app/data/aurum.db
+      - ACCOUNTS_DATABASE_PATH=/app/data/aurum_accounts.db
+      - VAULT_DATABASES_PATH=/app/data/vaults
+      - GOLDAPI_KEY=${GOLDAPI_KEY}
+    volumes:
+      - aurum_data:/app/data
+    healthcheck:
+      test: ["CMD", "bin/aurum", "pid"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  aurum_data:
+    driver: local
