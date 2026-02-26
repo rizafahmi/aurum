@@ -1,5 +1,5 @@
 defmodule AurumWeb.Endpoint do
-  use SiteEncrypt.Phoenix.Endpoint, otp_app: :my_app
+  use SiteEncrypt.Phoenix.Endpoint, otp_app: :aurum
 
   @impl SiteEncrypt
   def certification do
