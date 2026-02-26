@@ -59,6 +59,8 @@ defmodule Aurum.Gold.CachedPrice do
   end
 
   @source_mapping %{
+    "exchange_api" => :exchange_api,
+    "exchange_api_fallback" => :exchange_api_fallback,
     "goldapi" => :goldapi,
     "metalpriceapi" => :metalpriceapi,
     "test" => :test,

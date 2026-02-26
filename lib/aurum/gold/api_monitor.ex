@@ -28,8 +28,8 @@ defmodule Aurum.Gold.ApiMonitor do
 
     results = %{
       timestamp: timestamp,
-      goldapi: check_provider(:goldapi, &PriceClient.fetch_goldapi/0),
-      metalpriceapi: check_provider(:metalpriceapi, &PriceClient.fetch_metalpriceapi/0)
+      exchange_api: check_provider(:exchange_api, &PriceClient.fetch_primary/0),
+      exchange_api_fallback: check_provider(:exchange_api_fallback, &PriceClient.fetch_fallback/0)
     }
 
     append_log(results)
@@ -59,9 +59,8 @@ defmodule Aurum.Gold.ApiMonitor do
           total_checks: length(logs),
           period: get_period(logs),
           providers: %{
-            nbp: provider_stats(logs, :nbp),
-            goldapi: provider_stats(logs, :goldapi),
-            metalpriceapi: provider_stats(logs, :metalpriceapi)
+            exchange_api: provider_stats(logs, :exchange_api),
+            exchange_api_fallback: provider_stats(logs, :exchange_api_fallback)
           }
         }
 

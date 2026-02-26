@@ -1,12 +1,12 @@
 defmodule Aurum.Gold.PriceClient do
   @moduledoc """
-  Fetches gold spot prices from multiple API providers.
-  Validates response schemas and logs response times/failures for reliability testing.
+  Fetches gold spot prices from the free fawazahmed0/exchange-api.
 
-  Candidate APIs:
-  1. GoldAPI.io - Free tier (100 req/month), requires API key, supports IDR
-  2. MetalpriceAPI - Free tier, requires API key, supports IDR
+  Uses two endpoints with automatic fallback:
+  1. Primary: cdn.jsdelivr.net (CDN)
+  2. Fallback: currency-api.pages.dev (Cloudflare)
 
+  No API keys required. No rate limits. Daily updated.
   All prices are returned in Indonesian Rupiah (IDR).
   """
 
@@ -14,6 +14,9 @@ defmodule Aurum.Gold.PriceClient do
 
   @timeout 10_000
   @grams_per_oz Decimal.new("31.1035")
+
+  @primary_url "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/xau.min.json"
+  @fallback_url "https://latest.currency-api.pages.dev/v1/currencies/xau.min.json"
 
   @type price_result :: {:ok, price_data()} | {:error, error_reason()}
   @type price_data :: %{
@@ -27,55 +30,35 @@ defmodule Aurum.Gold.PriceClient do
   @type error_reason ::
           :timeout
           | :invalid_response
-          | :missing_api_key
-          | :unauthorized
-          | :rate_limited
           | {:http_error, integer()}
           | {:network_error, term()}
 
   @doc """
-  Fetches gold price from GoldAPI.io.
-  Requires API key set in config or environment variable GOLDAPI_KEY.
-
-  Free tier: 100 requests/month
+  Fetches gold price from exchange-api via CDN (primary).
   Returns XAU/IDR spot price in Indonesian Rupiah.
   """
-  @spec fetch_goldapi() :: price_result()
-  def fetch_goldapi do
-    with {:ok, api_key} <- require_api_key(:goldapi_key, "GOLDAPI_KEY") do
-      perform_request(
-        :goldapi,
-        fn ->
-          Req.get("https://www.goldapi.io/api/XAU/IDR",
-            headers: [{"x-access-token", api_key}],
-            receive_timeout: @timeout
-          )
-        end,
-        &validate_goldapi_response/1,
-        %{401 => :unauthorized, 429 => :rate_limited}
-      )
-    end
+  @spec fetch_primary() :: price_result()
+  def fetch_primary do
+    perform_request(
+      :exchange_api,
+      fn -> Req.get(@primary_url, receive_timeout: @timeout) end,
+      &validate_response/1,
+      %{}
+    )
   end
 
   @doc """
-  Fetches gold price from MetalpriceAPI.
-  Requires API key set in config or environment variable METALPRICEAPI_KEY.
-
-  Free tier available with registration.
+  Fetches gold price from exchange-api via Cloudflare (fallback).
   Returns XAU/IDR spot price in Indonesian Rupiah.
   """
-  @spec fetch_metalpriceapi() :: price_result()
-  def fetch_metalpriceapi do
-    with {:ok, api_key} <- require_api_key(:metalpriceapi_key, "METALPRICEAPI_KEY") do
-      url = "https://api.metalpriceapi.com/v1/latest?api_key=#{api_key}&base=IDR&currencies=XAU"
-
-      perform_request(
-        :metalpriceapi,
-        fn -> Req.get(url, receive_timeout: @timeout) end,
-        &validate_metalpriceapi_response/1,
-        %{401 => :unauthorized}
-      )
-    end
+  @spec fetch_fallback() :: price_result()
+  def fetch_fallback do
+    perform_request(
+      :exchange_api_fallback,
+      fn -> Req.get(@fallback_url, receive_timeout: @timeout) end,
+      &validate_response/1,
+      %{}
+    )
   end
 
   # Generic request handler that reduces duplication across providers
@@ -111,14 +94,6 @@ defmodule Aurum.Gold.PriceClient do
     end
   end
 
-  defp require_api_key(config_key, env_var) do
-    case Application.get_env(:aurum, config_key) || System.get_env(env_var) do
-      nil -> {:error, :missing_api_key}
-      "" -> {:error, :missing_api_key}
-      key -> {:ok, key}
-    end
-  end
-
   @doc """
   Fetches gold price from all configured providers and returns results.
   Useful for comparing reliability and response times.
@@ -126,8 +101,8 @@ defmodule Aurum.Gold.PriceClient do
   @spec fetch_all() :: %{atom() => price_result()}
   def fetch_all do
     tasks = [
-      Task.async(fn -> {:goldapi, fetch_goldapi()} end),
-      Task.async(fn -> {:metalpriceapi, fetch_metalpriceapi()} end)
+      Task.async(fn -> {:exchange_api, fetch_primary()} end),
+      Task.async(fn -> {:exchange_api_fallback, fetch_fallback()} end)
     ]
 
     tasks
@@ -137,72 +112,47 @@ defmodule Aurum.Gold.PriceClient do
 
   @doc """
   Fetches gold price with fallback logic.
-  Tries providers in order until one succeeds.
-  Priority: GoldAPI (most accurate) -> MetalpriceAPI
+  Tries CDN first, then Cloudflare fallback.
   """
   @spec fetch_with_fallback() :: price_result()
   def fetch_with_fallback do
     providers = [
-      &fetch_goldapi/0,
-      &fetch_metalpriceapi/0
+      &fetch_primary/0,
+      &fetch_fallback/0
     ]
 
     Enum.reduce_while(providers, {:error, :all_providers_failed}, fn fetch_fn, _acc ->
       case fetch_fn.() do
         {:ok, _} = success -> {:halt, success}
-        {:error, :missing_api_key} -> {:cont, {:error, :all_providers_failed}}
         {:error, _} -> {:cont, {:error, :all_providers_failed}}
       end
     end)
   end
 
-  # Response validators
+  # Response validator
 
-  defp validate_goldapi_response(%{"price" => price, "timestamp" => timestamp})
-       when is_number(price) and is_integer(timestamp) do
-    with {:ok, dt} <- DateTime.from_unix(timestamp) do
-      price_per_oz = Decimal.new(to_string(price))
-      price_per_gram = Decimal.div(price_per_oz, @grams_per_oz)
+  defp validate_response(%{"date" => date_str, "xau" => %{"idr" => idr_rate}})
+       when is_number(idr_rate) and idr_rate > 0 do
+    timestamp =
+      case Date.from_iso8601(date_str) do
+        {:ok, date} -> DateTime.new!(date, ~T[00:00:00], "Etc/UTC")
+        _ -> DateTime.utc_now()
+      end
 
-      {:ok,
-       %{
-         price_per_oz: price_per_oz,
-         price_per_gram: price_per_gram,
-         currency: "IDR",
-         timestamp: dt,
-         source: :goldapi
-       }}
-    else
-      _ -> {:error, :invalid_response}
-    end
+    price_per_oz = Decimal.new(to_string(idr_rate))
+    price_per_gram = Decimal.div(price_per_oz, @grams_per_oz)
+
+    {:ok,
+     %{
+       price_per_oz: price_per_oz,
+       price_per_gram: price_per_gram,
+       currency: "IDR",
+       timestamp: timestamp,
+       source: :exchange_api
+     }}
   end
 
-  defp validate_goldapi_response(_), do: {:error, :invalid_response}
-
-  defp validate_metalpriceapi_response(%{
-         "success" => true,
-         "rates" => %{"XAU" => rate},
-         "timestamp" => timestamp
-       })
-       when is_number(rate) and rate > 0 and is_integer(timestamp) do
-    with {:ok, dt} <- DateTime.from_unix(timestamp) do
-      price_per_oz = Decimal.div(Decimal.new("1"), Decimal.new(to_string(rate)))
-      price_per_gram = Decimal.div(price_per_oz, @grams_per_oz)
-
-      {:ok,
-       %{
-         price_per_oz: price_per_oz,
-         price_per_gram: price_per_gram,
-         currency: "IDR",
-         timestamp: dt,
-         source: :metalpriceapi
-       }}
-    else
-      _ -> {:error, :invalid_response}
-    end
-  end
-
-  defp validate_metalpriceapi_response(_), do: {:error, :invalid_response}
+  defp validate_response(_), do: {:error, :invalid_response}
 
   # Logging helpers
 
