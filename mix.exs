@@ -68,7 +68,8 @@ defmodule Aurum.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:stream_data, "~> 1.0", only: :test},
-      {:phoenix_test, "~> 0.9.1", only: :test, runtime: false}
+      {:phoenix_test, "~> 0.9.1", only: :test, runtime: false},
+      {:site_encrypt, "~> 0.7"}
     ]
   end
 

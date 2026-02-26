@@ -18,7 +18,7 @@ defmodule Aurum.Application do
       {Phoenix.PubSub, name: Aurum.PubSub},
       {Aurum.Gold.PriceCache, auto_refresh: true},
       # Start to serve requests, typically the last entry
-      AurumWeb.Endpoint
+      {SiteEncrypt.Phoenix, AurumWeb.Endpoint}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -32,6 +32,7 @@ config :aurum, :vault_databases_path, Path.expand("../tmp/test_vaults", __DIR__)
 # you can enable the server option below.
 config :aurum, AurumWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
+  https: [port: 4001],
   secret_key_base: "BkQBv41lDxt3BWjXJPOFktDFETJGbS/QGqNOFSfIG7u66tC/hVWq9iLuulYdcaC2",
   server: false
 

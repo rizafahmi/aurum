@@ -1,5 +1,27 @@
 defmodule AurumWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :aurum
+  use SiteEncrypt.Phoenix
+
+  @impl Phoenix.Endpoint
+  def init(_key, config) do
+    {:ok, SiteEncrypt.Phoenix.configure_https(config)}
+  end
+
+  @impl SiteEncrypt
+  def certification do
+    SiteEncrypt.configure(
+      client: :native,
+      domains: ["aurum.rizafahmi.com"],
+      emails: ["rizafahmi@gmail.com"],
+      db_folder: Application.get_env(:my_app, :cert_path, "tmp/site_encrypt_db"),
+      directory_url:
+        case Application.get_env(:my_app, :cert_mode, "local") do
+          "local" -> {:internal, port: 4002}
+          "staging" -> "https://acme-staging-v02.api.letsencrypt.org/directory"
+          "production" -> "https://acme-v02.api.letsencrypt.org/directory"
+        end
+    )
+  end
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
