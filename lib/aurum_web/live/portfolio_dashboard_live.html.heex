@@ -1,0 +1,50 @@
+<Layouts.app flash={@flash}>
+  <div class="min-h-screen bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <.header>
+        Portfolio Dashboard
+        <:subtitle>Track your gold investments in real-time</:subtitle>
+      </.header>
+
+      <div class="mt-8">
+        <h2 class="text-lg font-semibold text-gray-900">Portfolio Metrics</h2>
+        <p>Total Value: {Decimal.to_string(@current_metrics.total_value_idr)} IDR</p>
+        <p>Cost Basis: {Decimal.to_string(@current_metrics.total_cost_basis_idr)} IDR</p>
+        <p>ROI: {Decimal.round(@current_metrics.roi, 2) |> Decimal.to_string()}%</p>
+        <p>Pure Gold Weight: {Decimal.round(@current_metrics.total_pure_weight, 3) |> Decimal.to_string()} oz troy</p>
+      </div>
+
+      <div class="mt-8">
+        <h2 class="text-lg font-semibold text-gray-900">Holdings</h2>
+        <div id="holdings" phx-update="stream" class="mt-4 space-y-4">
+          <div :for={{id, holding} <- @streams.holdings} id={id} class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-medium text-gray-900">{holding.name}</h3>
+            <p class="mt-1 text-sm text-gray-500">
+              {String.capitalize(holding.category)} • {Decimal.to_string(holding.weight)} {String.replace(holding.weight_unit, "_", " ")} • {Decimal.mult(holding.purity, Decimal.new("24")) |> Decimal.round() |> Decimal.to_string()}K
+            </p>
+            <p class="mt-1 text-sm text-gray-500">Cost: {Decimal.to_string(holding.cost_basis)} USD • {if holding.purchase_date, do: Date.to_string(holding.purchase_date), else: "No date"}</p>
+            <button type="button" phx-click="delete" phx-value-id={holding.id} class="text-red-600 hover:text-red-900">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8">
+        <h2 class="text-lg font-semibold text-gray-900">Add New Holding</h2>
+        <div class="mt-4 bg-white shadow rounded-lg p-6">
+          <.form for={@add_form} id="add-holding-form" phx-submit="save" phx-change="validate">
+            <.input field={@add_form[:name]} type="text" label="Name" />
+            <.input field={@add_form[:category]} type="select" label="Category" options={[{"Coin", "coin"}, {"Bar", "bar"}, {"Round", "round"}]} />
+            <.input field={@add_form[:weight]} type="text" label="Weight" />
+            <.input field={@add_form[:weight_unit]} type="select" label="Weight Unit" options={[{"Grams", "grams"}, {"Troy Ounces", "troy_ounces"}]} />
+            <.input field={@add_form[:purity]} type="select" label="Purity" options={[{"24K (100%)", "1.0"}, {"22K (91.67%)", "0.9167"}, {"18K (75%)", "0.75"}, {"14K (58.33%)", "0.5833"}]} />
+            <.input field={@add_form[:quantity]} type="number" label="Quantity" min="1" />
+            <.input field={@add_form[:cost_basis]} type="text" label="Cost Basis (USD)" />
+            <.input field={@add_form[:purchase_date]} type="date" label="Purchase Date" />
+            <.input field={@add_form[:notes]} type="text" label="Notes (optional)" />
+            <.button type="submit">Add Holding</.button>
+          </.form>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layouts.app>

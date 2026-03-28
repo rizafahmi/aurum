@@ -18,6 +18,7 @@ defmodule AurumWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/portfolio", PortfolioDashboardLive, :index
   end
 
   # Other scopes may use custom stacks.
