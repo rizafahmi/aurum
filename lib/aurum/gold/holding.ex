@@ -29,7 +29,17 @@ defmodule Aurum.Gold.Holding do
 
   def changeset(holding, attrs) do
     holding
-    |> cast(attrs, [:name, :category, :weight, :weight_unit, :purity, :quantity, :cost_basis, :purchase_date, :notes])
+    |> cast(attrs, [
+      :name,
+      :category,
+      :weight,
+      :weight_unit,
+      :purity,
+      :quantity,
+      :cost_basis,
+      :purchase_date,
+      :notes
+    ])
     |> validate_required([:name, :category, :weight, :weight_unit, :purity, :cost_basis])
     |> validate_number(:weight, greater_than: 0)
     |> validate_number(:purity, greater_than: 0, less_than_or_equal_to: 1)

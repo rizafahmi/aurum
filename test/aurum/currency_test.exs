@@ -1,6 +1,5 @@
 defmodule Aurum.CurrencyTest do
   use Aurum.DataCase
-  import Decimal
 
   describe "usd_to_idr/2" do
     test "converts USD to IDR correctly" do

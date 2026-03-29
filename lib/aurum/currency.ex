@@ -17,8 +17,8 @@ defmodule Aurum.Currency do
   @doc """
   Round decimal to nearest thousand.
   """
-  def round_to_nearest_thousand(amount) do
-    Decimal.round(amount, -3, :half_up)
+  def round_to_nearest_thousand(amount, precision \\ -3) do
+    Decimal.round(amount, precision, :half_up)
   end
 
   @doc """
@@ -28,6 +28,8 @@ defmodule Aurum.Currency do
     amount_str = Decimal.to_string(amount_idr)
     add_thousand_separators(amount_str)
   end
+
+  defp add_thousand_separators(""), do: "0"
 
   defp add_thousand_separators(str) do
     str

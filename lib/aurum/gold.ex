@@ -26,6 +26,18 @@ defmodule Aurum.Gold do
   def get_holding!(id), do: Repo.get!(Holding, id)
 
   @doc """
+  Gets a single holding.
+
+  Returns `{:ok, holding}` or `{:error, :not_found}`.
+  """
+  def get_holding(id) do
+    case Repo.get(Holding, id) do
+      nil -> {:error, :not_found}
+      holding -> {:ok, holding}
+    end
+  end
+
+  @doc """
   Creates a holding.
   """
   def create_holding(attrs \\ %{}) do

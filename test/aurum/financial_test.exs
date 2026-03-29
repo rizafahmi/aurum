@@ -4,7 +4,8 @@ defmodule Aurum.FinancialTest do
   describe "pure_gold_weight/2" do
     test "calculates pure gold weight correctly" do
       weight = Decimal.new("10.0")
-      purity = Decimal.new("0.75")  # 18K gold
+      # 18K gold
+      purity = Decimal.new("0.75")
 
       result = Aurum.Financial.pure_gold_weight(weight, purity)
       expected = Decimal.new("7.5")
@@ -57,7 +58,8 @@ defmodule Aurum.FinancialTest do
 
   describe "convert_weight/3" do
     test "converts grams to troy ounces" do
-      weight = Decimal.new("31.1034768")  # 1 troy ounce in grams
+      # 1 troy ounce in grams
+      weight = Decimal.new("31.1034768")
 
       result = Aurum.Financial.convert_weight(weight, :grams, :troy_ounces)
       expected = Decimal.new("1.0")

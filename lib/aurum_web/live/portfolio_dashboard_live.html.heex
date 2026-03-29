@@ -17,8 +17,8 @@
       <div class="text-sm opacity-70">Indonesian Rupiah</div>
     </div>
   </div>
-
-  <!-- Cost Basis Card -->
+  
+<!-- Cost Basis Card -->
   <div class="card hover:shadow-lg transition-shadow">
     <div class="card-body">
       <div class="flex items-center justify-between mb-4">
@@ -31,8 +31,8 @@
       <div class="text-sm opacity-70">Investment</div>
     </div>
   </div>
-
-  <!-- ROI Card -->
+  
+<!-- ROI Card -->
   <div class="card hover:shadow-lg transition-shadow">
     <div class="card-body">
       <div class="flex items-center justify-between mb-4">
@@ -45,8 +45,8 @@
       <div class="text-sm opacity-70">Return on Investment</div>
     </div>
   </div>
-
-  <!-- Pure Gold Weight Card -->
+  
+<!-- Pure Gold Weight Card -->
   <div class="card hover:shadow-lg transition-shadow">
     <div class="card-body">
       <div class="flex items-center justify-between mb-4">
@@ -63,19 +63,26 @@
 
 <div class="flex items-center justify-between mb-6">
   <h2 class="text-2xl font-bold">Your Holdings</h2>
-  <button 
-    type="button" 
+  <button
+    type="button"
     phx-click="toggle_form"
     class="btn btn-primary"
     id="toggle-form-btn"
   >
-    <.icon name="hero-plus" class="size-5 mr-2" />
-    Add Holding
+    <.icon name="hero-plus" class="size-5 mr-2" /> Add Holding
   </button>
 </div>
 
-<div id="holdings" phx-update="stream" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-  <div :for={{id, holding} <- @streams.holdings} id={id} class="card hover:shadow-lg hover:border-primary transition-all">
+<div
+  id="holdings"
+  phx-update="stream"
+  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
+>
+  <div
+    :for={{id, holding} <- @streams.holdings}
+    id={id}
+    class="card hover:shadow-lg hover:border-primary transition-all"
+  >
     <div class="card-body">
       <div class="flex items-start justify-between mb-4">
         <div class="flex items-center gap-3">
@@ -87,9 +94,9 @@
             <p class="text-sm opacity-70">{String.capitalize(holding.category)}</p>
           </div>
         </div>
-        <button 
-          type="button" 
-          phx-click="delete" 
+        <button
+          type="button"
+          phx-click="delete"
           phx-value-id={holding.id}
           class="opacity-50 hover:text-error transition-colors p-2"
         >
@@ -100,11 +107,17 @@
       <div class="space-y-2 mb-4">
         <div class="flex justify-between text-sm">
           <span class="opacity-70">Weight</span>
-          <span>{Decimal.to_string(holding.weight)} {format_weight_unit(holding.weight_unit)}</span>
+          <span>
+            {Decimal.to_string(holding.weight)} {format_weight_unit(holding.weight_unit)}
+          </span>
         </div>
         <div class="flex justify-between text-sm">
           <span class="opacity-70">Purity</span>
-          <span class="text-primary">{Decimal.mult(holding.purity, Decimal.new("24")) |> Decimal.round() |> Decimal.to_string()}K</span>
+          <span class="text-primary">
+            {Decimal.mult(holding.purity, Decimal.new("24"))
+            |> Decimal.round()
+            |> Decimal.to_string()}K
+          </span>
         </div>
         <div class="flex justify-between text-sm">
           <span class="opacity-70">Cost</span>
@@ -112,7 +125,9 @@
         </div>
         <div class="flex justify-between text-sm">
           <span class="opacity-70">Purchase Date</span>
-          <span>{if holding.purchase_date, do: Date.to_string(holding.purchase_date), else: "—"}</span>
+          <span>
+            {if holding.purchase_date, do: Date.to_string(holding.purchase_date), else: "—"}
+          </span>
         </div>
       </div>
 
@@ -133,9 +148,11 @@
         <.icon name="hero-currency-dollar" class="size-10 text-primary" />
       </div>
       <h3 class="text-2xl font-bold mb-2">No Holdings Yet</h3>
-      <p class="opacity-70 mb-6">Start building your gold portfolio by adding your first holding.</p>
-      <button 
-        type="button" 
+      <p class="opacity-70 mb-6">
+        Start building your gold portfolio by adding your first holding.
+      </p>
+      <button
+        type="button"
         phx-click="toggle_form"
         class="btn btn-primary"
       >
@@ -151,8 +168,8 @@
     <div class="card-body">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-bold">Add New Holding</h2>
-        <button 
-          type="button" 
+        <button
+          type="button"
           phx-click="toggle_form"
           class="opacity-50 hover:opacity-100 transition-opacity"
         >
@@ -164,42 +181,82 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Basic Information -->
           <div class="space-y-4">
-            <h3 class="text-sm font-semibold uppercase tracking-wider mb-4 text-primary">Basic Information</h3>
-            <.input field={@add_form[:name]} type="text" label="Name" placeholder="e.g., American Gold Eagle" />
-            <.input field={@add_form[:category]} type="select" label="Category" options={[{"Coin", "coin"}, {"Bar", "bar"}, {"Round", "round"}]} />
-            <.input field={@add_form[:notes]} type="text" label="Notes (optional)" placeholder="Additional details..." />
+            <h3 class="text-sm font-semibold uppercase tracking-wider mb-4 text-primary">
+              Basic Information
+            </h3>
+            <.input
+              field={@add_form[:name]}
+              type="text"
+              label="Name"
+              placeholder="e.g., American Gold Eagle"
+            />
+            <.input
+              field={@add_form[:category]}
+              type="select"
+              label="Category"
+              options={[{"Coin", "coin"}, {"Bar", "bar"}, {"Round", "round"}]}
+            />
+            <.input
+              field={@add_form[:notes]}
+              type="text"
+              label="Notes (optional)"
+              placeholder="Additional details..."
+            />
           </div>
-
-          <!-- Weight & Purity -->
+          
+<!-- Weight & Purity -->
           <div class="space-y-4">
-            <h3 class="text-sm font-semibold uppercase tracking-wider mb-4 text-primary">Weight & Purity</h3>
+            <h3 class="text-sm font-semibold uppercase tracking-wider mb-4 text-primary">
+              Weight & Purity
+            </h3>
             <.input field={@add_form[:weight]} type="text" label="Weight" placeholder="e.g., 1.0" />
-            <.input field={@add_form[:weight_unit]} type="select" label="Weight Unit" options={[{"Grams", "grams"}, {"Troy Ounces", "troy_ounces"}]} />
-            <.input field={@add_form[:purity]} type="select" label="Purity" options={[{"24K (100%)", "1.0"}, {"22K (91.67%)", "0.9167"}, {"18K (75%)", "0.75"}, {"14K (58.33%)", "0.5833"}]} />
+            <.input
+              field={@add_form[:weight_unit]}
+              type="select"
+              label="Weight Unit"
+              options={[{"Grams", "grams"}, {"Troy Ounces", "troy_ounces"}]}
+            />
+            <.input
+              field={@add_form[:purity]}
+              type="select"
+              label="Purity"
+              options={[
+                {"24K (100%)", "1.0"},
+                {"22K (91.67%)", "0.9167"},
+                {"18K (75%)", "0.75"},
+                {"14K (58.33%)", "0.5833"}
+              ]}
+            />
             <.input field={@add_form[:quantity]} type="number" label="Quantity" min="1" value="1" />
           </div>
-
-          <!-- Financial Information -->
+          
+<!-- Financial Information -->
           <div class="space-y-4 md:col-span-2">
-            <h3 class="text-sm font-semibold uppercase tracking-wider mb-4 text-primary">Financial Information</h3>
+            <h3 class="text-sm font-semibold uppercase tracking-wider mb-4 text-primary">
+              Financial Information
+            </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <.input field={@add_form[:cost_basis]} type="text" label="Cost Basis (USD)" placeholder="e.g., 1950.00" />
+              <.input
+                field={@add_form[:cost_basis]}
+                type="text"
+                label="Cost Basis (USD)"
+                placeholder="e.g., 1950.00"
+              />
               <.input field={@add_form[:purchase_date]} type="date" label="Purchase Date" />
             </div>
           </div>
         </div>
 
         <div class="mt-8 flex justify-end gap-4">
-          <button 
-            type="button" 
+          <button
+            type="button"
             phx-click="toggle_form"
             class="btn btn-ghost"
           >
             Cancel
           </button>
           <button type="submit" class="btn btn-primary">
-            <.icon name="hero-plus" class="size-5 mr-2" />
-            Add Holding
+            <.icon name="hero-plus" class="size-5 mr-2" /> Add Holding
           </button>
         </div>
       </.form>

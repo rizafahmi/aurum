@@ -1,5 +1,6 @@
 defmodule AurumWeb.PortfolioDashboardLive do
   use AurumWeb, :live_view
+  use AurumWeb, :html
 
   alias Aurum.Gold
   alias Aurum.Portfolio
@@ -27,7 +28,7 @@ defmodule AurumWeb.PortfolioDashboardLive do
   end
 
   @impl true
-  def handle_info({:DOWN, _info}, socket) do
+  def handle_info({:DOWN, _ref, :process, _pid, _reason}, socket) do
     Phoenix.PubSub.unsubscribe(Aurum.PubSub, "price_updates")
     {:noreply, socket}
   end
@@ -71,18 +72,23 @@ defmodule AurumWeb.PortfolioDashboardLive do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    holding = Gold.get_holding!(id)
-    {:ok, _} = Gold.delete_holding(holding)
+    case Gold.get_holding(id) do
+      {:ok, holding} ->
+        {:ok, _} = Gold.delete_holding(holding)
 
-    new_holdings = Enum.reject(socket.assigns.holdings, fn h -> h.id == holding.id end)
-    new_metrics = calculate_portfolio_metrics(new_holdings, socket.assigns.current_price)
+        new_holdings = Enum.reject(socket.assigns.holdings, fn h -> h.id == holding.id end)
+        new_metrics = calculate_portfolio_metrics(new_holdings, socket.assigns.current_price)
 
-    {:noreply,
-     socket
-     |> stream_delete(:holdings, holding)
-     |> assign(:holdings, new_holdings)
-     |> assign(:current_metrics, new_metrics)
-     |> put_flash(:info, "Holding deleted successfully!")}
+        {:noreply,
+         socket
+         |> stream_delete(:holdings, holding)
+         |> assign(:holdings, new_holdings)
+         |> assign(:current_metrics, new_metrics)
+         |> put_flash(:info, "Holding deleted successfully!")}
+
+      {:error, :not_found} ->
+        {:noreply, put_flash(socket, :error, "Holding not found")}
+    end
   end
 
   @impl true
@@ -104,7 +110,11 @@ defmodule AurumWeb.PortfolioDashboardLive do
         total_cost_basis_idr: Decimal.new("0"),
         roi: Decimal.new("0"),
         total_pure_weight: Decimal.new("0"),
-        weight_breakdown: %{coin: Decimal.new("0"), bar: Decimal.new("0"), round: Decimal.new("0")}
+        weight_breakdown: %{
+          coin: Decimal.new("0"),
+          bar: Decimal.new("0"),
+          round: Decimal.new("0")
+        }
       }
     else
       total_value_usd = Portfolio.total_value_troy_ounces(holdings, current_price.usd)
@@ -124,7 +134,7 @@ defmodule AurumWeb.PortfolioDashboardLive do
         total_cost_basis_idr: total_cost_basis_idr,
         roi: roi,
         total_pure_weight: total_pure_weight,
-            weight_breakdown: weight_breakdown
+        weight_breakdown: weight_breakdown
       }
     end
   end
@@ -136,8 +146,7 @@ defmodule AurumWeb.PortfolioDashboardLive do
     |> String.reverse()
     |> String.graphemes()
     |> Enum.chunk_every(3)
-    |> Enum.map(&Enum.join/1)
-    |> Enum.join(".")
+    |> Enum.map_join(".")
     |> String.reverse()
   end
 

@@ -32,6 +32,7 @@ defmodule Aurum.Financial do
   def karat_to_purity(22), do: Decimal.new("0.9167")
   def karat_to_purity(18), do: Decimal.new("0.75")
   def karat_to_purity(14), do: Decimal.new("0.5833")
+
   def karat_to_purity(karat) when is_integer(karat) and karat > 0 and karat <= 24 do
     Decimal.div(Decimal.new(karat), Decimal.new("24"))
   end

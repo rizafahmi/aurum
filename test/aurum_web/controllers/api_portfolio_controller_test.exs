@@ -5,24 +5,27 @@ defmodule AurumWeb.APIPortfolioControllerTest do
 
   describe "index/2" do
     test "returns list of holdings", %{conn: conn} do
-      {:ok, _holding1} = Gold.create_holding(%{
-        name: "Coin 1",
-        category: "coin",
-        weight: "1.0",
-        weight_unit: "troy_ounces",
-        purity: "0.9167",
-        quantity: 1,
-        cost_basis: "2000.00"
-      })
-      {:ok, _holding2} = Gold.create_holding(%{
-        name: "Bar 1",
-        category: "bar",
-        weight: "10.0",
-        weight_unit: "grams",
-        purity: "0.999",
-        quantity: 1,
-        cost_basis: "600.00"
-      })
+      {:ok, _holding1} =
+        Gold.create_holding(%{
+          name: "Coin 1",
+          category: "coin",
+          weight: "1.0",
+          weight_unit: "troy_ounces",
+          purity: "0.9167",
+          quantity: 1,
+          cost_basis: "2000.00"
+        })
+
+      {:ok, _holding2} =
+        Gold.create_holding(%{
+          name: "Bar 1",
+          category: "bar",
+          weight: "10.0",
+          weight_unit: "grams",
+          purity: "0.999",
+          quantity: 1,
+          cost_basis: "600.00"
+        })
 
       conn = get(conn, "/api/portfolio")
       assert json_response(conn, 200)
@@ -193,5 +196,4 @@ defmodule AurumWeb.APIPortfolioControllerTest do
     {:ok, holding} = Gold.create_holding(merged_attrs)
     holding
   end
-
 end
