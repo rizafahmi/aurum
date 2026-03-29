@@ -31,17 +31,11 @@ defmodule AurumWeb.APIPortfolioController do
   end
 
   def show(conn, %{"id" => id}) do
-    case Gold.get_holding!(id) do
-      nil ->
-        conn
-        |> put_status(404)
-        |> json(%{error: "Holding not found"})
+    holding = Gold.get_holding!(id)
 
-      holding ->
-        conn
-        |> put_status(200)
-        |> json(%{holding: serialize_holding(holding)})
-    end
+    conn
+    |> put_status(200)
+    |> json(%{holding: serialize_holding(holding)})
   rescue
     Ecto.NoResultsError ->
       conn
@@ -51,10 +45,11 @@ defmodule AurumWeb.APIPortfolioController do
 
   def update(conn, %{"id" => id, "holding" => holding_params}) do
     holding =
-      Gold.get_holding!(id)
-    rescue
-      Ecto.NoResultsError -> nil
-    end
+      try do
+        Gold.get_holding!(id)
+      rescue
+        Ecto.NoResultsError -> nil
+      end
 
     case holding do
       nil ->
@@ -79,10 +74,11 @@ defmodule AurumWeb.APIPortfolioController do
 
   def delete(conn, %{"id" => id}) do
     holding =
-      Gold.get_holding!(id)
-    rescue
-      Ecto.NoResultsError -> nil
-    end
+      try do
+        Gold.get_holding!(id)
+      rescue
+        Ecto.NoResultsError -> nil
+      end
 
     case holding do
       nil ->
@@ -171,14 +167,14 @@ defmodule AurumWeb.APIPortfolioController do
   end
 
   defp format_errors(changeset) do
-    Ecto.Changeset.traverse_errors(changeset, fn {field, {msg, _opts}} ->
-      {field, msg}
+    # Ecto.Changeset.traverse_errors/2 returns a map of %{field => [messages]}
+    changeset
+    |> Ecto.Changeset.traverse_errors(fn {field, {msg, _opts}} ->
+      {to_string(field), msg}
     end)
   rescue
     _ ->
-      # Handle non-keyword error tuples
-      Ecto.Changeset.traverse_errors(changeset, fn {field, msg} ->
-        {field, msg}
-      end)
+      # Handle alternative error format - return simple map
+      %{"error" => "Validation failed"}
   end
 end
