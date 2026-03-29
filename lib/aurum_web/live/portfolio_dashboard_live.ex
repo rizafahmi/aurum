@@ -27,7 +27,13 @@ defmodule AurumWeb.PortfolioDashboardLive do
   end
 
   @impl true
-  def handle_info({:gold_price_idr, gold_price_idr, :gold_price_usd, gold_price_usd}, socket) do
+  def handle_info({:DOWN, _info}, socket) do
+    Phoenix.PubSub.unsubscribe(Aurum.PubSub, "price_updates")
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:gold_price, %{idr: gold_price_idr, usd: gold_price_usd}}, socket) do
     new_price = %{idr: gold_price_idr, usd: gold_price_usd}
     holdings = socket.assigns.holdings
     new_metrics = calculate_portfolio_metrics(holdings, new_price)
@@ -47,7 +53,7 @@ defmodule AurumWeb.PortfolioDashboardLive do
 
         {:noreply,
          socket
-         |> stream_insert(:holdings, holding)
+         |> stream(:holdings, [holding])
          |> assign(:holdings, new_holdings)
          |> assign(:current_metrics, new_metrics)
          |> put_flash(:info, "Holding added successfully!")}
@@ -77,6 +83,11 @@ defmodule AurumWeb.PortfolioDashboardLive do
      |> assign(:holdings, new_holdings)
      |> assign(:current_metrics, new_metrics)
      |> put_flash(:info, "Holding deleted successfully!")}
+  end
+
+  @impl true
+  def handle_event("toggle_form", _params, socket) do
+    {:noreply, socket}
   end
 
   defp get_current_price do
@@ -113,8 +124,29 @@ defmodule AurumWeb.PortfolioDashboardLive do
         total_cost_basis_idr: total_cost_basis_idr,
         roi: roi,
         total_pure_weight: total_pure_weight,
-        weight_breakdown: weight_breakdown
+            weight_breakdown: weight_breakdown
       }
     end
   end
+
+  # Helper functions for template rendering
+  defp format_large_number(decimal) do
+    decimal
+    |> Decimal.to_string()
+    |> String.reverse()
+    |> String.graphemes()
+    |> Enum.chunk_every(3)
+    |> Enum.map(&Enum.join/1)
+    |> Enum.join(".")
+    |> String.reverse()
+  end
+
+  defp format_weight_unit("grams"), do: "g"
+  defp format_weight_unit("troy_ounces"), do: "oz troy"
+  defp format_weight_unit(_), do: ""
+
+  defp get_category_icon("coin"), do: "hero-coin"
+  defp get_category_icon("bar"), do: "hero-cube"
+  defp get_category_icon("round"), do: "hero-circle-stack"
+  defp get_category_icon(_), do: "hero-currency-dollar"
 end

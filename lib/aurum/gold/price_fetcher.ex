@@ -44,22 +44,37 @@ defmodule Aurum.Gold.PriceFetcher do
   # Private Functions
 
   defp do_fetch_prices do
-    gold_price_usd = fetch_gold_price()
-    exchange_rate = fetch_exchange_rate()
+    try do
+      gold_price_usd = fetch_gold_price()
+      exchange_rate = fetch_exchange_rate()
 
-    gold_price_idr = convert_to_idr(gold_price_usd, exchange_rate)
+      gold_price_idr = convert_to_idr(gold_price_usd, exchange_rate)
 
-    # Broadcast price update
-    Phoenix.PubSub.broadcast(
-      Aurum.PubSub,
-      "price_updates",
-      {:gold_price_idr, gold_price_idr, :gold_price_usd, gold_price_usd}
-    )
+      # Broadcast price update
+      try do
+        Phoenix.PubSub.broadcast(
+          Aurum.PubSub,
+          "price_updates",
+          {:gold_price, %{idr: gold_price_idr, usd: gold_price_usd}}
+        )
+      rescue
+        error ->
+          Logger.error("Failed to broadcast price update: #{inspect(error)}")
+      end
 
-    # Store price in database
-    store_price_in_db(gold_price_idr, gold_price_usd, exchange_rate)
+      # Store price in database
+      try do
+        store_price_in_db(gold_price_idr, gold_price_usd, exchange_rate)
+      rescue
+        error ->
+          Logger.error("Failed to store price in database: #{inspect(error)}")
+      end
 
-    Logger.info("Fetched gold price: USD #{Decimal.to_string(gold_price_usd)}, IDR #{Decimal.to_string(gold_price_idr)}")
+      Logger.info("Fetched gold price: USD #{Decimal.to_string(gold_price_usd)}, IDR #{Decimal.to_string(gold_price_idr)}")
+    rescue
+      error ->
+        Logger.error("Failed to fetch prices: #{inspect(error)}")
+    end
   end
 
   defp fetch_gold_price do

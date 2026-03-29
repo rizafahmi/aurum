@@ -11,7 +11,8 @@ defmodule Aurum.Portfolio do
   def total_value_troy_ounces(holdings, spot_price_usd_per_troy_ounce) do
     holdings
     |> Enum.reduce(Decimal.new("0"), fn holding, acc ->
-      pure_weight = Financial.pure_gold_weight(holding.weight, holding.purity)
+      weight_troy_ounces = convert_weight_to_troy_ounces(holding.weight, holding.weight_unit)
+      pure_weight = Financial.pure_gold_weight(weight_troy_ounces, holding.purity)
       holding_value = Decimal.mult(pure_weight, spot_price_usd_per_troy_ounce)
       Decimal.add(acc, holding_value)
     end)
@@ -23,10 +24,7 @@ defmodule Aurum.Portfolio do
   def total_cost_basis_troy_ounces(holdings) do
     holdings
     |> Enum.reduce(Decimal.new("0"), fn holding, acc ->
-      pure_weight = Financial.pure_gold_weight(holding.weight, holding.purity)
-      cost_per_troy_ounce = Decimal.div(holding.cost_basis, pure_weight)
-      total_cost = Decimal.mult(cost_per_troy_ounce, pure_weight)
-      Decimal.add(acc, total_cost)
+      Decimal.add(acc, holding.cost_basis)
     end)
   end
 
@@ -48,7 +46,8 @@ defmodule Aurum.Portfolio do
     |> Enum.group_by(& &1.category/1)
     |> Enum.map(fn {category, category_holdings} ->
       total_weight = Enum.reduce(category_holdings, Decimal.new("0"), fn holding, acc ->
-        pure_weight = Financial.pure_gold_weight(holding.weight, holding.purity)
+        weight_troy_ounces = convert_weight_to_troy_ounces(holding.weight, holding.weight_unit)
+        pure_weight = Financial.pure_gold_weight(weight_troy_ounces, holding.purity)
         Decimal.add(acc, pure_weight)
       end)
       {String.to_atom(category), total_weight}
@@ -62,8 +61,21 @@ defmodule Aurum.Portfolio do
   def total_pure_weight_troy_ounces(holdings) do
     holdings
     |> Enum.reduce(Decimal.new("0"), fn holding, acc ->
-      pure_weight = Financial.pure_gold_weight(holding.weight, holding.purity)
+      weight_troy_ounces = convert_weight_to_troy_ounces(holding.weight, holding.weight_unit)
+      pure_weight = Financial.pure_gold_weight(weight_troy_ounces, holding.purity)
       Decimal.add(acc, pure_weight)
     end)
+  end
+
+  defp convert_weight_to_troy_ounces(weight, "grams") do
+    Financial.convert_weight(weight, :grams, :troy_ounces)
+  end
+
+  defp convert_weight_to_troy_ounces(weight, "troy_ounces") do
+    weight
+  end
+
+  defp convert_weight_to_troy_ounces(_weight, _unit) do
+    Decimal.new("0")
   end
 end
