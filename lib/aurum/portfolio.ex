@@ -43,7 +43,7 @@ defmodule Aurum.Portfolio do
   """
   def weight_breakdown_troy_ounces(holdings) do
     holdings
-    |> Enum.group_by(& &1.category/1)
+    |> Enum.group_by(& &1.category)
     |> Enum.map(fn {category, category_holdings} ->
       total_weight = Enum.reduce(category_holdings, Decimal.new("0"), fn holding, acc ->
         weight_troy_ounces = convert_weight_to_troy_ounces(holding.weight, holding.weight_unit)
