@@ -31,22 +31,38 @@ defmodule AurumWeb.APIPortfolioController do
   end
 
   def show(conn, %{"id" => id}) do
-    case Gold.get_holding(id) do
-      {:ok, holding} ->
-        conn
-        |> put_status(200)
-        |> json(%{holding: serialize_holding(holding)})
-
-      :error ->
+    case Gold.get_holding!(id) do
+      nil ->
         conn
         |> put_status(404)
         |> json(%{error: "Holding not found"})
+
+      holding ->
+        conn
+        |> put_status(200)
+        |> json(%{holding: serialize_holding(holding)})
     end
+  rescue
+    Ecto.NoResultsError ->
+      conn
+      |> put_status(404)
+      |> json(%{error: "Holding not found"})
   end
 
   def update(conn, %{"id" => id, "holding" => holding_params}) do
-    case Gold.get_holding(id) do
-      {:ok, holding} ->
+    holding =
+      Gold.get_holding!(id)
+    rescue
+      Ecto.NoResultsError -> nil
+    end
+
+    case holding do
+      nil ->
+        conn
+        |> put_status(404)
+        |> json(%{error: "Holding not found"})
+
+      holding ->
         case Gold.update_holding(holding, holding_params) do
           {:ok, updated_holding} ->
             conn
@@ -58,17 +74,23 @@ defmodule AurumWeb.APIPortfolioController do
             |> put_status(422)
             |> json(%{errors: format_errors(changeset)})
         end
-
-      :error ->
-        conn
-        |> put_status(404)
-        |> json(%{error: "Holding not found"})
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    case Gold.get_holding(id) do
-      {:ok, holding} ->
+    holding =
+      Gold.get_holding!(id)
+    rescue
+      Ecto.NoResultsError -> nil
+    end
+
+    case holding do
+      nil ->
+        conn
+        |> put_status(404)
+        |> json(%{error: "Holding not found"})
+
+      holding ->
         case Gold.delete_holding(holding) do
           {:ok, _} ->
             conn
@@ -80,11 +102,6 @@ defmodule AurumWeb.APIPortfolioController do
             |> put_status(500)
             |> json(%{error: "Failed to delete holding"})
         end
-
-      :error ->
-        conn
-        |> put_status(404)
-        |> json(%{error: "Holding not found"})
     end
   end
 
@@ -157,5 +174,11 @@ defmodule AurumWeb.APIPortfolioController do
     Ecto.Changeset.traverse_errors(changeset, fn {field, {msg, _opts}} ->
       {field, msg}
     end)
+  rescue
+    _ ->
+      # Handle non-keyword error tuples
+      Ecto.Changeset.traverse_errors(changeset, fn {field, msg} ->
+        {field, msg}
+      end)
   end
 end
