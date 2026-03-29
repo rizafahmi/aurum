@@ -21,6 +21,17 @@ defmodule AurumWeb.Router do
     live "/portfolio", PortfolioDashboardLive, :index
   end
 
+  scope "/api", AurumWeb do
+    pipe_through :api
+
+    get "/portfolio", APIPortfolioController, :index
+    post "/portfolio", APIPortfolioController, :create
+    get "/portfolio/:id", APIPortfolioController, :show
+    put "/portfolio/:id", APIPortfolioController, :update
+    delete "/portfolio/:id", APIPortfolioController, :delete
+    get "/portfolio/metrics", APIPortfolioController, :metrics
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", AurumWeb do
   #   pipe_through :api
