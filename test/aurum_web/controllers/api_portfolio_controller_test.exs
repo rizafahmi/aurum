@@ -4,9 +4,25 @@ defmodule AurumWeb.APIPortfolioControllerTest do
   alias Aurum.Gold
 
   describe "index/2" do
-    test "returns list of holdings" do
-      {:ok, holding1} = Gold.create_holding(%{name: "Coin 1", category: "coin"})
-      {:ok, holding2} = Gold.create_holding(%{name: "Bar 1", category: "bar"})
+    test "returns list of holdings", %{conn: conn} do
+      {:ok, _holding1} = Gold.create_holding(%{
+        name: "Coin 1",
+        category: "coin",
+        weight: "1.0",
+        weight_unit: "troy_ounces",
+        purity: "0.9167",
+        quantity: 1,
+        cost_basis: "2000.00"
+      })
+      {:ok, _holding2} = Gold.create_holding(%{
+        name: "Bar 1",
+        category: "bar",
+        weight: "10.0",
+        weight_unit: "grams",
+        purity: "0.999",
+        quantity: 1,
+        cost_basis: "600.00"
+      })
 
       conn = get(conn, "/api/portfolio")
       assert json_response(conn, 200)
@@ -16,7 +32,7 @@ defmodule AurumWeb.APIPortfolioControllerTest do
       assert length(body["holdings"]) == 2
     end
 
-    test "returns latest price" do
+    test "returns latest price", %{conn: conn} do
       conn = get(conn, "/api/portfolio")
 
       assert json_response(conn, 200)
@@ -27,7 +43,7 @@ defmodule AurumWeb.APIPortfolioControllerTest do
   end
 
   describe "create/2" do
-    test "creates holding with valid data" do
+    test "creates holding with valid data", %{conn: conn} do
       params = %{
         "holding" => %{
           "name" => "New Coin",
@@ -48,7 +64,7 @@ defmodule AurumWeb.APIPortfolioControllerTest do
       assert body["holding"]["name"] == "New Coin"
     end
 
-    test "returns errors with invalid data" do
+    test "returns errors with invalid data", %{conn: conn} do
       params = %{
         "holding" => %{
           "name" => "",
@@ -70,7 +86,7 @@ defmodule AurumWeb.APIPortfolioControllerTest do
   end
 
   describe "show/2" do
-    test "returns holding by id" do
+    test "returns holding by id", %{conn: conn} do
       holding = insert_holding!(name: "Test Coin", category: "coin")
 
       conn = get(conn, "/api/portfolio/#{holding.id}")
@@ -81,7 +97,7 @@ defmodule AurumWeb.APIPortfolioControllerTest do
       assert body["holding"]["id"] == holding.id
     end
 
-    test "returns 404 for non-existent holding" do
+    test "returns 404 for non-existent holding", %{conn: conn} do
       conn = get(conn, "/api/portfolio/999999")
       assert json_response(conn, 404)
 
@@ -91,7 +107,7 @@ defmodule AurumWeb.APIPortfolioControllerTest do
   end
 
   describe "update/2" do
-    test "updates holding with valid data" do
+    test "updates holding with valid data", %{conn: conn} do
       holding = insert_holding!(name: "Original Coin", category: "coin")
 
       params = %{
@@ -110,7 +126,7 @@ defmodule AurumWeb.APIPortfolioControllerTest do
       assert body["holding"]["cost_basis"] == "2500.00"
     end
 
-    test "returns 404 for non-existent holding" do
+    test "returns 404 for non-existent holding", %{conn: conn} do
       params = %{
         "holding" => %{
           "name" => "Updated Coin",
@@ -127,7 +143,7 @@ defmodule AurumWeb.APIPortfolioControllerTest do
   end
 
   describe "delete/2" do
-    test "deletes holding successfully" do
+    test "deletes holding successfully", %{conn: conn} do
       holding = insert_holding!(name: "To Delete", category: "coin")
 
       conn = delete(conn, "/api/portfolio/#{holding.id}")
@@ -137,7 +153,7 @@ defmodule AurumWeb.APIPortfolioControllerTest do
       assert body["success"] == true
     end
 
-    test "returns 404 for non-existent holding" do
+    test "returns 404 for non-existent holding", %{conn: conn} do
       conn = delete(conn, "/api/portfolio/999999")
       assert json_response(conn, 404)
 
@@ -147,7 +163,7 @@ defmodule AurumWeb.APIPortfolioControllerTest do
   end
 
   describe "metrics/2" do
-    test "returns portfolio metrics" do
+    test "returns portfolio metrics", %{conn: conn} do
       insert_holding!(name: "Coin", category: "coin", weight: "1.0", cost_basis: "2000.00")
       insert_holding!(name: "Bar", category: "bar", weight: "10.0", cost_basis: "20000.00")
 
