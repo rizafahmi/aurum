@@ -26,10 +26,10 @@ defmodule AurumWeb.Router do
 
     get "/portfolio", APIPortfolioController, :index
     post "/portfolio", APIPortfolioController, :create
+    get "/portfolio/metrics", APIPortfolioController, :metrics
     get "/portfolio/:id", APIPortfolioController, :show
     put "/portfolio/:id", APIPortfolioController, :update
     delete "/portfolio/:id", APIPortfolioController, :delete
-    get "/portfolio/metrics", APIPortfolioController, :metrics
   end
 
   # Other scopes may use custom stacks.
