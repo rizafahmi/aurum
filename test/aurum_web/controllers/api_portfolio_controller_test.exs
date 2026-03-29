@@ -2,7 +2,6 @@ defmodule AurumWeb.APIPortfolioControllerTest do
   use AurumWeb.ConnCase
 
   alias Aurum.Gold
-  alias Aurum.Portfolio
 
   describe "index/2" do
     test "returns list of holdings" do
@@ -173,7 +172,7 @@ defmodule AurumWeb.APIPortfolioControllerTest do
       cost_basis: "2000.00"
     }
 
-    merged_attrs = Map.merge(default_attrs, attrs)
+    merged_attrs = Map.merge(default_attrs, Map.new(attrs))
 
     {:ok, holding} = Gold.create_holding(merged_attrs)
     holding
